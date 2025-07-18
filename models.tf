@@ -1,7 +1,7 @@
 variable "mistral_api_key" {}
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.1.2"
+  version = "0.1.3"
 
   space_id = data.tama_space.global.id
   api_key  = var.mistral_api_key
@@ -25,7 +25,7 @@ module "mistral" {
 variable "xai_api_key" {}
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.1.2"
+  version = "0.1.3"
 
   space_id = data.tama_space.global.id
   api_key  = var.xai_api_key
@@ -37,11 +37,17 @@ module "xai" {
   models = [
     {
       identifier = "grok-3-mini"
-      path       = "/chat/completions"
+      path       = "/chat/completions",
+      parameters = {
+        reasoning_effort = "high"
+      }
     },
     {
       identifier = "grok-3-mini-fast"
-      path       = "/chat/completions"
+      path       = "/chat/completions",
+      parameters = {
+        reasoning_effort = "low"
+      }
     }
   ]
 }
