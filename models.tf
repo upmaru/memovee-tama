@@ -1,61 +1,47 @@
 variable "mistral_api_key" {}
-resource "tama_source" "mistral" {
+module "mistral" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.1.2"
+
   space_id = data.tama_space.global.id
   api_key  = var.mistral_api_key
-  endpoint = "https://api.mistral.ai"
+  endpoint = "https://api.mistral.ai/v1"
   name     = "mistral"
-  type     = "model"
-}
 
-resource "tama_limit" "mistral" {
-  source_id   = tama_source.mistral.id
-  scale_count = 1
-  scale_unit  = "seconds"
-  value       = 6
-}
+  requests_per_second = 6
 
-resource "tama_model" "mistral-medium" {
-  source_id  = tama_source.mistral.id
-  identifier = "mistral-medium-latest"
-  path       = "/v1/chat/completions"
-}
-
-resource "tama_model" "mistral-small" {
-  source_id  = tama_source.mistral.id
-  identifier = "mistral-small-latest"
-  path       = "/v1/chat/completions"
+  models = [
+    {
+      identifier = "mistral-medium-latest"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "mistral-small-latest"
+      path       = "/chat/completions"
+    }
+  ]
 }
 
 variable "xai_api_key" {}
-resource "tama_source" "xai" {
+module "xai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.1.2"
+
   space_id = data.tama_space.global.id
   api_key  = var.xai_api_key
-  endpoint = "https://api.x.ai"
+  endpoint = "https://api.x.ai/v1"
   name     = "xai"
-  type     = "model"
-}
 
-resource "tama_limit" "xai" {
-  source_id   = tama_source.xai.id
-  scale_count = 1
-  scale_unit  = "seconds"
-  value       = 4
-}
+  requests_per_second = 4
 
-resource "tama_model" "grok-3-mini" {
-  source_id  = tama_source.xai.id
-  identifier = "grok-3-mini"
-  path       = "/v1/chat/completions"
-  parameters = jsonencode({
-    reasoning_effort = "high"
-  })
-}
-
-resource "tama_model" "grok-3-mini-fast" {
-  source_id  = tama_source.xai.id
-  identifier = "grok-3-mini-fast"
-  path       = "/v1/chat/completions"
-  parameters = jsonencode({
-    reasoning_effort = "low"
-  })
+  models = [
+    {
+      identifier = "grok-3-mini"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "grok-3-mini-fast"
+      path       = "/chat/completions"
+    }
+  ]
 }
