@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "title": "greeting",
+  "description": "The message is a greeting. The user is saying hi or greeting us in some way.",
+  "properties": {
+    "origin_entity_id": {
+      "type": "string",
+      "description": "The ID of the origin entity."
+    }
+  },
+  "required": ["origin_entity_id"]
+}

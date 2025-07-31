@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "title": "introductory",
+  "description": "The message is an introductory message it contains a name or some personal information.",
+  "properties": {
+    "origin_entity_id": {
+      "type": "string",
+      "description": "The ID of the origin message."
+    }
+  },
+  "required": ["origin_entity_id"]
+}
