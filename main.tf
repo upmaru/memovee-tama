@@ -1,14 +1,15 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.2.2"
+  version = "0.2.7"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.2.2"
+  version = "0.2.7"
 
-  name                 = "memovee"
-  class_proxy_class_id = module.global.schemas["class-proxy"].id
+  depends_on = [module.global.schemas]
+
+  name = "memovee"
 }
 
 resource "tama_prompt" "memovee" {
