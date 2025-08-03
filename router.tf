@@ -1,24 +1,17 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.2.8"
+  version = "0.2.10"
 
-  root_messaging_space_id = module.memovee.space.id
+  root_messaging_space_id    = module.memovee.space.id
+  network_message_thought_id = module.memovee.network_message_thought_id
 
-  actor_class_id  = module.memovee.schemas["actor"].id
-  thread_class_id = module.memovee.schemas["thread"].id
-
-  entity_network_class_id  = module.global.schemas["entity-network"].id
   message_routing_class_id = module.global.schemas["message-routing"].id
 
   prompt = file("${path.module}/router/classify.md")
-}
 
-resource "tama_node" "route-user-message" {
-  space_id = module.memovee.space.id
-  class_id = module.memovee.schemas["user-message"].id
-  chain_id = module.router.chain_id
-
-  type = "reactive"
+  routable_class_ids = [
+    module.memovee.schemas["user-message"].id
+  ]
 }
 
 resource "tama_thought_path" "route-to-off-topic" {
