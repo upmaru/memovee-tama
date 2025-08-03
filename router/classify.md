@@ -3,5 +3,6 @@ Take into account the previous messages in context.
 
 ---
 
-Classes:
+<classes>
 {{ classes }}
+</classes>
