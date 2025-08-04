@@ -1,11 +1,11 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.2.10"
+  version = "0.2.12"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.2.10"
+  version = "0.2.12"
 
   depends_on = [module.global.schemas]
 
