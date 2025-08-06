@@ -50,8 +50,13 @@ resource "tama_space_bridge" "basic-conversation-personalization" {
   target_space_id = tama_space.personalization.id
 }
 
+resource "tama_space_bridge" "basic-conversation-prompt-assembly" {
+  space_id        = tama_space.basic-conversation.id
+  target_space_id = tama_space.prompt-assembly.id
+}
+
 resource "tama_chain" "load-profile-and-greet" {
-  space_id = tama_space.personalization.id
+  space_id = tama_space.basic-conversation.id
   name     = "Load Profile and Greet"
 }
 
@@ -60,6 +65,13 @@ resource "tama_prompt" "check-profile" {
   name     = "Check Profile"
   role     = "system"
   content  = file("${path.module}/basic/check-profile.md")
+}
+
+resource "tama_prompt" "greeting-reply" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Greeting Reply"
+  role     = "system"
+  content  = file("${path.module}/basic/greeting-reply.md")
 }
 
 locals {
@@ -93,4 +105,36 @@ module "check-profile-tooling" {
       ]
     }
   }
+}
+
+resource "tama_modular_thought" "forward-check-profile" {
+  chain_id = tama_chain.load-profile-and-greet.id
+  relation = "forward"
+  index    = 1
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_thought_path" "forward-as-context-component" {
+  depends_on = [
+    tama_space_bridge.basic-conversation-prompt-assembly
+  ]
+
+  thought_id      = tama_modular_thought.forward-check-profile.id
+  target_class_id = tama_class.context-component.id
+}
+
+resource "tama_thought_context" "greeting-reply" {
+  thought_id = tama_modular_thought.forward-check-profile.id
+  prompt_id  = tama_prompt.greeting-reply.id
+}
+
+resource "tama_node" "handle-greeting" {
+  space_id = tama_space.basic-conversation.id
+  class_id = tama_class.greeting.id
+  chain_id = tama_chain.load-profile-and-greet.id
+
+  type = "reactive"
 }
