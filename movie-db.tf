@@ -46,3 +46,5 @@ resource "tama_source_identity" "tmdb" {
     }
   }
 }
+
+variable "elasticsearch_movie_db_api_key" {}
