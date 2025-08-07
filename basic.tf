@@ -29,7 +29,7 @@ resource "tama_class" "curse" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.13"
+  version = "0.2.16"
 
   depends_on = [module.global.schemas]
 
@@ -74,23 +74,17 @@ resource "tama_prompt" "greeting-reply" {
   content  = file("${path.module}/basic/greeting-reply.md")
 }
 
-locals {
-  tool_calling_class_id = module.global.schemas["tool-calling"].id
-  context_metadata_input = {
-    type            = "metadata",
-    class_corpus_id = module.global.context_metadata_corpus_id
-  }
-}
+
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.13"
+  version = "0.2.16"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
   index    = 0
 
-  tool_calling_class_id = local.tool_calling_class_id
+  assistant_response_class_id = local.assistant_response_class_id
 
   action_ids = [
     data.tama_action.get-profile.id
@@ -108,6 +102,8 @@ module "check-profile-tooling" {
 }
 
 resource "tama_modular_thought" "forward-check-profile" {
+  depends_on = [module.global.schemas]
+
   chain_id = tama_chain.load-profile-and-greet.id
   relation = "forward"
   index    = 1
