@@ -22,3 +22,8 @@ data "tama_action" "get-profile" {
   specification_id = tama_specification.personalization-spec.id
   identifier       = "get-profile"
 }
+
+data "tama_action" "upsert-profile" {
+  specification_id = tama_specification.personalization-spec.id
+  identifier       = "create-or-update-profile"
+}

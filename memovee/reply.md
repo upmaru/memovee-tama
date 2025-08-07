@@ -1,4 +1,6 @@
-{{ corpus }}
+<context_metadata>
+  {{ corpus }}
+</context_metadata>
 
 **General Guidelines:**
 * Maintain a polite and welcoming tone throughout.

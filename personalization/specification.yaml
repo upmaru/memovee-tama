@@ -133,9 +133,7 @@ paths:
       tags:
         - Personalization
     put:
-      description: "Create or update the profile for a given actor in a system.
-
-        "
+      description: Create or update the profile for a given actor in a system.
       operationId: create-or-update-profile
       parameters:
         - description: The ID of the actor

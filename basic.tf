@@ -60,21 +60,19 @@ resource "tama_chain" "load-profile-and-greet" {
   name     = "Load Profile and Greet"
 }
 
-resource "tama_prompt" "check-profile" {
+resource "tama_prompt" "check-profile-tooling" {
   space_id = tama_space.basic-conversation.id
-  name     = "Check Profile"
+  name     = "Check Profile Tooling"
   role     = "system"
-  content  = file("${path.module}/basic/check-profile.md")
+  content  = file("${path.module}/basic/check-profile/tooling.md")
 }
 
-resource "tama_prompt" "greeting-reply" {
+resource "tama_prompt" "check-profile-reply" {
   space_id = tama_space.basic-conversation.id
-  name     = "Greeting Reply"
+  name     = "Check Profile Reply"
   role     = "system"
-  content  = file("${path.module}/basic/greeting-reply.md")
+  content  = file("${path.module}/basic/check-profile/reply.md")
 }
-
-
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
@@ -92,7 +90,7 @@ module "check-profile-tooling" {
 
   contexts = {
     check_profile = {
-      prompt_id = tama_prompt.check-profile.id
+      prompt_id = tama_prompt.check-profile-tooling.id
       layer     = 0
       inputs = [
         local.context_metadata_input
@@ -122,15 +120,93 @@ resource "tama_thought_path" "forward-as-context-component" {
   target_class_id = tama_class.context-component.id
 }
 
-resource "tama_thought_context" "greeting-reply" {
+resource "tama_thought_context" "check-profile-reply" {
   thought_id = tama_modular_thought.forward-check-profile.id
-  prompt_id  = tama_prompt.greeting-reply.id
+  prompt_id  = tama_prompt.check-profile-reply.id
 }
 
-resource "tama_node" "handle-greeting" {
+resource "tama_node" "handle-check-profile" {
   space_id = tama_space.basic-conversation.id
   class_id = tama_class.greeting.id
   chain_id = tama_chain.load-profile-and-greet.id
+
+  type = "reactive"
+}
+
+resource "tama_prompt" "upsert-profile-tooling" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Upsert Profile Tooling"
+  role     = "system"
+  content  = file("${path.module}/basic/upsert-profile/tooling.md")
+}
+
+resource "tama_prompt" "upsert-profile-reply" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Upsert Profile Reply"
+  role     = "system"
+  content  = file("${path.module}/basic/upsert-profile/reply.md")
+}
+
+resource "tama_chain" "upsert-profile" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Create or Update Profile"
+}
+
+module "upsert-profile-tooling" {
+  source  = "upmaru/base/tama//modules/tooling"
+  version = "0.2.16"
+
+  chain_id = tama_chain.upsert-profile.id
+
+  relation                    = "tooling"
+  index                       = 0
+  assistant_response_class_id = local.assistant_response_class_id
+
+  action_ids = [
+    data.tama_action.upsert-profile.id
+  ]
+
+  contexts = {
+    upsert_profile = {
+      prompt_id = tama_prompt.upsert-profile-tooling.id
+      layer     = 0
+      inputs = [
+        local.context_metadata_input
+      ]
+    }
+  }
+}
+
+resource "tama_modular_thought" "forward-upsert-profile" {
+  depends_on = [module.global.schemas]
+
+  chain_id = tama_chain.upsert-profile.id
+  relation = "forwarding"
+  index    = 1
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_thought_context" "upsert-profile-reply" {
+  thought_id = tama_modular_thought.forward-upsert-profile.id
+  prompt_id  = tama_prompt.upsert-profile-reply.id
+}
+
+resource "tama_thought_path" "forward-upsert-profile" {
+  depends_on = [
+    tama_space_bridge.basic-conversation-prompt-assembly
+  ]
+
+  thought_id      = tama_modular_thought.forward-upsert-profile.id
+  target_class_id = tama_class.context-component.id
+}
+
+resource "tama_node" "handle-upsert-profile" {
+  space_id = tama_space.basic-conversation.id
+  class_id = tama_class.introductory.id
+  chain_id = tama_chain.upsert-profile.id
 
   type = "reactive"
 }

@@ -6,8 +6,8 @@ You are provided with some tools that will give you the ability to load the user
 - Use the tool to load the profile.
 - Check if the actor has a profile with a name.
 
---
+---
 
 <context_metadata>
-{{ corpus }}
+  {{ corpus }}
 </context_metadata>
