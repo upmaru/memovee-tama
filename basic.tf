@@ -29,7 +29,7 @@ resource "tama_class" "curse" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.16"
+  version = "0.2.17"
 
   depends_on = [module.global.schemas]
 
@@ -76,7 +76,7 @@ resource "tama_prompt" "check-profile-reply" {
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.16"
+  version = "0.2.17"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -154,7 +154,7 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.16"
+  version = "0.2.17"
 
   chain_id = tama_chain.upsert-profile.id
 
