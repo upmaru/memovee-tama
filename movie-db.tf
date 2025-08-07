@@ -48,3 +48,5 @@ resource "tama_source_identity" "tmdb" {
 }
 
 variable "elasticsearch_movie_db_api_key" {}
+
+# TODO: Implement Elasticsearch integration for Movie DB
