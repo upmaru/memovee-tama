@@ -47,6 +47,43 @@ resource "tama_source_identity" "tmdb" {
   }
 }
 
-variable "elasticsearch_movie_db_api_key" {}
 
-# TODO: Implement Elasticsearch integration for Movie DB
+resource "tama_specification" "movie-db-query-elasticsearch" {
+  space_id = tama_space.movie-db.id
+  version  = "1.0.0"
+  endpoint = var.elasticsearch_endpoint
+  schema   = module.elasticsearch.query_schema
+
+  wait_for {
+    field {
+      name = "current_state"
+      in   = ["completed", "failed"]
+    }
+  }
+}
+
+variable "elasticsearch_movie_db_api_key" {}
+resource "tama_source_identity" "movie-db-query-elasticsearch" {
+  specification_id = tama_specification.movie-db-query-elasticsearch.id
+  identifier       = "ApiKey"
+
+  api_key = var.elasticsearch_movie_db_api_key
+
+  validation {
+    path   = "/_cluster/health"
+    method = "GET"
+    codes  = [200]
+  }
+
+  wait_for {
+    field {
+      name = "current_state"
+      in   = ["active", "failed"]
+    }
+  }
+}
+
+data "tama_source" "tmdb-api" {
+  specification_id = tama_specification.tmdb.id
+  slug             = "tmdb-api"
+}
