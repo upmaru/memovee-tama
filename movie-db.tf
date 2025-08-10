@@ -94,3 +94,14 @@ resource "tama_source_limit" "tmdb-api" {
   scale_unit  = "seconds"
   value       = 40
 }
+
+data "tama_class" "movie-details" {
+  specification_id = tama_specification.tmdb.id
+  name             = "movie-details"
+}
+
+resource "tama_class_corpus" "crawl-movie-details" {
+  class_id = data.tama_class.movie-details.id
+  name     = "Crawl Movie Details"
+  template = file("${path.module}/movie-db/crawl-movie-details.liquid")
+}
