@@ -87,3 +87,10 @@ data "tama_source" "tmdb-api" {
   specification_id = tama_specification.tmdb.id
   slug             = "tmdb-api"
 }
+
+resource "tama_source_limit" "tmdb-api" {
+  source_id   = data.tama_source.tmdb-api.id
+  scale_count = 1
+  scale_unit  = "seconds"
+  value       = 40
+}

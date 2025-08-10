@@ -1,6 +1,6 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.2.17"
+  version = "0.2.18"
 
   root_messaging_space_id    = module.memovee.space.id
   network_message_thought_id = module.memovee.network_message_thought_id
