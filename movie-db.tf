@@ -95,43 +95,21 @@ resource "tama_source_limit" "tmdb-api" {
   value       = 40
 }
 
-# TODO replace this with extract-nested-properties module
-# data "tama_class" "movie-credits" {
-#   specification_id = tama_specification.tmdb.id
-#   name             = "movie-credits"
-# }
+module "extract-nested-properties-movie-db" {
+  source  = "upmaru/base/tama//modules/extract-nested-properties"
+  version = "0.2.19"
 
-# resource "tama_chain" "extract-nested-properties" {
-#   space_id = tama_space.movie-db.id
-#   name     = "Extract Nested Properties"
-# }
+  depends_on = [module.global]
 
-# resource "tama_modular_thought" "nested-properties-extraction" {
-#   chain_id = tama_chain.extract-nested-properties.id
-#   index    = 0
-#   relation = "extraction"
+  class_names      = ["movie-credits"]
+  specification_id = tama_specification.tmdb.id
+  space_id         = tama_space.movie-db.id
 
-#   module {
-#     reference = "tama/classes/extraction"
-#     parameters = jsonencode({
-#       types = ["array"]
-#       depth = 1
-#     })
-#   }
-# }
+  types = ["array"]
+  depth = 1
 
-# resource "tama_thought_path" "extract-nested-properties-movie-credits" {
-#   thought_id      = tama_modular_thought.nested-properties-extraction.id
-#   target_class_id = data.tama_class.movie-credits.id
-# }
-
-# resource "tama_node" "handle-movie-credits-nested-extraction" {
-#   space_id = tama_space.movie-db.id
-#   class_id = module.global.schemas["class-proxy-class"].id
-#   chain_id = tama_chain.extract-nested-properties.id
-
-#   type = "explicit"
-# }
+  expected_class_names = ["movie-credits.cast", "movie-credits.crew"]
+}
 
 data "tama_class" "movie-details" {
   specification_id = tama_specification.tmdb.id
