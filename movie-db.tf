@@ -97,7 +97,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.19"
+  version = "0.2.20"
 
   depends_on = [module.global]
 
@@ -111,13 +111,14 @@ module "extract-nested-properties-movie-db" {
   expected_class_names = ["movie-credits.cast", "movie-credits.crew"]
 }
 
-data "tama_class" "movie-details" {
-  specification_id = tama_specification.tmdb.id
-  name             = "movie-details"
-}
+module "crawl-movie-credits" {
+  source = "./movie-db/crawl-movie-credits"
 
-resource "tama_class_corpus" "crawl-movie-details" {
-  class_id = data.tama_class.movie-details.id
-  name     = "Crawl Movie Details"
-  template = file("${path.module}/movie-db/crawl-movie-details.liquid")
+  depends_on = [module.global]
+
+  specification_id = tama_specification.tmdb.id
+  space_id         = tama_space.movie-db.id
+
+  action_call_class_id       = module.global.schemas["action-call"].id
+  action_call_json_corpus_id = module.global.action_call_json_corpus_id
 }
