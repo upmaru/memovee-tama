@@ -1,5 +1,3 @@
-
-
 resource "tama_chain" "this" {
   space_id = var.space_id
   name     = "Crawl Movie Credits"
