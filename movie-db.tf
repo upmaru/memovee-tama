@@ -97,7 +97,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.22"
+  version = "0.2.23"
 
   depends_on = [module.global]
 
@@ -108,7 +108,14 @@ module "extract-nested-properties-movie-db" {
   types = ["array"]
   depth = 1
 
-  expected_class_names = ["movie-credits.cast", "movie-credits.crew"]
+  expected_class_names = [
+    "movie-credits.cast",
+    "movie-credits.crew"
+  ]
+}
+
+locals {
+  spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
 }
 
 data "tama_class" "movie-details" {
@@ -129,7 +136,7 @@ resource "tama_class_corpus" "movie-details-mapping" {
 
 module "crawl-movie-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.22"
+  version = "0.2.23"
 
   depends_on = [module.global]
 
@@ -147,14 +154,18 @@ module "crawl-movie-credits" {
 }
 
 module "spread-cast-and-crew" {
-  source = "./movie-db/spread-cast-crew"
-  name   = "Spread Cast and Crew"
+  source  = "upmaru/base/tama//modules/spread"
+  version = "0.2.23"
 
-  space_id   = tama_space.movie-db.id
-  fields     = ["cast", "crew"]
-  identifier = "id"
+  depends_on = [module.global]
 
-  class_ids = local.spread_class_ids
+  name = "Spread Cast and Crew"
+
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-credits.id
+  fields   = ["cast", "crew"]
+
+  target_class_ids = local.spread_class_ids
 }
 
 data "tama_class" "movie-credits" {
@@ -164,7 +175,7 @@ data "tama_class" "movie-credits" {
 
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.22"
+  version = "0.2.23"
 
   depends_on = [module.global]
 
@@ -178,13 +189,9 @@ module "network-movie-credits" {
   belongs_to_class_id = data.tama_class.movie-details.id
 }
 
-locals {
-  spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
-}
-
 module "network-cast-and-crew" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.22"
+  version = "0.2.23"
 
   depends_on = [module.global]
 
