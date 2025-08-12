@@ -146,8 +146,6 @@ module "crawl-movie-credits" {
   validate_record = false
 }
 
-
-
 module "spread-cast-and-crew" {
   source = "./movie-db/spread-cast-crew"
   name   = "Spread Cast and Crew"
