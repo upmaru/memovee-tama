@@ -127,4 +127,30 @@ Manages message routing functionality. It:
 
 ### `movie-db.tf`
 
-Contains configuration for movie database integrations and related functionality. This file is responsible for connecting with movie database services and handling movie-related data processing.
+Contains comprehensive configuration for movie database integrations and related functionality. This file is responsible for connecting with movie database services and handling movie-related data processing.
+
+The configuration includes:
+
+1. **TMDb API Integration**:
+   - Sets up a Tama space named "Movie DB" for managing movie database components
+   - Configures the TMDb OpenAPI endpoint with proper schema handling
+   - Implements API key authentication for TMDb with validation checks
+   - Uses the TMDb OpenAPI specification to ensure compatibility with current TMDb endpoints
+
+2. **Elasticsearch Integration**:
+   - Configures a separate specification for movie database queries against Elasticsearch
+   - Sets up API key authentication for Elasticsearch with cluster health validation
+   - Integrates with the existing Elasticsearch module's query schema
+
+3. **Movie Data Processing**:
+   - Defines a `tama_source_limit` to control API rate limiting for TMDb requests (40 requests per second)
+   - Sets up a module to extract nested properties from movie credits data (cast and crew information)
+   - Implements a crawl module for movie credits using a custom `crawl-movie-credits` implementation
+   - Integrates with the global module to ensure proper dependencies
+
+4. **Module Components**:
+   - `extract-nested-properties-movie-db` module extracts nested movie credit data
+   - `crawl-movie-credits` module handles the crawling of movie credit information with proper mapping
+   - Both modules are configured to work within the Movie DB space and depend on the global module
+
+This setup enables comprehensive movie database integration with proper rate limiting, data extraction capabilities, and seamless integration with the broader Memovee Tama ecosystem.
