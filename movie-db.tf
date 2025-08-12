@@ -138,6 +138,11 @@ module "spread-cast-and-crew" {
   class_ids = local.spread_class_ids
 }
 
+data "tama_class" "movie-details" {
+  specification_id = tama_specification.tmdb.id
+  name             = "movie-details"
+}
+
 data "tama_class" "movie-credits" {
   specification_id = tama_specification.tmdb.id
   name             = "movie-credits"
@@ -149,9 +154,22 @@ module "network-cast-and-crew" {
 
   depends_on = [module.global]
 
-  name                = "Network Cast and Crew"
-  space_id            = tama_space.movie-db.id
-  belongs_to_class_id = data.tama_class.movie-credits.id
+  name     = "Network Cast and Crew"
+  space_id = tama_space.movie-db.id
 
-  class_ids = local.spread_class_ids
+  class_ids           = local.spread_class_ids
+  belongs_to_class_id = data.tama_class.movie-credits.id
+}
+
+module "network-movie-credits" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.2.21"
+
+  depends_on = [module.global]
+
+  name     = "Network Movie Credits"
+  space_id = tama_space.movie-db.id
+
+  class_ids           = [data.tama_class.movie-credits.id]
+  belongs_to_class_id = data.tama_class.movie-details.id
 }
