@@ -2,7 +2,7 @@ variable "elasticsearch_endpoint" {}
 variable "elasticsearch_management_api_key" {}
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
-  version = "0.2.21"
+  version = "0.2.22"
 
   name           = "Elasticsearch"
   endpoint       = var.elasticsearch_endpoint
