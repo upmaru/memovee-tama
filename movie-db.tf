@@ -97,7 +97,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.20"
+  version = "0.2.21"
 
   depends_on = [module.global]
 
@@ -121,4 +121,37 @@ module "crawl-movie-credits" {
 
   action_call_class_id       = module.global.schemas["action-call"].id
   action_call_json_corpus_id = module.global.action_call_json_corpus_id
+}
+
+locals {
+  spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
+}
+
+module "spread-cast-and-crew" {
+  source = "./movie-db/spread-cast-crew"
+  name   = "Spread Cast and Crew"
+
+  space_id   = tama_space.movie-db.id
+  fields     = ["cast", "crew"]
+  identifier = "id"
+
+  class_ids = local.spread_class_ids
+}
+
+data "tama_class" "movie-credits" {
+  specification_id = tama_specification.tmdb.id
+  name             = "movie-credits"
+}
+
+module "network-cast-and-crew" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.2.21"
+
+  depends_on = [module.global]
+
+  name                = "Network Cast and Crew"
+  space_id            = tama_space.movie-db.id
+  belongs_to_class_id = data.tama_class.movie-credits.id
+
+  class_ids = local.spread_class_ids
 }
