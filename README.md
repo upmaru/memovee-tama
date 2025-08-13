@@ -73,15 +73,13 @@ graph LR
     B -- "basic-conversation-prompt-assembly" --> E
     E -- "prompt-assembly-memovee" --> A
     
-    style A fill:#bbdefb
-    style B fill:#c8e6c9
-    style C fill:#ffe0b2
-    style D fill:#f8b6c0
-    style E fill:#e1bee7
-    style F fill:#d7ccc8
-    style G fill:#ffd599
-    style F fill:#efebe9
-    style G fill:#fcedc4
+    style A fill:#bbdefb stroke:#333
+    style B fill:#c8e6c9 stroke:#333
+    style C fill:#ffe0b2 stroke:#333
+    style D fill:#f8b6c0 stroke:#333
+    style E fill:#e1bee7 stroke:#333
+    style F fill:#d7ccc8 stroke:#333
+    style G fill:#ffd599 stroke:#333
 ```
 
 ## Getting Started
