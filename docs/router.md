@@ -42,8 +42,8 @@ flowchart LR
     J --> E
     L --> M
     N --> M
-    P --> E
-    R --> E
+    P --> M
+    R --> M
 ```
 
 ## Routing Configuration
@@ -56,8 +56,8 @@ The router is configured to handle messages from the `user-message` class and ro
 - **Greeting** - Belongs to `basic-conversation` space
 - **Media Detail** - Belongs to `media` space
 - **Media Browsing** - Belongs to `media` space
-- **Person Detail** - Belongs to `person` space
-- **Person Browsing** - Belongs to `person` space
+- **Person Detail** - Belongs to `media` space
+- **Person Browsing** - Belongs to `media` space
 
 ## Implementation Details
 
@@ -89,7 +89,7 @@ The routing mechanism enables the system to:
 - `greeting` → `basic-conversation` space
 - `media-detail` → `media` space
 - `media-browsing` → `media` space
-- `person-detail` → `person` space
-- `person-browsing` → `person` space
+- `person-detail` → `media` space
+- `person-browsing` → `media` space
 
 This setup enables the system to efficiently sort and process various types of user messages according to their semantic content while maintaining proper organization across different functional domains.
