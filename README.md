@@ -11,6 +11,7 @@ This repository contains the Terraform configuration for the Memovee Tama applic
 - [Architecture](#architecture)
 - [Key Modules](#key-modules)
 - [Space Relationships](#space-relationships)
+- [Documentation](#documentation)
 - [Getting Started](#getting-started)
 
 ## Overview
@@ -75,6 +76,14 @@ graph LR
     style E fill:#e1bee7 stroke:#333
     style F fill:#d7ccc8 stroke:#333
 ```
+
+## Documentation
+
+For detailed information about the various components of the Memovee Tama system, please refer to the following documentation files:
+
+- [Main Module Documentation](docs/main.md)
+- [Movie Database Documentation](docs/movie-db.md)
+- [Personalization Documentation](docs/personalization.md)
 
 ## Getting Started
 
