@@ -53,7 +53,7 @@ The system is built with a modular architecture that allows for flexible extensi
 
 ## Space Relationships
 
-The following diagram shows the relationships between Tama spaces in the system:
+The following diagram shows the correct relationships between Tama spaces in the system, based on the actual `tama_space_bridge` resource definitions:
 
 ```mermaid
 graph LR
@@ -67,12 +67,11 @@ graph LR
         G[Movie DB Space]
     end
     
-    A -- "bridge" --> B
-    A -- "bridge" --> C
-    A -- "bridge" --> D
-    A -- "bridge" --> E
-    A -- "bridge" --> F
-    A -- "bridge" --> G
+    A -- "memovee-basic" --> B
+    A -- "memovee-media" --> C
+    B -- "basic-conversation-personalization" --> D
+    B -- "basic-conversation-prompt-assembly" --> E
+    E -- "prompt-assembly-memovee" --> A
     
     style A fill:#e1f5fe
     style B fill:#e8f5e9
