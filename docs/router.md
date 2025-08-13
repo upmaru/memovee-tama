@@ -7,35 +7,43 @@ The router module is a core component of the Memovee system responsible for inte
 ## Architecture Diagram
 
 ```mermaid
-graph LR
-    subgraph "Memovee System"
-        A[Router Module<br/>module.router] --> B[memovee.space<br/>Root Messaging Space]
-        
-        subgraph "Routing Classes"
-            B --> C[User Message<br/>module.memovee.schemas["user-message"].id]
-        end
-        
-        subgraph "Target Classifications"
-            D[Off Topic<br/>tama_class.off-topic] --> E[basic-conversation<br/>Space]
-            F[Introductory<br/>tama_class.introductory] --> G[basic-conversation<br/>Space]
-            H[Curse<br/>tama_class.curse] --> I[basic-conversation<br/>Space]
-            J[Greeting<br/>tama_class.greeting] --> K[basic-conversation<br/>Space]
-            L[Media Detail<br/>tama_class.media-detail] --> M[media<br/>Space]
-            N[Media Browsing<br/>tama_class.media-browsing] --> O[media<br/>Space]
-            P[Person Detail<br/>tama_class.person-detail] --> Q[person<br/>Space]
-            R[Person Browsing<br/>tama_class.person-browsing] --> S[person<br/>Space]
-        end
-        
-        A --> C
-        C -->|Routes To| D
-        C -->|Routes To| F
-        C -->|Routes To| H
-        C -->|Routes To| J
-        C -->|Routes To| L
-        C -->|Routes To| N
-        C -->|Routes To| P
-        C -->|Routes To| R
+flowchart LR
+    A[Router Module<br/>module.router] --> B[memovee.space<br/>Root Messaging Space]
+    B --> C[User Message<br/>module.memovee.schemas user-message id]
+
+    subgraph Classifications["Target Classifications"]
+        D[Off Topic<br/>tama_class.off-topic]
+        F[Introductory<br/>tama_class.introductory]
+        H[Curse<br/>tama_class.curse]
+        J[Greeting<br/>tama_class.greeting]
+        L[Media Detail<br/>tama_class.media-detail]
+        N[Media Browsing<br/>tama_class.media-browsing]
+        P[Person Detail<br/>tama_class.person-detail]
+        R[Person Browsing<br/>tama_class.person-browsing]
     end
+
+    subgraph Spaces["Target Spaces"]
+        E[basic-conversation<br/>Space]
+        M[media-conversation<br/>Space]
+    end
+
+    C -->|Routes To| D
+    C -->|Routes To| F
+    C -->|Routes To| H
+    C -->|Routes To| J
+    C -->|Routes To| L
+    C -->|Routes To| N
+    C -->|Routes To| P
+    C -->|Routes To| R
+
+    D --> E
+    F --> E
+    H --> E
+    J --> E
+    L --> M
+    N --> M
+    P --> E
+    R --> E
 ```
 
 ## Routing Configuration
@@ -43,7 +51,7 @@ graph LR
 The router is configured to handle messages from the `user-message` class and route them to the following target classes:
 
 - **Off Topic** - Belongs to `basic-conversation` space
-- **Introductory** - Belongs to `basic-conversation` space  
+- **Introductory** - Belongs to `basic-conversation` space
 - **Curse** - Belongs to `basic-conversation` space
 - **Greeting** - Belongs to `basic-conversation` space
 - **Media Detail** - Belongs to `media` space
