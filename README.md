@@ -84,6 +84,7 @@ For detailed information about the various components of the Memovee Tama system
 - [Main Module Documentation](docs/main.md)
 - [Movie Database Documentation](docs/movie-db.md)
 - [Personalization Documentation](docs/personalization.md)
+- [Router Module Documentation](docs/router.md)
 
 ## Getting Started
 
