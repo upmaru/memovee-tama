@@ -144,13 +144,69 @@ The configuration includes:
 
 3. **Movie Data Processing**:
    - Defines a `tama_source_limit` to control API rate limiting for TMDb requests (40 requests per second)
-   - Sets up a module to extract nested properties from movie credits data (cast and crew information)
-   - Implements a crawl module for movie credits using a custom `crawl-movie-credits` implementation
+   - Sets up modules to extract nested properties from movie credits data (cast and crew information)
+   - Implements crawl modules for movie credits and person details
    - Integrates with the global module to ensure proper dependencies
 
 4. **Module Components**:
    - `extract-nested-properties-movie-db` module extracts nested movie credit data
    - `crawl-movie-credits` module handles the crawling of movie credit information with proper mapping
-   - Both modules are configured to work within the Movie DB space and depend on the global module
+   - `spread-cast-and-crew` module spreads cast and crew data into separate classes
+   - `network-movie-credits`, `network-cast-and-crew`, and `network-person-details` modules establish relationships between entities
+   - `crawl-cast-details` and `crawl-crew-details` modules fetch detailed information for cast and crew members
+   - `crawl-person-credits` module retrieves combined credits for people
+   - All modules are configured to work within the Movie DB space and depend on the global module
 
-This setup enables comprehensive movie database integration with proper rate limiting, data extraction capabilities, and seamless integration with the broader Memovee Tama ecosystem.
+This setup enables comprehensive movie database integration with proper rate limiting, data extraction capabilities, relationship building, and seamless integration with the broader Memovee Tama ecosystem.
+
+### Entity Relationship Diagram
+
+The following Mermaid diagram illustrates the entity relationships in the movie database configuration:
+
+```mermaid
+erDiagram
+    movie-details {
+        string id
+        string title
+        date release_date
+    }
+
+    movie-credits {
+        string id
+        string movie_id
+    }
+
+    cast {
+        string id
+        string person_id
+        string character
+    }
+
+    crew {
+        string id
+        string person_id
+        string job
+        string department
+    }
+
+    person-details {
+        string id
+        string name
+        date birth_date
+    }
+
+    person-combined-credits {
+        string id
+        string person_id
+        string title
+        string role
+        date release_date
+    }
+
+    movie-credits ||--o{ cast : "contains"
+    movie-credits ||--o{ crew : "contains"
+    cast ||--o{ person-details : "belongs_to"
+    crew ||--o{ person-details : "belongs_to"
+    movie-credits ||--o{ movie-details : "belongs_to"
+    person-details ||--o{ person-combined-credits : "has"
+```
