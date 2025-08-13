@@ -1,212 +1,92 @@
 # Memovee Tama
 
-Memovee app tama configuration.
+## Summary
+
+This repository contains the Terraform configuration for the Memovee Tama application, which provides a comprehensive AI-powered conversational platform integrating with various services including Tama, Mistral, X.ai, and Elasticsearch. The system supports advanced features like personalized conversations, media handling, and intelligent message routing.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Core Components](#core-components)
+- [Architecture](#architecture)
+- [Key Modules](#key-modules)
+- [Space Relationships](#space-relationships)
+- [Getting Started](#getting-started)
+
+## Overview
+
+The Memovee Tama system is designed to create an intelligent conversational AI platform that can handle:
+- Personalized conversations with user profiles
+- Media-related interactions
+- Message routing and classification
+- Contextual awareness and memory
+- Integration with external AI services
+
+## Core Components
+
+### Main Module
+- Core memovee messaging module serving as the primary interface
+- Reply generation chain with associated processors
+- Configuration for handling reply generation with specific models and contexts
+
+### Models
+- Mistral module with `mistral-medium-latest` and `mistral-small-latest` models
+- X.ai module with `grok-3-mini` and `grok-3-mini-fast` models
+
+### Data Storage
+- Elasticsearch module for indexing and searching capabilities
+- Personalization and prompt assembly spaces
+
+## Architecture
+
+The system is built with a modular architecture that allows for flexible extension and maintenance of different conversational functionalities.
+
+## Key Modules
+
+- **Main**: Core memovee functionality and interfaces
+- **Basic**: Basic conversation handling with off-topic, greeting, and introductory flows
+- **Media**: Media-related conversation components
+- **Personalization**: User-specific content management
+- **Prompt Assembly**: Contextual information assembly
+- **Router**: Message classification and routing
+- **Movie Database**: Movie information integration
+
+## Space Relationships
+
+The following diagram shows the relationships between Tama spaces in the system:
+
+```mermaid
+graph LR
+    subgraph Spaces
+        A[Main Memovee Space] 
+        B[Basic Conversation Space]
+        C[Media Conversation Space]
+        D[Personalization Space]
+        E[Prompt Assembly Space]
+        F[Router Space]
+        G[Movie DB Space]
+    end
+    
+    A -- "bridge" --> B
+    A -- "bridge" --> C
+    A -- "bridge" --> D
+    A -- "bridge" --> E
+    A -- "bridge" --> F
+    A -- "bridge" --> G
+    
+    style A fill:#e1f5fe
+    style B fill:#e8f5e9
+    style C fill:#fff3e0
+    style D fill:#fce4ec
+    style E fill:#f3e5f5
+    style F fill:#efebe9
+    style G fill:#fcedc4
+```
 
 ## Getting Started
 
-To get started with the Memovee Tama project, you'll need to set up your environment and deploy the infrastructure using Terraform.
-
-### Prerequisites
-
-- Terraform v1.0.0 or higher
-- Access to a Tama instance
-- Appropriate API keys for external services (Mistral, X.ai, Elasticsearch)
-
-### Setup Instructions
-
-1. Clone this repository
-2. Initialize Terraform:
-   ```
-   terraform init
-   ```
-3. Create a `.auto.tfvars` file with your configuration values:
-   ```
-   tama_base_url = "your-tama-base-url"
-   tama_api_key = "your-tama-api-key"
-   mistral_api_key = "your-mistral-api-key"
-   xai_api_key = "your-xai-api-key"
-   elasticsearch_endpoint = "your-elasticsearch-endpoint"
-   elasticsearch_management_api_key = "your-elasticsearch-api-key"
-   ```
-4. Plan and apply the configuration:
-   ```
-   terraform plan
-   terraform apply
-   ```
-
-## Project Detail
-
-This project consists of several Terraform files that define different components of the Memovee Tama configuration. Each file serves a specific purpose in setting up the various modules and components.
-
-### `configurations.tf`
-
-This file sets up the Tama provider with the required base URL and API key variables. It establishes the connection to the Tama platform that will be used for managing the various components and modules defined in this configuration.
-
-### `versions.tf`
-
-Defines the Terraform version requirements and the required provider for Tama. This ensures compatibility with the Tama provider version 0.2+ and sets the minimum required Terraform version to 1.0.0.
-
-### `models.tf`
-
-Configures the inference services for the system. It defines two main modules:
-- Mistral module with two models: `mistral-medium-latest` and `mistral-small-latest`
-- X.ai module with two models: `grok-3-mini` and `grok-3-mini-fast`
-
-These modules handle the integration with external large language models for various AI functionalities.
-
-### `elasticsearch.tf`
-
-Sets up the Elasticsearch module that handles indexing and searching capabilities. This is used for storing and retrieving structured data with full-text search capabilities.
-
-### `main.tf`
-
-This is the core configuration file that sets up the main Memovee components. It includes:
-- A global module that provides shared functionality
-- A memovee messaging module that serves as the primary interface
-- Two prompts for defining the Memovee personality and reply template
-- A reply generation chain with associated processors
-- Configuration for handling reply generation with specific models and contexts
-
-### `basic.tf`
-
-Handles basic conversation functionality. This file sets up:
-- A basic conversation space
-- Several classes for handling different conversation flows:
-  - `off-topic`: Handles off-topic messages
-  - `greeting`: Handles greeting interactions
-  - `introductory`: Manages introductory conversations
-  - `curse`: Manages curse word detection
-- Integration with personalization and prompt assembly spaces
-- Chain definitions for profile checking and updating processes
-- Associated prompts and tooling for profile operations
-
-### `media.tf`
-
-Manages media-related conversation components. It defines:
-- A media conversation space
-- Four classes for handling different types of media-related data:
-  - `media-detail`: Details about media content
-  - `media-browsing`: Browsing media content
-  - `person-detail`: Details about people
-  - `person-browsing`: Browsing person-related information
-- An extract and embed module for processing media conversation data
-
-### `personalization.tf`
-
-Sets up the personalization module for user-specific content. This file:
-- Creates a personalization space
-- Defines a personalization specification with endpoint `/internal/personalization`
-- Sets up data sources for profile actions (`get-profile` and `upsert-profile`)
-- Configures the specification with a YAML schema file
-
-### `prompt-assembly.tf`
-
-Handles the prompt assembly functionality. This file:
-- Creates a prompt assembly space
-- Defines a `context-component` class for assembling contextual information
-- Sets up bridges to connect the prompt assembly space with the main memovee space
-- Configures chains and modular thoughts for context assembly workflows
-- Includes nodes for handling the context assembly process
-
-### `router.tf`
-
-Manages message routing functionality. It:
-- Sets up a router module that handles message classification
-- Connects to the main memovee space
-- Uses a classification prompt from `router/classify.md`
-- Routes messages to various classes based on content:
-  - Off-topic messages
-  - Introductory messages
-  - Curse word messages
-  - Greeting messages
-  - Media detail messages
-  - Media browsing messages
-  - Person detail messages
-  - Person browsing messages
-- Defines thought paths for routing messages to appropriate handlers
-
-### `movie-db.tf`
-
-Contains comprehensive configuration for movie database integrations and related functionality. This file is responsible for connecting with movie database services and handling movie-related data processing.
-
-The configuration includes:
-
-1. **TMDb API Integration**:
-   - Sets up a Tama space named "Movie DB" for managing movie database components
-   - Configures the TMDb OpenAPI endpoint with proper schema handling
-   - Implements API key authentication for TMDb with validation checks
-   - Uses the TMDb OpenAPI specification to ensure compatibility with current TMDb endpoints
-
-2. **Elasticsearch Integration**:
-   - Configures a separate specification for movie database queries against Elasticsearch
-   - Sets up API key authentication for Elasticsearch with cluster health validation
-   - Integrates with the existing Elasticsearch module's query schema
-
-3. **Movie Data Processing**:
-   - Defines a `tama_source_limit` to control API rate limiting for TMDb requests (40 requests per second)
-   - Sets up modules to extract nested properties from movie credits data (cast and crew information)
-   - Implements crawl modules for movie credits and person details
-   - Integrates with the global module to ensure proper dependencies
-
-4. **Module Components**:
-   - `extract-nested-properties-movie-db` module extracts nested movie credit data
-   - `crawl-movie-credits` module handles the crawling of movie credit information with proper mapping
-   - `spread-cast-and-crew` module spreads cast and crew data into separate classes
-   - `network-movie-credits`, `network-cast-and-crew`, and `network-person-details` modules establish relationships between entities
-   - `crawl-cast-details` and `crawl-crew-details` modules fetch detailed information for cast and crew members
-   - `crawl-person-credits` module retrieves combined credits for people
-   - All modules are configured to work within the Movie DB space and depend on the global module
-
-This setup enables comprehensive movie database integration with proper rate limiting, data extraction capabilities, relationship building, and seamless integration with the broader Memovee Tama ecosystem.
-
-### Entity Relationship Diagram
-
-The following Mermaid diagram illustrates the entity relationships in the movie database configuration:
-
-```mermaid
-erDiagram
-    movie-details {
-        string id
-        string title
-        date release_date
-    }
-
-    movie-credits {
-        string id
-        string movie_id
-    }
-
-    cast {
-        string id
-        string person_id
-        string character
-    }
-
-    crew {
-        string id
-        string person_id
-        string job
-        string department
-    }
-
-    person-details {
-        string id
-        string name
-        date birth_date
-    }
-
-    person-combined-credits {
-        string id
-        string person_id
-        string title
-        string role
-        date release_date
-    }
-
-    movie-credits ||--o{ cast : "contains"
-    movie-credits ||--o{ crew : "contains"
-    cast ||--o{ person-details : "belongs_to"
-    crew ||--o{ person-details : "belongs_to"
-    movie-credits ||--o{ movie-details : "belongs_to"
-    person-details ||--o{ person-combined-credits : "has"
-```
+To get started with the Memovee Tama project, you'll need to:
+1. Set up your environment with the required Terraform version (v1.0.0+)
+2. Configure API keys for external services (Tama, Mistral, X.ai, Elasticsearch)
+3. Create a `.auto.tfvars` file with your configuration values
+4. Run `terraform init`, `terraform plan`, and `terraform apply`
