@@ -1,7 +1,7 @@
 variable "mistral_api_key" {}
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.23"
+  version = "0.2.26"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -25,7 +25,7 @@ module "mistral" {
 variable "xai_api_key" {}
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.23"
+  version = "0.2.26"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key

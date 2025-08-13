@@ -97,7 +97,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global]
 
@@ -116,6 +116,8 @@ module "extract-nested-properties-movie-db" {
 
 locals {
   spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
+  cast_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.cast"]
+  crew_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.crew"]
 }
 
 data "tama_class" "movie-details" {
@@ -136,10 +138,11 @@ resource "tama_class_corpus" "movie-details-mapping" {
 
 module "crawl-movie-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global]
 
+  name            = "Crawl Movie Credits"
   space_id        = tama_space.movie-db.id
   origin_class_id = data.tama_class.movie-details.id
 
@@ -155,7 +158,7 @@ module "crawl-movie-credits" {
 
 module "spread-cast-and-crew" {
   source  = "upmaru/base/tama//modules/spread"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global]
 
@@ -175,7 +178,7 @@ data "tama_class" "movie-credits" {
 
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global]
 
@@ -186,18 +189,108 @@ module "network-movie-credits" {
     data.tama_class.movie-credits.id
   ]
 
-  belongs_to_class_id = data.tama_class.movie-details.id
+  can_belong_to_class_ids = [
+    data.tama_class.movie-details.id
+  ]
 }
 
 module "network-cast-and-crew" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global]
 
   name     = "Network Cast and Crew"
   space_id = tama_space.movie-db.id
 
-  class_ids           = local.spread_class_ids
-  belongs_to_class_id = data.tama_class.movie-credits.id
+  class_ids = [
+    local.crew_class_id,
+    local.cast_class_id
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.movie-credits.id
+  ]
+}
+
+data "tama_class" "person-details" {
+  specification_id = tama_specification.tmdb.id
+  name             = "person-details"
+}
+
+module "network-person-details" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.2.26"
+
+  depends_on = [module.global]
+
+  name     = "Network Person Details"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.person-details.id,
+  ]
+
+  can_belong_to_class_ids = [
+    local.cast_class_id,
+    local.crew_class_id
+  ]
+}
+
+resource "tama_class_corpus" "movie-details-cast-mapping" {
+  class_id = local.cast_class_id
+  name     = "Crawl Cast Details"
+  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+}
+
+resource "tama_class_corpus" "movie-details-crew-mapping" {
+  class_id = local.crew_class_id
+  name     = "Crawl Crew Details"
+  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+}
+
+data "tama_action" "get-person-details" {
+  specification_id = tama_specification.tmdb.id
+  method           = "GET"
+  path             = "/3/person/{person_id}"
+}
+
+module "crawl-cast-details" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.2.26"
+
+  depends_on = [module.global]
+
+  name            = "Crawl Cast Details"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = local.cast_class_id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-cast-mapping.id
+
+  request_relation  = "get-cast-person-details"
+  request_action_id = data.tama_action.get-person-details.id
+
+  response_relation = "create-cast-person-details"
+
+  validate_record = false
+}
+
+module "crawl-crew-details" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.2.26"
+
+  depends_on = [module.global]
+
+  name            = "Crawl Crew Details"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = local.crew_class_id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-crew-mapping.id
+
+  request_relation  = "get-crew-person-details"
+  request_action_id = data.tama_action.get-person-details.id
+
+  response_relation = "create-crew-person-details"
+
+  validate_record = false
 }

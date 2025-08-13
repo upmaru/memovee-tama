@@ -1,11 +1,11 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.2.23"
+  version = "0.2.26"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.2.23"
+  version = "0.2.26"
 
   depends_on = [module.global.schemas]
 
@@ -78,7 +78,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.2.23"
+  version = "0.2.26"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {
