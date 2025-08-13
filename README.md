@@ -62,8 +62,7 @@ graph LR
     C[Media Conversation Space]
     D[Personalization Space]
     E[Prompt Assembly Space]
-    F[Router Space]
-    G[Movie DB Space]
+    F[Movie DB Space]
     A -- "memovee-basic" --> B
     A -- "memovee-media" --> C
     B -- "basic-conversation-personalization" --> D
@@ -74,8 +73,7 @@ graph LR
     style C fill:#ffe0b2 stroke:#333
     style D fill:#f8b6c0 stroke:#333
     style E fill:#e1bee7 stroke:#333
-    style F fill:#ffd599 stroke:#333
-    style G fill:#d7ccc8 stroke:#333
+    style F fill:#d7ccc8 stroke:#333
 ```
 
 ## Getting Started
