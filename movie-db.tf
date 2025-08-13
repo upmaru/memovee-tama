@@ -294,3 +294,58 @@ module "crawl-crew-details" {
 
   validate_record = false
 }
+
+data "tama_action" "get-person-combined-credits" {
+  specification_id = tama_specification.tmdb.id
+  method           = "GET"
+  path             = "/3/person/{person_id}/combined_credits"
+}
+
+resource "tama_class_corpus" "person-details-mapping" {
+  class_id = data.tama_class.person-details.id
+  name     = "Crawl Person Detail Mapping"
+  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+}
+
+module "crawl-person-credits" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.2.26"
+
+  depends_on = [module.global]
+
+  name            = "Crawl Person Combined Credits"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = data.tama_class.person-details.id
+
+  request_input_corpus_id = tama_class_corpus.person-details-mapping.id
+
+  request_relation  = "get-person-combined-credits"
+  request_action_id = data.tama_action.get-person-combined-credits.id
+
+  response_relation = "create-person-combined-credits"
+
+  validate_record = false
+}
+
+data "tama_class" "person-combined-credits" {
+  specification_id = tama_specification.tmdb.id
+  name             = "person-combined-credits"
+}
+
+module "network-person-credits" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.2.26"
+
+  depends_on = [module.global]
+
+  name     = "Network Person Credits"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.person-combined-credits.id,
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.person-details.id
+  ]
+}
