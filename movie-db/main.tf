@@ -536,8 +536,14 @@ module "movie-details-preloader" {
   class_id   = data.tama_class.movie-details.id
   index      = 0
 
-  concept_relations  = ["description", "overview", "setting"]
+  concept_relations = [
+    "description",
+    "overview",
+    "setting"
+  ]
+
   concept_embeddings = "include"
+
   concept_content = {
     action = "merge"
     merge = {
