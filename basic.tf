@@ -6,30 +6,30 @@ resource "tama_space" "basic-conversation" {
 resource "tama_class" "off-topic" {
   space_id    = tama_space.basic-conversation.id
   depends_on  = [module.global]
-  schema_json = jsonencode(jsondecode(file("${path.module}/basic/off-topic.json")))
+  schema_json = jsonencode(jsondecode(file("basic/off-topic.json")))
 }
 
 resource "tama_class" "greeting" {
   space_id    = tama_space.basic-conversation.id
   depends_on  = [module.global]
-  schema_json = jsonencode(jsondecode(file("${path.module}/basic/greeting.json")))
+  schema_json = jsonencode(jsondecode(file("basic/greeting.json")))
 }
 
 resource "tama_class" "introductory" {
   space_id    = tama_space.basic-conversation.id
   depends_on  = [module.global]
-  schema_json = jsonencode(jsondecode(file("${path.module}/basic/introductory.json")))
+  schema_json = jsonencode(jsondecode(file("basic/introductory.json")))
 }
 
 resource "tama_class" "curse" {
   space_id    = tama_space.basic-conversation.id
   depends_on  = [module.global]
-  schema_json = jsonencode(jsondecode(file("${path.module}/basic/curse.json")))
+  schema_json = jsonencode(jsondecode(file("basic/curse.json")))
 }
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global.schemas]
 
@@ -63,19 +63,19 @@ resource "tama_prompt" "check-profile-tooling" {
   space_id = tama_space.basic-conversation.id
   name     = "Check Profile Tooling"
   role     = "system"
-  content  = file("${path.module}/basic/check-profile/tooling.md")
+  content  = file("basic/check-profile/tooling.md")
 }
 
 resource "tama_prompt" "check-profile-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Check Profile Reply"
   role     = "system"
-  content  = file("${path.module}/basic/check-profile/reply.md")
+  content  = file("basic/check-profile/reply.md")
 }
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.28"
+  version = "0.2.29"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -136,14 +136,14 @@ resource "tama_prompt" "upsert-profile-tooling" {
   space_id = tama_space.basic-conversation.id
   name     = "Upsert Profile Tooling"
   role     = "system"
-  content  = file("${path.module}/basic/upsert-profile/tooling.md")
+  content  = file("basic/upsert-profile/tooling.md")
 }
 
 resource "tama_prompt" "upsert-profile-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Upsert Profile Reply"
   role     = "system"
-  content  = file("${path.module}/basic/upsert-profile/reply.md")
+  content  = file("basic/upsert-profile/reply.md")
 }
 
 resource "tama_chain" "upsert-profile" {
@@ -153,7 +153,7 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.28"
+  version = "0.2.29"
 
   chain_id = tama_chain.upsert-profile.id
 

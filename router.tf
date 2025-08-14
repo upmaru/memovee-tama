@@ -1,13 +1,13 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.2.28"
+  version = "0.2.29"
 
   root_messaging_space_id    = module.memovee.space.id
   network_message_thought_id = module.memovee.network_message_thought_id
 
   message_routing_class_id = module.global.schemas["message-routing"].id
 
-  prompt = file("${path.module}/router/classify.md")
+  prompt = file("router/classify.md")
 
   routable_class_ids = [
     module.memovee.schemas["user-message"].id

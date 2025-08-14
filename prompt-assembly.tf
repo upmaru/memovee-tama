@@ -7,7 +7,7 @@ resource "tama_class" "context-component" {
   space_id   = tama_space.prompt-assembly.id
   depends_on = [module.global.schemas]
   schema_json = jsonencode(
-    jsondecode(file("${path.module}/prompt-assembly/context-component.json"))
+    jsondecode(file("prompt-assembly/context-component.json"))
   )
 }
 

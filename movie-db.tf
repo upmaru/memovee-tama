@@ -97,7 +97,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -133,12 +133,12 @@ data "tama_action" "get-movie-credits" {
 resource "tama_class_corpus" "movie-details-mapping" {
   class_id = data.tama_class.movie-details.id
   name     = "Crawl Movie Details"
-  template = file("${path.module}/movie-db/movie-id-mapping.liquid")
+  template = file("movie-db/movie-id-mapping.liquid")
 }
 
 module "crawl-movie-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -158,7 +158,7 @@ module "crawl-movie-credits" {
 
 module "spread-cast-and-crew" {
   source  = "upmaru/base/tama//modules/spread"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -178,7 +178,7 @@ data "tama_class" "movie-credits" {
 
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -196,7 +196,7 @@ module "network-movie-credits" {
 
 module "network-cast-and-crew" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -220,7 +220,7 @@ data "tama_class" "person-details" {
 
 module "network-person-details" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -240,13 +240,13 @@ module "network-person-details" {
 resource "tama_class_corpus" "movie-details-cast-mapping" {
   class_id = local.cast_class_id
   name     = "Crawl Cast Details"
-  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+  template = file("movie-db/person-id-mapping.liquid")
 }
 
 resource "tama_class_corpus" "movie-details-crew-mapping" {
   class_id = local.crew_class_id
   name     = "Crawl Crew Details"
-  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+  template = file("movie-db/person-id-mapping.liquid")
 }
 
 data "tama_action" "get-person-details" {
@@ -257,7 +257,7 @@ data "tama_action" "get-person-details" {
 
 module "crawl-cast-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -277,7 +277,7 @@ module "crawl-cast-details" {
 
 module "crawl-crew-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -304,12 +304,12 @@ data "tama_action" "get-person-combined-credits" {
 resource "tama_class_corpus" "person-details-mapping" {
   class_id = data.tama_class.person-details.id
   name     = "Crawl Person Detail Mapping"
-  template = file("${path.module}/movie-db/person-id-mapping.liquid")
+  template = file("movie-db/person-id-mapping.liquid")
 }
 
 module "crawl-person-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -334,7 +334,7 @@ data "tama_class" "person-combined-credits" {
 
 module "network-person-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -352,7 +352,7 @@ module "network-person-credits" {
 
 module "extract-embed-movie-overview" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -367,7 +367,7 @@ module "extract-embed-movie-overview" {
 
 module "extract-embed-person-biography" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global]
 
@@ -384,19 +384,19 @@ resource "tama_prompt" "generate-description" {
   space_id = tama_space.movie-db.id
   name     = "Generate Description"
   role     = "user"
-  content  = file("${path.module}/movie-db/generate-description.md")
+  content  = file("movie-db/generate-description.md")
 }
 
 resource "tama_prompt" "generate-setting" {
   space_id = tama_space.movie-db.id
   name     = "Generate Setting"
   role     = "user"
-  content  = file("${path.module}/movie-db/setting-extraction.md")
+  content  = file("movie-db/setting-extraction.md")
 }
 
 resource "tama_class" "movie-setting" {
   space_id    = tama_space.movie-db.id
-  schema_json = jsonencode(jsondecode(file("${path.module}/movie-db/setting.json")))
+  schema_json = jsonencode(jsondecode(file("movie-db/setting.json")))
 }
 
 resource "tama_class_corpus" "setting-embedding-corpus" {
@@ -508,4 +508,59 @@ resource "tama_node" "handle-movie-details-embedding" {
 resource "tama_space_bridge" "movie-db-elasticsearch" {
   space_id        = tama_space.movie-db.id
   target_space_id = module.elasticsearch.space_id
+}
+
+resource "tama_class_corpus" "movie-details-indexing" {
+  class_id = data.tama_class.movie-details.id
+  name     = "Movie Details Indexing"
+  template = file("movie-db/movie-details-indexing.liquid")
+}
+
+data "tama_action" "index-document" {
+  specification_id = module.elasticsearch.specification_id
+  method           = "PUT"
+  path             = "/{index}/_doc/{id}"
+}
+
+resource "tama_chain" "index-movie-details" {
+  space_id = tama_space.movie-db.id
+  name     = "Index Movie Details"
+}
+
+resource "tama_modular_thought" "index-movie-details" {
+  chain_id = tama_chain.index-movie-details.id
+  index    = 0
+  relation = "index-movie-details"
+
+  module {
+    reference = "tama/actions/caller"
+  }
+}
+
+resource "tama_thought_module_input" "index-movie-details" {
+  thought_id      = tama_modular_thought.index-movie-details.id
+  type            = "entity"
+  class_corpus_id = tama_class_corpus.movie-details-indexing.id
+}
+
+resource "tama_thought_tool" "index-movie-details" {
+  thought_id = tama_modular_thought.index-movie-details.id
+  action_id  = data.tama_action.index-document.id
+}
+
+resource "tama_node" "index-movie-details-on-processed" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = tama_chain.index-movie-details.id
+
+  type = "reactive"
+  on   = "processed"
+}
+
+resource "tama_node" "index-movie-details-explicit" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = tama_chain.index-movie-details.id
+
+  type = "explicit"
 }

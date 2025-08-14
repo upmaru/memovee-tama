@@ -1,11 +1,11 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.2.28"
+  version = "0.2.29"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global.schemas]
 
@@ -18,7 +18,7 @@ resource "tama_prompt" "memovee" {
 
   name    = "Memovee Personality"
   role    = "system"
-  content = file("${path.module}/memovee/persona.md")
+  content = file("memovee/persona.md")
 }
 
 resource "tama_space_bridge" "memovee-basic" {
@@ -36,7 +36,7 @@ resource "tama_prompt" "reply-template" {
 
   name    = "Memovee Reply Template"
   role    = "system"
-  content = file("${path.module}/memovee/reply.md")
+  content = file("memovee/reply.md")
 }
 
 resource "tama_chain" "reply-generation" {
@@ -78,7 +78,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.2.28"
+  version = "0.2.29"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {

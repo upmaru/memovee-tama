@@ -8,7 +8,7 @@ resource "tama_specification" "personalization-spec" {
   endpoint = "/internal/personalization"
   version  = "1.0.0"
 
-  schema = jsonencode(yamldecode(file("${path.module}/personalization/specification.yaml")))
+  schema = jsonencode(yamldecode(file("personalization/specification.yaml")))
 
   wait_for {
     field {

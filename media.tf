@@ -11,7 +11,7 @@ resource "tama_class" "media-detail" {
     type  = "object"
     title = "media-detail"
 
-    description = file("${path.module}/media/media-detail.md")
+    description = file("media/media-detail.md")
 
     properties = jsonencode({
       origin_entity_id = {
@@ -31,7 +31,7 @@ resource "tama_class" "media-browsing" {
     type  = "object"
     title = "media-browsing"
 
-    description = file("${path.module}/media/media-browsing.md")
+    description = file("media/media-browsing.md")
 
     properties = jsonencode({
       origin_entity_id = {
@@ -51,7 +51,7 @@ resource "tama_class" "person-detail" {
     type  = "object"
     title = "person-detail"
 
-    description = file("${path.module}/media/person-detail.md")
+    description = file("media/person-detail.md")
 
     properties = jsonencode({
       origin_entity_id = {
@@ -71,7 +71,7 @@ resource "tama_class" "person-browsing" {
     type  = "object"
     title = "person-browsing"
 
-    description = file("${path.module}/media/person-browsing.md")
+    description = file("media/person-browsing.md")
 
     properties = jsonencode({
       origin_entity_id = {
@@ -85,7 +85,7 @@ resource "tama_class" "person-browsing" {
 
 module "extract-embed-media-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.28"
+  version = "0.2.29"
 
   depends_on = [module.global.schemas]
 
