@@ -109,6 +109,81 @@ Multiple crawl modules are implemented to fetch detailed data:
 - **Can Belong To**: `person-details` class
 - **Functionality**: Links person details to their combined credits for comprehensive filmography
 
+## AI Generation and Embedding Modules
+
+### Text Extraction and Embedding
+
+#### Extract and Embed Movie Overview
+
+- **Module**: `extract-embed-movie-overview`
+- **Purpose**: Extracts and embeds movie overview text
+- **Relations Affected**: `overview`
+- **Embeddable Classes**: `movie-details`
+
+#### Extract and Embed Person Biography
+
+- **Module**: `extract-embed-person-biography`
+- **Purpose**: Extracts and embeds person biography text
+- **Relations Affected**: `biography`
+- **Embeddable Classes**: `person-details`
+
+### AI Generation Modules
+
+#### Generate Description Prompt
+
+- **Prompt**: `generate-description`
+- **Purpose**: Generates descriptions for movie data
+- **Content File**: `movie-db/generate-description.md`
+
+#### Generate Setting Prompt
+
+- **Prompt**: `generate-setting`
+- **Purpose**: Extracts settings from movie data
+- **Content File**: `movie-db/setting-extraction.md`
+
+#### Movie Setting Class
+
+- **Class**: `movie-setting`
+- **Purpose**: Stores extracted setting information
+- **Schema**: Uses `movie-db/setting.json` schema
+
+#### Setting Embedding Corpus
+
+- **Corpus**: `setting-embedding-corpus`
+- **Purpose**: Provides corpus for embedding setting information
+- **Template**: `"{{ data.reason }}"`
+
+#### Chain for Description and Setting Generation
+
+- **Chain**: `generate-description-and-setting-and-embed`
+- **Purpose**: Coordinates the generation of descriptions and settings, followed by embedding
+
+#### Modular Thoughts for AI Processing
+
+##### Generate Description
+
+- **Module**: `tama/agentic/generate`
+- **Relation**: `description`
+- **Purpose**: Generates movie descriptions based on movie data
+
+##### Generate Setting
+
+- **Module**: `tama/agentic/generate`
+- **Relation**: `setting`
+- **Purpose**: Generates setting information for movies
+
+##### Embed Description
+
+- **Module**: `tama/concepts/embed`
+- **Relation**: `description`
+- **Purpose**: Embeds generated movie descriptions
+
+##### Embed Setting
+
+- **Module**: `tama/concepts/embed`
+- **Relation**: `setting`
+- **Purpose**: Embeds generated setting information
+
 ## Rate Limiting
 
 ### Source Limit Configuration
@@ -185,3 +260,4 @@ This configuration enables:
 - Robust relationship building between entities
 - Seamless integration with the broader Memovee Tama ecosystem
 - Efficient data processing through specialized modules
+- AI-powered generation and embedding of textual content
