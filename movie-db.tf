@@ -102,7 +102,7 @@ resource "tama_source_limit" "tmdb-api" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -143,7 +143,7 @@ resource "tama_class_corpus" "movie-details-mapping" {
 
 module "crawl-movie-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -163,7 +163,7 @@ module "crawl-movie-credits" {
 
 module "spread-cast-and-crew" {
   source  = "upmaru/base/tama//modules/spread"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -183,7 +183,7 @@ data "tama_class" "movie-credits" {
 
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -201,7 +201,7 @@ module "network-movie-credits" {
 
 module "network-cast-and-crew" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -225,7 +225,7 @@ data "tama_class" "person-details" {
 
 module "network-person-details" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -262,7 +262,7 @@ data "tama_action" "get-person-details" {
 
 module "crawl-cast-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -282,7 +282,7 @@ module "crawl-cast-details" {
 
 module "crawl-crew-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -314,7 +314,7 @@ resource "tama_class_corpus" "person-details-mapping" {
 
 module "crawl-person-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -339,7 +339,7 @@ data "tama_class" "person-combined-credits" {
 
 module "network-person-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -357,7 +357,7 @@ module "network-person-credits" {
 
 module "extract-embed-movie-overview" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -372,7 +372,7 @@ module "extract-embed-movie-overview" {
 
 module "extract-embed-person-biography" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.30"
+  version = "0.2.34"
 
   depends_on = [module.global]
 
@@ -559,7 +559,7 @@ resource "tama_modular_thought" "index-movie-details" {
 
 module "movie-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.2.30"
+  version = "0.2.34"
 
   thought_id = tama_modular_thought.index-movie-details.id
   class_id   = data.tama_class.movie-details.id
@@ -574,6 +574,10 @@ module "movie-details-preloader" {
       name     = "merge"
     }
   }
+
+  children = [
+    { class = "movie-credits", as = "object" }
+  ]
 }
 
 resource "tama_thought_module_input" "index-movie-details" {
