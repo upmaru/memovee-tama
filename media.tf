@@ -85,7 +85,7 @@ resource "tama_class" "person-browsing" {
 
 module "extract-embed-media-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.27"
+  version = "0.2.28"
 
   depends_on = [module.global.schemas]
 
