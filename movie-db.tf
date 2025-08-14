@@ -379,3 +379,128 @@ module "extract-embed-person-biography" {
     data.tama_class.person-details.id
   ]
 }
+
+resource "tama_prompt" "generate-description" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Description"
+  role     = "user"
+  content  = file("${path.module}/movie-db/generate-description.md")
+}
+
+resource "tama_prompt" "generate-setting" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Setting"
+  role     = "user"
+  content  = file("${path.module}/movie-db/setting-extraction.md")
+}
+
+resource "tama_class" "movie-setting" {
+  space_id    = tama_space.movie-db.id
+  schema_json = jsonencode(jsondecode(file("${path.module}/movie-db/setting.json")))
+}
+
+resource "tama_class_corpus" "setting-embedding-corpus" {
+  class_id = tama_class.movie-setting.id
+  name     = "Setting Embedding Corpus"
+  template = "{{ data.reason }}"
+}
+
+resource "tama_chain" "generate-description-and-setting-and-embed" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Description and Setting and Embed"
+}
+
+resource "tama_modular_thought" "generate-description" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+  index    = 0
+  relation = "description"
+
+  module {
+    reference = "tama/agentic/generate"
+  }
+}
+
+resource "tama_thought_context" "generate-description-context" {
+  thought_id = tama_modular_thought.generate-description.id
+  layer      = 0
+  prompt_id  = tama_prompt.generate-description.id
+}
+
+data "tama_class_corpus" "movie-details-default-json" {
+  class_id = data.tama_class.movie-details.id
+  slug     = "entity-json-schema"
+}
+
+resource "tama_thought_context_input" "entity-corpus-input" {
+  thought_context_id = tama_thought_context.generate-description-context.id
+  type               = "entity"
+  class_corpus_id    = data.tama_class_corpus.movie-details-default-json.id
+}
+
+resource "tama_modular_thought" "generate-setting" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+  index    = 1
+  relation = "setting"
+
+  module {
+    reference = "tama/agentic/generate"
+  }
+}
+
+resource "tama_thought_context" "generate-setting-context" {
+  thought_id = tama_modular_thought.generate-setting.id
+  layer      = 0
+  prompt_id  = tama_prompt.generate-setting.id
+}
+
+resource "tama_thought_context_input" "generate-setting-context-input" {
+  thought_context_id = tama_thought_context.generate-setting-context.id
+  type               = "concept"
+  class_corpus_id    = module.global.answer_corpus_id
+}
+
+resource "tama_modular_thought" "embed-description" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+  index    = 2
+  relation = "embed-description"
+
+  module {
+    reference = "tama/concepts/embed"
+    parameters = jsonencode({
+      relation = "description"
+    })
+  }
+}
+
+resource "tama_thought_module_input" "embed-description-input" {
+  thought_id      = tama_modular_thought.embed-description.id
+  type            = "concept"
+  class_corpus_id = module.global.answer_corpus_id
+}
+
+resource "tama_modular_thought" "embed-setting" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+  index    = 3
+  relation = "embed-setting"
+
+  module {
+    reference = "tama/concepts/embed"
+    parameters = jsonencode({
+      relation = "setting"
+    })
+  }
+}
+
+resource "tama_thought_module_input" "embed-setting-input" {
+  thought_id      = tama_modular_thought.embed-setting.id
+  type            = "concept"
+  class_corpus_id = tama_class_corpus.setting-embedding-corpus.id
+}
+
+resource "tama_node" "handle-movie-details-embedding" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  type = "reactive"
+}

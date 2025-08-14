@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "locations": {
+      "description": "Potential locations the movie takes place.",
+      "items": { "type": "string" },
+      "type": "array"
+    },
+    "reason": {
+      "description": "A brief description of the reason why the model thinks the movie took place in those locations.",
+      "type": "string"
+    }
+  },
+  "required": ["locations", "reason"],
+  "title": "movie-setting",
+  "description": "Details for the setting of the movie.",
+  "type": "object"
+}
