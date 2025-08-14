@@ -29,15 +29,14 @@ resource "tama_class" "curse" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.26"
+  version = "0.2.27"
 
   depends_on = [module.global.schemas]
 
-  name     = "Extract and Embed User Messages"
-  space_id = tama_space.basic-conversation.id
-  relation = "content"
+  name      = "Extract and Embed User Messages"
+  space_id  = tama_space.basic-conversation.id
+  relations = ["content"]
 
-  answer_class_corpus_id = module.global.answer_corpus_id
 
   embeddable_class_ids = [
     tama_class.greeting.id,
@@ -76,7 +75,7 @@ resource "tama_prompt" "check-profile-reply" {
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.26"
+  version = "0.2.27"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -154,7 +153,7 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.2.26"
+  version = "0.2.27"
 
   chain_id = tama_chain.upsert-profile.id
 

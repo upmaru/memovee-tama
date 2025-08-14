@@ -85,14 +85,13 @@ resource "tama_class" "person-browsing" {
 
 module "extract-embed-media-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.26"
+  version = "0.2.27"
 
   depends_on = [module.global.schemas]
 
-  name     = "Extract and Embed Media Conversation"
-  space_id = tama_space.media-conversation.id
-
-  answer_class_corpus_id = module.global.answer_corpus_id
+  name      = "Extract and Embed Media Conversation"
+  space_id  = tama_space.media-conversation.id
+  relations = ["content"]
 
   embeddable_class_ids = [
     tama_class.person-detail.id,
