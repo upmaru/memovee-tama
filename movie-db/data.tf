@@ -7,6 +7,11 @@ data "tama_class" "answer" {
   name     = "answer"
 }
 
+data "tama_class" "class-proxy" {
+  space_id = data.tama_space.global.id
+  name     = "class-proxy"
+}
+
 data "tama_class" "task-result" {
   space_id = data.tama_space.global.id
   name     = "task-result"
