@@ -7,6 +7,11 @@ data "tama_class" "answer" {
   name     = "answer"
 }
 
+data "tama_class" "task-result" {
+  space_id = data.tama_space.global.id
+  name     = "task-result"
+}
+
 data "tama_class_corpus" "answer-content" {
   class_id = data.tama_class.answer.id
   slug     = "answer-content"

@@ -189,3 +189,19 @@ resource "tama_node" "index-person-details-explicit" {
 
   type = "explicit"
 }
+
+resource "tama_chain" "index-class-entities" {
+  space_id = tama_space.movie-db.id
+  name     = "Index Class Entities"
+}
+
+resource "tama_modular_thought" "index-class-entities" {
+  chain_id        = tama_chain.index-class-entities.id
+  output_class_id = data.tama_class.task-result.id
+  index           = 0
+  relation        = "index-class-entities"
+
+  module {
+    reference = "tama/classes/process"
+  }
+}
