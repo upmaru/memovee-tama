@@ -35,127 +35,126 @@ Return a JSON object with:
 - If a property’s type is `"unknown"`, include a note in the description indicating it was not found in the mapping.
 
 **Example**:
-
-**Input**:
-- Sample:
-  ```yaml
-  [{
-    "metadata": {
-      "space": "entertainment",
-      "class": "movie"
-    },
-    "id": 1,
-    "title": "Jurassic Park",
-    "tags": [{"name": "Sci-fi"}, {"name": "Action"}],
-    "category": {
-      "name": "Fiction"
-    },
-    "director": {
-      "name": {
-        "first": "Steven",
-        "last": "Spielberg"
-      }
-    },
-    "extra": "unmapped"
-  }]
-  ```
-- Mapping:
-  ```json
-  {
-    "mappings": {
-      "properties": {
-        "metadata": {
-          "properties": {
-            "space": {"type": "keyword"},
-            "class": {"type": "keyword"}
-          }
-        },
-        "id": {"type": "long"},
-        "title": {
-          "type": "text",
-          "fields": {
-            "keyword": {"type": "keyword"}
-          }
-        },
-        "tags": {
-          "type": "nested",
-          "properties": {
-            "name": {"type": "keyword"}
-          }
-        },
-        "category": {
-          "properties": {
-            "name": {"type": "keyword"}
-          }
-        },
-        "director": {
-          "properties": {
-            "name": {
-              "properties": {
-                "first": {"type": "keyword"},
-                "last": {"type": "keyword"}
+  **Input**:
+  - Sample:
+    ```yaml
+    [{
+      "metadata": {
+        "space": "entertainment",
+        "class": "movie"
+      },
+      "id": 1,
+      "title": "Jurassic Park",
+      "tags": [{"name": "Sci-fi"}, {"name": "Action"}],
+      "category": {
+        "name": "Fiction"
+      },
+      "director": {
+        "name": {
+          "first": "Steven",
+          "last": "Spielberg"
+        }
+      },
+      "extra": "unmapped"
+    }]
+    ```
+  - Mapping:
+    ```json
+    {
+      "mappings": {
+        "properties": {
+          "metadata": {
+            "properties": {
+              "space": {"type": "keyword"},
+              "class": {"type": "keyword"}
+            }
+          },
+          "id": {"type": "long"},
+          "title": {
+            "type": "text",
+            "fields": {
+              "keyword": {"type": "keyword"}
+            }
+          },
+          "tags": {
+            "type": "nested",
+            "properties": {
+              "name": {"type": "keyword"}
+            }
+          },
+          "category": {
+            "properties": {
+              "name": {"type": "keyword"}
+            }
+          },
+          "director": {
+            "properties": {
+              "name": {
+                "properties": {
+                  "first": {"type": "keyword"},
+                  "last": {"type": "keyword"}
+                }
               }
             }
           }
         }
       }
     }
+    ```
+
+  **Output**:
+  ```json
+  {
+    "index": "tama-entertainment-movie",
+    "definitions": [
+      {
+        "property": "metadata.space",
+        "description": "The domain or context of the item, e.g., 'entertainment'.",
+        "type": "keyword"
+      },
+      {
+        "property": "metadata.class",
+        "description": "The category or type of the item, e.g., 'movie'.",
+        "type": "keyword"
+      },
+      {
+        "property": "id",
+        "description": "A unique identifier for the item, e.g., 1.",
+        "type": "long"
+      },
+      {
+        "property": "title",
+        "description": "The title of the item, e.g., 'Jurassic Park'.",
+        "type": "text"
+      },
+      {
+        "property": "tags.name",
+        "description": "A tag describing the item, e.g., 'Sci-fi' or 'Action'.",
+        "type": "keyword"
+      },
+      {
+        "property": "category.name",
+        "description": "The category of the item, e.g., 'Fiction'.",
+        "type": "keyword"
+      },
+      {
+        "property": "director.name.first",
+        "description": "The first name of the director, e.g., 'Steven'.",
+        "type": "keyword"
+      },
+      {
+        "property": "director.name.last",
+        "description": "The last name of the director, e.g., 'Spielberg'.",
+        "type": "keyword"
+      },
+      {
+        "property": "extra",
+        "description": "An additional field not defined in the mapping, e.g., 'unmapped'.",
+        "type": "unknown"
+      }
+    ]
   }
   ```
-
-**Output**:
-```json
-{
-  "index": "tama-entertainment-movie",
-  "definitions": [
-    {
-      "property": "metadata.space",
-      "description": "The domain or context of the item, e.g., 'entertainment'.",
-      "type": "keyword"
-    },
-    {
-      "property": "metadata.class",
-      "description": "The category or type of the item, e.g., 'movie'.",
-      "type": "keyword"
-    },
-    {
-      "property": "id",
-      "description": "A unique identifier for the item, e.g., 1.",
-      "type": "long"
-    },
-    {
-      "property": "title",
-      "description": "The title of the item, e.g., 'Jurassic Park'.",
-      "type": "text"
-    },
-    {
-      "property": "tags.name",
-      "description": "A tag describing the item, e.g., 'Sci-fi' or 'Action'.",
-      "type": "keyword"
-    },
-    {
-      "property": "category.name",
-      "description": "The category of the item, e.g., 'Fiction'.",
-      "type": "keyword"
-    },
-    {
-      "property": "director.name.first",
-      "description": "The first name of the director, e.g., 'Steven'.",
-      "type": "keyword"
-    },
-    {
-      "property": "director.name.last",
-      "description": "The last name of the director, e.g., 'Spielberg'.",
-      "type": "keyword"
-    },
-    {
-      "property": "extra",
-      "description": "An additional field not defined in the mapping, e.g., 'unmapped'.",
-      "type": "unknown"
-    }
-  ]
-}
-```
 
 ---
 
