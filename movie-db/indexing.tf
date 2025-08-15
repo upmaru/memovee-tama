@@ -239,12 +239,3 @@ resource "tama_node" "handle-class-indexing" {
   type = "reactive"
   on   = "processed"
 }
-
-module "index-definition-generation" {
-  source = "./index-definition"
-
-  movie_db_space_id      = tama_space.movie-db.id
-  tmdb_specification_id  = tama_specification.tmdb.id
-  elasticsearch_space_id = var.elasticsearch_space_id
-  model_id               = var.index_management_model_id
-}

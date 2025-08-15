@@ -32,8 +32,3 @@ variable "elasticsearch_query_schema" {
   type        = string
   description = "Elasticsearch Query Schema"
 }
-
-variable "index_management_model_id" {
-  type        = string
-  description = "The Model ID for Index Management"
-}
