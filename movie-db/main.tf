@@ -1,107 +1,6 @@
-data "tama_space" "global" {
-  id = "global"
-}
-
-data "tama_class" "answer" {
-  space_id = data.tama_space.global.id
-  name     = "answer"
-}
-
-data "tama_class_corpus" "answer-content" {
-  class_id = data.tama_class.answer.id
-  slug     = "answer-content"
-}
-
 resource "tama_space" "movie-db" {
   name = "Movie DB"
   type = "component"
-}
-
-data "http" "tmdb" {
-  url = var.tmdb_openapi_url
-}
-
-resource "tama_specification" "tmdb" {
-  space_id = tama_space.movie-db.id
-
-  endpoint = var.tmdb_openapi_url
-  version  = "3.0.0"
-  schema   = jsonencode(jsondecode(data.http.tmdb.response_body))
-
-  wait_for {
-    field {
-      name = "current_state"
-      in   = ["completed", "failed"]
-    }
-  }
-}
-
-resource "tama_source_identity" "tmdb" {
-  specification_id = tama_specification.tmdb.id
-  identifier       = "sec0"
-
-  api_key = var.tmdb_api_key
-
-  validation {
-    path   = "/3/authentication"
-    method = "GET"
-    codes  = [200]
-  }
-
-  wait_for {
-    field {
-      name = "current_state"
-      in   = ["active", "failed"]
-    }
-  }
-}
-
-
-resource "tama_specification" "movie-db-query-elasticsearch" {
-  space_id = tama_space.movie-db.id
-
-  version  = "1.0.0"
-  endpoint = var.elasticsearch_endpoint
-  schema   = var.elasticsearch_query_schema
-
-  wait_for {
-    field {
-      name = "current_state"
-      in   = ["completed", "failed"]
-    }
-  }
-}
-
-resource "tama_source_identity" "movie-db-query-elasticsearch" {
-  specification_id = tama_specification.movie-db-query-elasticsearch.id
-  identifier       = "ApiKey"
-
-  api_key = var.elasticsearch_api_key
-
-  validation {
-    path   = "/_cluster/health"
-    method = "GET"
-    codes  = [200]
-  }
-
-  wait_for {
-    field {
-      name = "current_state"
-      in   = ["active", "failed"]
-    }
-  }
-}
-
-data "tama_source" "tmdb-api" {
-  specification_id = tama_specification.tmdb.id
-  slug             = "tmdb-api"
-}
-
-resource "tama_source_limit" "tmdb-api" {
-  source_id   = data.tama_source.tmdb-api.id
-  scale_count = 1
-  scale_unit  = "seconds"
-  value       = 40
 }
 
 module "extract-nested-properties-movie-db" {
@@ -125,16 +24,6 @@ locals {
   spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
   cast_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.cast"]
   crew_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.crew"]
-}
-
-data "tama_class" "movie-details" {
-  specification_id = tama_specification.tmdb.id
-  name             = "movie-details"
-}
-
-data "tama_action" "get-movie-credits" {
-  specification_id = tama_specification.tmdb.id
-  identifier       = "movie-credits"
 }
 
 resource "tama_class_corpus" "movie-details-mapping" {
@@ -174,11 +63,6 @@ module "spread-cast-and-crew" {
   target_class_ids = local.spread_class_ids
 }
 
-data "tama_class" "movie-credits" {
-  specification_id = tama_specification.tmdb.id
-  name             = "movie-credits"
-}
-
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
   version = "0.2.34"
@@ -210,11 +94,6 @@ module "network-cast-and-crew" {
   can_belong_to_class_ids = [
     data.tama_class.movie-credits.id
   ]
-}
-
-data "tama_class" "person-details" {
-  specification_id = tama_specification.tmdb.id
-  name             = "person-details"
 }
 
 module "network-person-details" {
@@ -498,89 +377,4 @@ resource "tama_node" "handle-movie-details-embedding" {
 resource "tama_space_bridge" "movie-db-elasticsearch" {
   space_id        = tama_space.movie-db.id
   target_space_id = var.elasticsearch_space_id
-}
-
-resource "tama_class_corpus" "movie-details-indexing" {
-  class_id = data.tama_class.movie-details.id
-  name     = "Movie Details Indexing"
-  template = file("movie-db/movie-details-indexing.liquid")
-}
-
-data "tama_action" "index-document" {
-  specification_id = var.elasticsearch_specification_id
-  method           = "PUT"
-  path             = "/{index}/_doc/{id}"
-}
-
-resource "tama_chain" "index-movie-details" {
-  space_id = tama_space.movie-db.id
-  name     = "Index Movie Details"
-}
-
-resource "tama_modular_thought" "index-movie-details" {
-  chain_id = tama_chain.index-movie-details.id
-
-  index    = 0
-  relation = "index-movie-details"
-
-  module {
-    reference = "tama/actions/caller"
-  }
-}
-
-module "movie-details-preloader" {
-  source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.2.34"
-
-  thought_id = tama_modular_thought.index-movie-details.id
-  class_id   = data.tama_class.movie-details.id
-  index      = 0
-
-  concept_relations = [
-    "description",
-    "overview",
-    "setting"
-  ]
-
-  concept_embeddings = "include"
-
-  concept_content = {
-    action = "merge"
-    merge = {
-      location = "root"
-      name     = "merge"
-    }
-  }
-
-  children = [
-    { class = "movie-credits", as = "object" }
-  ]
-}
-
-resource "tama_thought_module_input" "index-movie-details" {
-  thought_id      = tama_modular_thought.index-movie-details.id
-  type            = "entity"
-  class_corpus_id = tama_class_corpus.movie-details-indexing.id
-}
-
-resource "tama_thought_tool" "index-movie-details" {
-  thought_id = tama_modular_thought.index-movie-details.id
-  action_id  = data.tama_action.index-document.id
-}
-
-resource "tama_node" "index-movie-details-on-processed" {
-  space_id = tama_space.movie-db.id
-  class_id = data.tama_class.movie-details.id
-  chain_id = tama_chain.index-movie-details.id
-
-  type = "reactive"
-  on   = "processed"
-}
-
-resource "tama_node" "index-movie-details-explicit" {
-  space_id = tama_space.movie-db.id
-  class_id = data.tama_class.movie-details.id
-  chain_id = tama_chain.index-movie-details.id
-
-  type = "explicit"
 }
