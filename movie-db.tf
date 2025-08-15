@@ -13,4 +13,6 @@ module "movie-db" {
   elasticsearch_space_id         = module.elasticsearch.space_id
   elasticsearch_specification_id = module.elasticsearch.specification_id
   elasticsearch_query_schema     = module.elasticsearch.query_schema
+
+  index_management_model_id = module.xai.model_ids["grok-3-mini"]
 }

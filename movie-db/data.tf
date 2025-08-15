@@ -22,7 +22,6 @@ data "tama_class_corpus" "answer-content" {
   slug     = "answer-content"
 }
 
-
 data "tama_class" "person-details" {
   specification_id = tama_specification.tmdb.id
   name             = "person-details"

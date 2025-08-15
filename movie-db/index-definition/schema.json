@@ -1,0 +1,31 @@
+{
+  "title": "index-definition",
+  "description": "Index definition for elasticsearch mappings",
+  "type": "object",
+  "properties": {
+    "index": {
+      "type": "string",
+      "description": "The name of the index"
+    },
+    "definitions": {
+      "type": "array",
+      "description": "The property definition, and their types",
+      "items": {
+        "type": "object",
+        "properties": {
+          "property": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["property", "description", "type"]
+      }
+    }
+  },
+  "required": ["index", "definitions"]
+}

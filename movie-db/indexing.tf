@@ -31,7 +31,7 @@ resource "tama_modular_thought" "index-movie-details" {
 
 module "movie-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.2.34"
+  version = "0.2.35"
 
   thought_id = tama_modular_thought.index-movie-details.id
   class_id   = data.tama_class.movie-details.id
@@ -125,7 +125,7 @@ resource "tama_modular_thought" "index-person-details" {
 
 module "person-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.2.34"
+  version = "0.2.35"
 
   thought_id = tama_modular_thought.index-person-details.id
   class_id   = data.tama_class.person-details.id
@@ -190,6 +190,11 @@ resource "tama_node" "index-person-details-explicit" {
   type = "explicit"
 }
 
+//
+// Class level indexing.
+// After a given class operation is 'processed' it will run indexing for
+// all the entities in the class.
+//
 resource "tama_chain" "index-class-entities" {
   space_id = tama_space.movie-db.id
   name     = "Index Class Entities"
@@ -233,4 +238,13 @@ resource "tama_node" "handle-class-indexing" {
 
   type = "reactive"
   on   = "processed"
+}
+
+module "index-definition-generation" {
+  source = "./index-definition"
+
+  movie_db_space_id      = tama_space.movie-db.id
+  tmdb_specification_id  = tama_specification.tmdb.id
+  elasticsearch_space_id = var.elasticsearch_space_id
+  model_id               = var.index_management_model_id
 }
