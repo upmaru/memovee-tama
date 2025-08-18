@@ -15,6 +15,15 @@ module "movie-db" {
   elasticsearch_query_schema     = module.elasticsearch.query_schema
 }
 
+module "index-mapping-generation" {
+  source = "./index-mapping"
+
+  depends_on = [module.global]
+
+  movie_db_space_id      = module.movie-db.space_id
+  elasticsearch_space_id = module.elasticsearch.space_id
+}
+
 module "index-definition-generation" {
   source = "./index-definition"
 
@@ -24,13 +33,4 @@ module "index-definition-generation" {
   tmdb_specification_id  = module.movie-db.tmdb_specification_id
   elasticsearch_space_id = module.elasticsearch.space_id
   model_id               = module.xai.model_ids["grok-3-mini"]
-}
-
-module "index-mapping-generation" {
-  source = "./index-mapping"
-
-  depends_on = [module.global]
-
-  movie_db_space_id      = module.movie-db.space_id
-  elasticsearch_space_id = module.elasticsearch.space_id
 }

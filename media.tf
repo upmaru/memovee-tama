@@ -100,3 +100,13 @@ module "extract-embed-media-conversation" {
     tama_class.media-browsing.id
   ]
 }
+
+resource "tama_space_bridge" "media-conversation-to-movie-db" {
+  space_id        = tama_space.media-conversation.id
+  target_space_id = tama_space.movie-db.id
+}
+
+resource "tama_space_bridge" "media-conversation-to-prompt-assembly" {
+  space_id        = tama_space.media-conversation.id
+  target_space_id = tama_space.prompt-assembly.id
+}
