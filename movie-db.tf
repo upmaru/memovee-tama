@@ -25,3 +25,12 @@ module "index-definition-generation" {
   elasticsearch_space_id = module.elasticsearch.space_id
   model_id               = module.xai.model_ids["grok-3-mini"]
 }
+
+module "index-mapping-generation" {
+  source = "./index-mapping"
+
+  depends_on = [module.global]
+
+  movie_db_space_id      = module.movie-db.space_id
+  elasticsearch_space_id = module.elasticsearch.space_id
+}
