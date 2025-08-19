@@ -1,0 +1,9 @@
+{
+  "query": {{ data.query | json }},
+  "sort": {% if data.sort %}{{ data.sort | json }}{% else %}[]{% endif %},
+  "size": {{ data.limit | default: 3 }},
+  "_source": {
+    "includes": {% if data._source %}{{ data._source | json }}{% else %}["id"]{% endif %},
+    "excludes": ["*.embedding"]
+  }
+}

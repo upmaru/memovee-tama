@@ -17,6 +17,9 @@ resource "tama_chain" "browse-media" {
   name     = "Browse Media"
 }
 
+//
+// Browse Media Tooling
+//
 resource "tama_modular_thought" "browse-media" {
   chain_id        = tama_chain.browse-media.id
   index           = 0
@@ -57,4 +60,54 @@ resource "tama_thought_processor" "browse-media" {
 resource "tama_thought_tool" "browse-media" {
   thought_id = tama_modular_thought.browse-media.id
   action_id  = data.tama_action.query-elasticsearch.id
+}
+
+resource "tama_thought_tool_initializer" "import-movie-db-definition" {
+  thought_tool_id = tama_thought_tool.browse-media.id
+  index           = 0
+  reference       = "tama/initializers/import"
+  parameters = jsonencode({
+    resources = [
+      {
+        type     = "concept"
+        relation = var.index_definition_relation
+        scope    = "space"
+      }
+    ]
+  })
+}
+
+resource "tama_thought_tool_input" "vector-search-request-body" {
+  thought_tool_id = tama_thought_tool.browse-media.id
+  type            = "body"
+  class_corpus_id = data.tama_class_corpus.vector-search-request-body.id
+}
+
+resource "tama_thought_tool_input" "standard-search-request-body" {
+  thought_tool_id = tama_thought_tool.browse-media.id
+  type            = "body"
+  class_corpus_id = data.tama_class_corpus.standard-search-request-body.id
+}
+
+//
+// Browse Media Forwarding
+//
+resource "tama_modular_thought" "forward-to-prompt-assembly" {
+  chain_id = tama_chain.browse-media.id
+  index    = 1
+  relation = "forwarding"
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_thought_path" "forward-to-prompt-assembly" {
+  thought_id      = tama_modular_thought.forward-to-prompt-assembly.id
+  target_class_id = data.tama_class.context-component.id
+}
+
+resource "tama_thought_context" "forward-to-prompt-assembly" {
+  thought_id = tama_modular_thought.forward-to-prompt-assembly.id
+  prompt_id  = tama_prompt.media-browsing-reply.id
 }

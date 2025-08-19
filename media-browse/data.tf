@@ -32,3 +32,28 @@ data "tama_class_corpus" "index-definition-yaml" {
   class_id = data.tama_class.index-definition.id
   slug     = "index-definition-yaml"
 }
+
+data "tama_class" "text-based-vector-search" {
+  specification_id = var.movie_db_elasticsearch_specification_id
+  name             = "text-based-vector-search"
+}
+
+data "tama_class_corpus" "vector-search-request-body" {
+  class_id = data.tama_class.text-based-vector-search.id
+  slug     = "vector-search"
+}
+
+data "tama_class" "query-and-sort-based-search" {
+  specification_id = var.movie_db_elasticsearch_specification_id
+  name             = "query-and-sort-based-search"
+}
+
+data "tama_class_corpus" "standard-search-request-body" {
+  class_id = data.tama_class.query-and-sort-based-search.id
+  slug     = "standard-search"
+}
+
+data "tama_class" "context-component" {
+  space_id = var.prompt_assembly_space_id
+  name     = "context-component"
+}

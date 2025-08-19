@@ -45,11 +45,16 @@ resource "tama_thought_initializer" "import" {
   })
 }
 
+locals {
+  movie_db_index_definition_relation  = "movie-details-definition"
+  person_db_index_definition_relation = "person-details-definition"
+}
+
 resource "tama_thought_path" "movie-details-definition" {
   thought_id      = tama_modular_thought.this.id
   target_class_id = data.tama_class.movie-details.id
   parameters = jsonencode({
-    relation = "movie-details-definition"
+    relation = local.movie_db_index_definition_relation
   })
 }
 
@@ -57,7 +62,7 @@ resource "tama_thought_path" "person-details-definition" {
   thought_id      = tama_modular_thought.this.id
   target_class_id = data.tama_class.person-details.id
   parameters = jsonencode({
-    relation = "person-details-definition"
+    relation = local.person_db_index_definition_relation
   })
 }
 

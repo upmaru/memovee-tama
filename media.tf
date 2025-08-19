@@ -103,10 +103,26 @@ module "extract-embed-media-conversation" {
 
 resource "tama_space_bridge" "media-conversation-to-movie-db" {
   space_id        = tama_space.media-conversation.id
-  target_space_id = tama_space.movie-db.id
+  target_space_id = module.movie-db.space_id
 }
 
 resource "tama_space_bridge" "media-conversation-to-prompt-assembly" {
   space_id        = tama_space.media-conversation.id
   target_space_id = tama_space.prompt-assembly.id
+}
+
+module "media-browsing" {
+  source = "./media-browse"
+
+  depends_on = [module.global, module.movie-db]
+
+  media_conversation_space_id = tama_space.media-conversation.id
+  tool_call_model_id          = module.mistral.model_ids["mistral-medium-latest"]
+
+  prompt_assembly_space_id = tama_space.prompt-assembly.id
+
+  movie_db_space_id                       = module.movie-db.space_id
+  movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
+
+  index_definition_relation = module.index-definition-generation.movie_db_index_definition_relation
 }
