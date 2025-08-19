@@ -4,5 +4,5 @@ Take into account the previous messages in context.
 ---
 
 <classes>
-{{ classes }}
+  {{ classes }}
 </classes>
