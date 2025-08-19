@@ -2,7 +2,7 @@ variable "elasticsearch_endpoint" {}
 variable "elasticsearch_management_api_key" {}
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
-  version = "0.2.37"
+  version = "0.2.38"
 
   depends_on = [
     module.global

@@ -1,4 +1,6 @@
-# Ingest Data
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/Users/zacksiri/Development/notebooks/movies.json"},"name":"movies.json","type":"file"}]} -->
+
+# Memovee Ingest Data
 
 ```elixir
 Mix.install([
@@ -16,11 +18,11 @@ alias Explorer.Series
 
 require Explorer.DataFrame
 
-df = 
+df =
   Kino.FS.file_path("movies.json")
   |> DataFrame.from_ndjson!()
 
-df = DataFrame.mutate(df, 
+df = DataFrame.mutate(df,
   release_date: Series.cast(release_date, :date)
 )
 
@@ -32,12 +34,12 @@ df =
   |> DataFrame.filter(lengths(split(overview, " ")) > 5)
   |> DataFrame.sort_by(desc: popularity)
 
-stream = 
+stream =
   DataFrame.to_rows_stream(df, atom_keys: true, chunk_size: 500)
 ```
 
 ```elixir
-movies = 
+movies =
   stream
   |> Enum.take(10)
 
@@ -49,7 +51,9 @@ movies
       record: movie
     }
   }
-  
+
   Req.post!(url: "http://localhost:4000/ingest/movie-db/movie-details", json: body)
 end)
 ```
+
+<!-- livebook:{"offset":1159,"stamp":{"token":"XCP.lkO1Dr8NLJUmLSvLH7wnpo9CvQQ8CahyXHFboCEpTZ-MkQ3dOMo0SdJbqq1ufIpYQJnkiqkNsePLfgzNmYknSlFllMF14Qd3r1anIQ","version":2}} -->

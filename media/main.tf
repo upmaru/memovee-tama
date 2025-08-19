@@ -81,7 +81,7 @@ resource "tama_class" "person-browsing" {
 
 module "extract-embed-media-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.2.37"
+  version = "0.2.38"
 
   name      = "Extract and Embed Media Conversation"
   space_id  = tama_space.this.id
