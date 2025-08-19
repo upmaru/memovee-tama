@@ -72,15 +72,48 @@ module "arrakis" {
           include_usage = true
         }
       })
+    },
+    {
+      identifier = "intfloat/multilingual-e5-large-instruct"
+      path       = "/embeddings"
+    },
+    {
+      identifier = "mixedbread-ai/mxbai-rerank-large-v1"
+      path       = "/rerank"
     }
   ]
 }
 
-resource "tama_space_processor" "default" {
+resource "tama_space_processor" "default-completion" {
   space_id = module.global.space.id
   model_id = module.arrakis.model_ids.qwen-3-30b-a3b
 
   completion_config {
     temperature = 0.7
+  }
+}
+
+resource "tama_space_processor" "default-embedding" {
+  space_id = module.global.space.id
+  model_id = module.arrakis.model_ids["intfloat/multilingual-e5-large-instruct"]
+
+  embedding_config {
+    max_tokens = 512
+    templates = [{
+      type    = "query"
+      content = <<-EOT
+      Instruct: {{ instruction }}
+      Query: {{ query }}
+      EOT
+    }]
+  }
+}
+
+resource "tama_space_processor" "default-reranking" {
+  space_id = module.global.space.id
+  model_id = module.arrakis.model_ids["mixedbread-ai/mxbai-rerank-large-v1"]
+
+  reranking_config {
+    top_n = 3
   }
 }
