@@ -68,9 +68,7 @@ module "arrakis" {
       identifier = "qwen-3-30b-a3b"
       path       = "/v1/chat/completions"
       parameters = jsonencode({
-        stream_options = {
-          include_usage = true
-        }
+        temperature = 0.7
       })
     },
     {

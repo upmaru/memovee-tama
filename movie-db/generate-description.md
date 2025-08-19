@@ -3,5 +3,5 @@ Write an accurate description of the movie in a single paragraph. Use as many da
 ---
 
 <movie-details>
-{{ corpus }}
+  {{ corpus }}
 </movie-details>

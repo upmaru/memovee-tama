@@ -275,11 +275,16 @@ resource "tama_chain" "generate-description-and-setting-and-embed" {
   name     = "Generate Description and Setting and Embed"
 }
 
+locals {
+  description_relation = "description"
+  setting_relation     = "setting"
+}
+
 resource "tama_modular_thought" "generate-description" {
   chain_id = tama_chain.generate-description-and-setting-and-embed.id
 
   index    = 0
-  relation = "description"
+  relation = local.description_relation
 
   module {
     reference = "tama/agentic/generate"
@@ -307,7 +312,7 @@ resource "tama_modular_thought" "generate-setting" {
   chain_id = tama_chain.generate-description-and-setting-and-embed.id
 
   index    = 1
-  relation = "setting"
+  relation = local.setting_relation
 
   module {
     reference = "tama/agentic/generate"
@@ -330,12 +335,12 @@ resource "tama_modular_thought" "embed-description" {
   chain_id = tama_chain.generate-description-and-setting-and-embed.id
 
   index    = 2
-  relation = "embed-description"
+  relation = "embed-${local.description_relation}"
 
   module {
     reference = "tama/concepts/embed"
     parameters = jsonencode({
-      relation = "description"
+      relation = local.description_relation
     })
   }
 }
@@ -350,12 +355,12 @@ resource "tama_modular_thought" "embed-setting" {
   chain_id = tama_chain.generate-description-and-setting-and-embed.id
 
   index    = 3
-  relation = "embed-setting"
+  relation = "embed-${local.setting_relation}"
 
   module {
     reference = "tama/concepts/embed"
     parameters = jsonencode({
-      relation = "setting"
+      relation = local.setting_relation
     })
   }
 }
