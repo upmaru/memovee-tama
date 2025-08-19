@@ -1,6 +1,16 @@
+variable "name" {
+  type        = string
+  description = "The name of the media conversation chain."
+}
+
 variable "media_conversation_space_id" {
   type        = string
   description = "The ID of the space for the media conversation."
+}
+
+variable "target_class_id" {
+  type        = string
+  description = "The ID of the class for the target."
 }
 
 variable "movie_db_space_id" {
@@ -26,4 +36,14 @@ variable "tool_call_model_id" {
 variable "index_definition_relation" {
   type        = string
   description = "The relation of the index definition to the movie database."
+}
+
+variable "tooling_prompt_id" {
+  type        = string
+  description = "The ID of the prompt for the tooling."
+}
+
+variable "reply_prompt_id" {
+  type        = string
+  description = "The ID of the prompt for the reply."
 }

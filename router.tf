@@ -34,22 +34,9 @@ resource "tama_thought_path" "route-to-greeting" {
   target_class_id = tama_class.greeting.id
 }
 
-resource "tama_thought_path" "route-to-media-detail" {
-  thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.media-detail.id
-}
+resource "tama_thought_path" "route-to-media-conversation-classes" {
+  for_each = module.media-conversation.class_ids
 
-resource "tama_thought_path" "route-to-media-browsing" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.media-browsing.id
-}
-
-resource "tama_thought_path" "route-to-person-detail" {
-  thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.person-detail.id
-}
-
-resource "tama_thought_path" "route-to-person-browsing" {
-  thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.person-browsing.id
+  target_class_id = each.value
 }
