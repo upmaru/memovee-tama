@@ -1,0 +1,55 @@
+# Ingest Data
+
+```elixir
+Mix.install([
+  {:req, "~> 0.5.10"},
+  {:explorer, "~> 0.10.1"},
+  {:kino, "~> 0.15"}
+])
+```
+
+## Load dataset
+
+```elixir
+alias Explorer.DataFrame
+alias Explorer.Series
+
+require Explorer.DataFrame
+
+df = 
+  Kino.FS.file_path("movies.json")
+  |> DataFrame.from_ndjson!()
+
+df = DataFrame.mutate(df, 
+  release_date: Series.cast(release_date, :date)
+)
+
+df =
+  df
+  |> DataFrame.filter(year(release_date) >= 2020)
+  |> DataFrame.filter(not(adult))
+  |> DataFrame.filter(status == "Released")
+  |> DataFrame.filter(lengths(split(overview, " ")) > 5)
+  |> DataFrame.sort_by(desc: popularity)
+
+stream = 
+  DataFrame.to_rows_stream(df, atom_keys: true, chunk_size: 500)
+```
+
+```elixir
+movies = 
+  stream
+  |> Enum.take(10)
+
+movies
+|> Enum.map(fn movie ->
+  body = %{
+    entity: %{
+      identifier: "#{movie.id}",
+      record: movie
+    }
+  }
+  
+  Req.post!(url: "http://localhost:4000/ingest/movie-db/movie-details", json: body)
+end)
+```
