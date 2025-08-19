@@ -64,17 +64,22 @@ graph LR
     D[Personalization Space]
     E[Prompt Assembly Space]
     F[Movie DB Space]
+    G[Elasticsearch Space]
     A -- "memovee-basic" --> B
     A -- "memovee-media" --> C
     B -- "basic-conversation-personalization" --> D
     B -- "basic-conversation-prompt-assembly" --> E
+    C -- "media-conversation-to-movie-db" --> F
+    C -- "media-conversation-to-prompt-assembly" --> E
     E -- "prompt-assembly-memovee" --> A
+    F -- "movie-db-elasticsearch" --> G
     style A fill:#bbdefb stroke:#333
     style B fill:#c8e6c9 stroke:#333
     style C fill:#ffe0b2 stroke:#333
     style D fill:#f8b6c0 stroke:#333
     style E fill:#e1bee7 stroke:#333
     style F fill:#d7ccc8 stroke:#333
+    style G fill:#fff9c4 stroke:#333
 ```
 
 ## Documentation
