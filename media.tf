@@ -40,7 +40,7 @@ module "media-browsing" {
   movie_db_space_id                       = module.movie-db.space_id
   movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
 
-  index_definition_relation = module.index-definition-generation.relations["movie-db"]
+  index_definition_relation = module.index-definition-generation.relations.movie-index
 }
 
 resource "tama_prompt" "media-detail-tooling" {
@@ -78,5 +78,81 @@ module "media-detail" {
   movie_db_space_id                       = module.movie-db.space_id
   movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
 
-  index_definition_relation = module.index-definition-generation.relations["movie-db"]
+  index_definition_relation = module.index-definition-generation.relations.movie-index
+}
+
+resource "tama_prompt" "person-browse-tooling" {
+  space_id = module.media-conversation.space_id
+  name     = "Person Browse Tooling"
+  role     = "system"
+  content  = file("${path.module}/person-browse/querying.md")
+}
+
+resource "tama_prompt" "person-browse-reply" {
+  space_id = module.media-conversation.space_id
+  name     = "Person Browse Reply"
+  role     = "system"
+  content  = file("${path.module}/person-browse/reply.md")
+}
+
+module "person-browsing" {
+  source = "./media-conversate"
+
+  depends_on = [
+    module.global,
+    module.index-definition-generation
+  ]
+
+  name                        = "Person Browsing"
+  media_conversation_space_id = module.media-conversation.space_id
+  target_class_id             = module.media-conversation.class_ids["person-browsing"]
+  tool_call_model_id          = module.mistral.model_ids["mistral-medium-latest"]
+
+  tooling_prompt_id = tama_prompt.person-browse-tooling.id
+  reply_prompt_id   = tama_prompt.person-browse-reply.id
+
+  prompt_assembly_space_id = tama_space.prompt-assembly.id
+
+  movie_db_space_id                       = module.movie-db.space_id
+  movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
+
+  index_definition_relation = module.index-definition-generation.relations.person-index
+}
+
+resource "tama_prompt" "person-detail-tooling" {
+  space_id = module.media-conversation.space_id
+  name     = "Person Detail Tooling"
+  role     = "system"
+  content  = file("${path.module}/person-detail/querying.md")
+}
+
+resource "tama_prompt" "person-detail-reply" {
+  space_id = module.media-conversation.space_id
+  name     = "Person Detail Reply"
+  role     = "system"
+  content  = file("${path.module}/person-detail/reply.md")
+}
+
+module "person-detail" {
+  source = "./media-conversate"
+
+  depends_on = [
+    module.global,
+    module.index-definition-generation
+  ]
+
+  name                        = "Person Detail"
+  media_conversation_space_id = module.media-conversation.space_id
+  target_class_id             = module.media-conversation.class_ids["person-detail"]
+  tool_call_model_id          = module.mistral.model_ids["mistral-medium-latest"]
+
+  tooling_prompt_id = tama_prompt.person-detail-tooling.id
+  reply_prompt_id   = tama_prompt.person-detail-reply.id
+
+  prompt_assembly_space_id = tama_space.prompt-assembly.id
+
+  movie_db_space_id                       = module.movie-db.space_id
+  movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
+
+  index_definition_relation = module.index-definition-generation.relations.person-index
 }
