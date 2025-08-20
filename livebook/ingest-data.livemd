@@ -1,13 +1,30 @@
 <!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/Users/zacksiri/Development/notebooks/movies.json"},"name":"movies.json","type":"file"}]} -->
 
-# Memovee Ingest Data
+# Ingest Data
 
 ```elixir
 Mix.install([
-  {:req, "~> 0.5.10"},
   {:explorer, "~> 0.10.1"},
-  {:kino, "~> 0.15"}
+  {:kino, "~> 0.15"},
+  {:tama_ex, github: "upmaru/tama-ex"}
 ])
+```
+
+## Setup Client
+
+```elixir
+alias TamaEx.Neural
+alias TamaEx.Perception
+alias TamaEx.Memory
+
+provision = TamaEx.client(base_url: "http://localhost:4000/provision")
+
+ingest = TamaEx.client(base_url: "http://localhost:4000/ingest")
+
+{:ok, movie_db_space} = Neural.get_space(provision, "movie-db")
+
+{:ok, movie_details_class} = 
+  Neural.get_class(provision, movie_db_space, "movie-details")
 ```
 
 ## Load dataset
@@ -38,6 +55,8 @@ stream =
   DataFrame.to_rows_stream(df, atom_keys: true, chunk_size: 500)
 ```
 
+## Push into Tama
+
 ```elixir
 movies =
   stream
@@ -45,15 +64,13 @@ movies =
 
 movies
 |> Enum.map(fn movie ->
-  body = %{
-    entity: %{
-      identifier: "#{movie.id}",
-      record: movie
-    }
+  attrs = %{
+    identifier: "#{movie.id}",
+    record: movie
   }
 
-  Req.post!(url: "http://localhost:4000/ingest/movie-db/movie-details", json: body)
+  Memory.create_entity(ingest, movie_details_class, attrs)
 end)
 ```
 
-<!-- livebook:{"offset":1152,"stamp":{"token":"XCP.WsHiFSyh52JKg20i3D8DAcDQA4yF4TeRSt4zN0Jahs76DVGeNDWbehLnnv11Mdlp2VhyXkdlu4HcDwcoAIwOu7_zu-y2vB-_apUfSA","version":2}} -->
+<!-- livebook:{"offset":1524,"stamp":{"token":"XCP.8EsObTiVRvMdGwZ_8ppzvYswRKeFZVQ0sPB8QoPiMmZIpEiuyv8muKpz9O-muf-vY3pqmTjjIW_-huDZYXohus0WdfZ6kJn-rVgGCA","version":2}} -->
