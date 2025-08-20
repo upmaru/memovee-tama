@@ -18,7 +18,6 @@ alias TamaEx.Perception
 alias TamaEx.Memory
 
 provision = TamaEx.client(base_url: "http://localhost:4000/provision")
-
 ingest = TamaEx.client(base_url: "http://localhost:4000/ingest")
 
 {:ok, movie_db_space} = Neural.get_space(provision, "movie-db")
@@ -73,4 +72,4 @@ movies
 end)
 ```
 
-<!-- livebook:{"offset":1524,"stamp":{"token":"XCP.8EsObTiVRvMdGwZ_8ppzvYswRKeFZVQ0sPB8QoPiMmZIpEiuyv8muKpz9O-muf-vY3pqmTjjIW_-huDZYXohus0WdfZ6kJn-rVgGCA","version":2}} -->
+<!-- livebook:{"offset":1523,"stamp":{"token":"XCP.jnZScUkTgI_vffRPI-QCh7IoCYoBxKZFwJpMY5LBefExxjJ-lQYFQ35M3U0WxtEbBIVabtrEmKlmW3AkxodWn3AaMeI10aMR25tHZg","version":2}} -->
