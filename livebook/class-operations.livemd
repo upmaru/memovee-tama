@@ -6,32 +6,69 @@ Mix.install([
 ])
 ```
 
-## Client Setup
+## Setup
 
-```elixir
-client = TamaEx.client(base_url: "http://localhost:4000/provision")
-```
+These are common class level operations that need to be triggered.
 
-## Movie Details Class
+We initialize the `client` then load the `movie-db` space.
 
 ```elixir
 alias TamaEx.Neural
+alias TamaEx.Perception
+
+client = TamaEx.client(base_url: "http://localhost:4000/provision")
 
 {:ok, movie_db_space} = Neural.get_space(client, "movie-db")
+```
 
+<!-- livebook:{"branch_parent_index":0} -->
+
+## Movie Details Class
+
+Load the `movie-details` class
+
+```elixir
 {:ok, movie_details_class} = 
   Neural.get_class(client, movie_db_space, "movie-details")
 ```
 
-```elixir
-alias TamaEx.Perception
+Load the sample for movie index generation chain.
 
+```elixir
 {:ok, movie_index_chain} = 
   Perception.get_chain(client, movie_db_space, "sample-for-movie-index-generation") 
 ```
 
+Run the chain.
+
 ```elixir
 Neural.create_class_operation(client, movie_details_class, %{
   chain_ids: [movie_index_chain.id]
+})
+```
+
+<!-- livebook:{"branch_parent_index":0} -->
+
+## Person Details Class
+
+Load the `person-details` class.
+
+```elixir
+{:ok, person_details_class} = 
+  Neural.get_class(client, movie_db_space, "person-details")
+```
+
+Load the sample person for indexing chain.
+
+```elixir
+{:ok, person_index_chain} = 
+  Perception.get_chain(client, movie_db_space, "sample-for-person-index-generation") 
+```
+
+Run the chain
+
+```elixir
+Neural.create_class_operation(client, person_details_class, %{
+  chain_ids: [person_index_chain.id]
 })
 ```
