@@ -1,7 +1,7 @@
 resource "tama_prompt" "index-definition-generation" {
   space_id = var.movie_db_space_id
   name     = "Index Definition Generation"
-  role     = "system"
+  role     = "user"
   content  = file("${path.module}/prompt.md")
 }
 
