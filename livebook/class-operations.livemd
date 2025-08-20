@@ -1,0 +1,37 @@
+# Class Operations
+
+```elixir
+Mix.install([
+  {:tama_ex, github: "upmaru/tama-ex"}
+])
+```
+
+## Client Setup
+
+```elixir
+client = TamaEx.client(base_url: "http://localhost:4000/provision")
+```
+
+## Movie Details Class
+
+```elixir
+alias TamaEx.Neural
+
+{:ok, movie_db_space} = Neural.get_space(client, "movie-db")
+
+{:ok, movie_details_class} = 
+  Neural.get_class(client, movie_db_space, "movie-details")
+```
+
+```elixir
+alias TamaEx.Perception
+
+{:ok, movie_index_chain} = 
+  Perception.get_chain(client, movie_db_space, "sample-for-movie-index-generation") 
+```
+
+```elixir
+Neural.create_class_operation(client, movie_details_class, %{
+  chain_ids: [movie_index_chain.id]
+})
+```
