@@ -1,4 +1,4 @@
-Make a best estimate based on the description below on the type of setting the movie is likely to take place, whether it takes place in
+Make a best estimate based on the description below on the type of setting the movie is likely to take place, whether it takes place in.
  - space
  - school
  - university
@@ -27,6 +27,6 @@ What are some themes you think the movie takes place in?
  - utopian
  - religious
 
----
-
-{{ corpus }}
+<description>
+  {{ corpus }}
+</description>

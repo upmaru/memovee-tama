@@ -125,6 +125,21 @@ module "arrakis" {
       })
     },
     {
+      identifier = "gpt-oss"
+      path       = "/v1/chat/completions"
+      parameters = jsonencode({
+        temperature      = 0.7
+        reasoning_effort = "medium"
+      })
+    },
+    {
+      identifier = "qwen-3-14b"
+      path       = "/v1/chat/completions"
+      parameters = jsonencode({
+        temperature = 0.7
+      })
+    },
+    {
       identifier = "intfloat/multilingual-e5-large-instruct"
       path       = "/embeddings"
     },
