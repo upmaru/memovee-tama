@@ -1,7 +1,7 @@
 variable "mistral_api_key" {}
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.38"
+  version = "0.2.39"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -25,7 +25,7 @@ module "mistral" {
 variable "xai_api_key" {}
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.38"
+  version = "0.2.39"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key
@@ -52,9 +52,62 @@ module "xai" {
   ]
 }
 
+variable "openai_api_key" {}
+module "openai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.2.39"
+
+  space_id = module.global.space.id
+  api_key  = var.openai_api_key
+  endpoint = "https://api.openai.com/v1"
+  name     = "openai"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "gpt-5-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "high"
+      })
+    },
+    {
+      identifier = "gpt-5-nano"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    }
+  ]
+}
+
+variable "azure_api_key" {}
+module "azure" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.2.39"
+
+  space_id = module.global.space.id
+  api_key  = var.azure_api_key
+  endpoint = "https://tama-dev-resource.openai.azure.com/openai/deployments"
+  name     = "azure-ai-foundry"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "gpt-5-mini"
+      path       = "/gpt-5-mini/chat/completions?api-version=2025-01-01-preview"
+      parameters = jsonencode({
+        reasoning_effort = "high"
+      })
+    }
+  ]
+}
+
 module "arrakis" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.38"
+  version = "0.2.39"
 
   space_id = module.global.space.id
   api_key  = "dummy"

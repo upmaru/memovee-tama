@@ -2,7 +2,7 @@ variable "elasticsearch_endpoint" {}
 variable "elasticsearch_management_api_key" {}
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
-  version = "0.2.38"
+  version = "0.2.39"
 
   depends_on = [
     module.global
@@ -14,5 +14,6 @@ module "elasticsearch" {
   endpoint = var.elasticsearch_endpoint
   api_key  = var.elasticsearch_management_api_key
 
-  index_mapping_generation_model_id = module.xai.model_ids["grok-3-mini"]
+  index_mapping_generation_model_id    = module.openai.model_ids["gpt-5-mini"]
+  index_mapping_generation_temperature = 1.0
 }

@@ -12,6 +12,7 @@
       "description": "The property definition, and their types",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "property": {
             "type": "string"

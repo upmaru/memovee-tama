@@ -71,7 +71,7 @@ resource "tama_thought_processor" "index-definition-generator" {
   model_id   = var.model_id
 
   completion_config {
-    temperature = 0.0
+    temperature = 1.0
   }
 }
 
