@@ -152,7 +152,7 @@ module "arrakis" {
 
 resource "tama_space_processor" "default-completion" {
   space_id = module.global.space.id
-  model_id = module.arrakis.model_ids.qwen-3-30b-a3b
+  model_id = module.arrakis.model_ids.qwen-3-14b
 
   completion_config {
     temperature = 0.7
