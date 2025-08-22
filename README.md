@@ -31,8 +31,18 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 - Configuration for handling reply generation with specific models and contexts
 
 ### Models
-- Mistral module with `mistral-medium-latest` and `mistral-small-latest` models
-- X.ai module with `grok-3-mini` and `grok-3-mini-fast` models
+
+| Function | Model name |
+| --- | --- |
+| Router - Message Routing | gpt-5-nano |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini |
+| Movie DB - Generate Description | gpt-5-nano |
+| Movie DB - Generate Setting | gpt-5-nano |
+| Media Browsing - Tool Call | mistral-medium-latest |
+| Media Detail - Tool Call | mistral-medium-latest |
+| Person Browsing - Tool Call | mistral-medium-latest |
+| Person Detail - Tool Call | mistral-medium-latest |
+| Memovee - Reply Generation | mistral-small-latest |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities
