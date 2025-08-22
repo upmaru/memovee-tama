@@ -37,7 +37,7 @@ OpenAI
 | Function | Model | Reasoning effort | Service tier |
 | --- | --- | --- | --- |
 | Router - Message Routing | gpt-5-nano | 🪶 | ⚪ |
-| Elasticsearch - Index Mapping Generation | gpt-5-mini |  | ⚪ |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini | 🔴 | ⚪ |
 | Movie DB - Generate Description | gpt-5-nano | 🟢 | 🤸 |
 | Movie DB - Generate Setting | gpt-5-nano | 🟢 | 🤸 |
 
