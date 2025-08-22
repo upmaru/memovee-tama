@@ -34,16 +34,16 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 
 OpenAI
 
-| Function | Model name | Reasoning effort | Service tier |
+| Function | Model | Reasoning effort | Service tier |
 | --- | --- | --- | --- |
-| Router - Message Routing | gpt-5-nano | minimal |  |
-| Elasticsearch - Index Mapping Generation | gpt-5-mini |  |  |
-| Movie DB - Generate Description | gpt-5-nano | low | flex |
-| Movie DB - Generate Setting | gpt-5-nano | low | flex |
+| Router - Message Routing | gpt-5-nano | 🪶 | ⚪ |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini |  | ⚪ |
+| Movie DB - Generate Description | gpt-5-nano | 🟢 | 🤸 |
+| Movie DB - Generate Setting | gpt-5-nano | 🟢 | 🤸 |
 
 Mistral
 
-| Function | Model name |
+| Function | Model |
 | --- | --- |
 | Media Browsing - Tool Call | mistral-medium-latest |
 | Media Detail - Tool Call | mistral-medium-latest |
