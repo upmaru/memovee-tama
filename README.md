@@ -36,10 +36,10 @@ OpenAI
 
 | Function | Model | Reasoning effort | Service tier |
 | --- | --- | --- | --- |
-| Router - Message Routing | gpt-5-nano | 🪶 | ⚪ |
-| Elasticsearch - Index Mapping Generation | gpt-5-mini | 🔴 | ⚪ |
-| Movie DB - Generate Description | gpt-5-nano | 🟢 | 🤸 |
-| Movie DB - Generate Setting | gpt-5-nano | 🟢 | 🤸 |
+| Router - Message Routing | gpt-5-nano | `minimal` | `default` |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini | `high` | `default` |
+| Movie DB - Generate Description | gpt-5-nano | `low` | `flex` |
+| Movie DB - Generate Setting | gpt-5-nano | `low` | `flex` |
 
 Mistral
 
