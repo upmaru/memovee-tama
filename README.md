@@ -34,7 +34,7 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 
 OpenAI
 
-| Function | Model name | reasoning_effort | service_tier |
+| Function | Model name | Reasoning effort | Service tier |
 | --- | --- | --- | --- |
 | Router - Message Routing | gpt-5-nano | minimal |  |
 | Elasticsearch - Index Mapping Generation | gpt-5-mini |  |  |
