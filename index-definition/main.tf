@@ -68,10 +68,11 @@ resource "tama_thought_path" "person-details-definition" {
 
 resource "tama_thought_processor" "index-definition-generator" {
   thought_id = tama_modular_thought.this.id
-  model_id   = var.model_id
+  model_id   = var.index_definition_generation_model_id
 
   completion {
-    temperature = 1.0
+    temperature = var.index_definition_generation_model_temperature
+    parameters  = var.index_definition_generation_model_parameters
   }
 }
 

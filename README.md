@@ -38,6 +38,7 @@ OpenAI
 | --- | --- | --- | --- |
 | Router - Message Routing | gpt-5-nano | `minimal` | `default` |
 | Elasticsearch - Index Mapping Generation | gpt-5-mini | `high` | `default` |
+| Movie DB - Index Definition Generation | gpt-5-mini | `high` | `default` |
 | Movie DB - Generate Description | gpt-5-nano | `low` | `flex` |
 | Movie DB - Generate Setting | gpt-5-nano | `low` | `flex` |
 
