@@ -1,6 +1,6 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.3.0"
+  version = "0.3.1"
 
   root_messaging_space_id    = module.memovee.space.id
   network_message_thought_id = module.memovee.network_message_thought_id
@@ -12,6 +12,11 @@ module "router" {
   routable_class_ids = [
     module.memovee.schemas["user-message"].id
   ]
+
+  routing_model_id = module.openai.model_ids.gpt-5-nano
+  routing_model_parameters = jsonencode({
+    reasoning_effort = "minimal"
+  })
 }
 
 resource "tama_thought_path" "route-to-off-topic" {

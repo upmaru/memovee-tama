@@ -36,13 +36,9 @@ variable "elasticsearch_query_schema" {
 variable "generate_description_model_id" {
   type        = string
   description = "The model to use for generating movie descriptions"
-  default     = null
-  nullable    = true
 }
 
 variable "generate_setting_model_id" {
   type        = string
   description = "The model to use for generating movie settings"
-  default     = null
-  nullable    = true
 }

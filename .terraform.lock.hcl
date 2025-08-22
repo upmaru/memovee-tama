@@ -22,7 +22,7 @@ provider "registry.terraform.io/hashicorp/http" {
 
 provider "registry.terraform.io/upmaru/tama" {
   version     = "0.3.0"
-  constraints = "~> 0.2"
+  constraints = "~> 0.2, ~> 0.3"
   hashes = [
     "h1:XpzdqwoL+HP2ORodnjJcgoPfG1kc3GCCr4VSO7WeyMc=",
     "zh:0403c0ea3815988ab1a48cffec20cc82d46cf64c6675f4a6c81c254770799694",
