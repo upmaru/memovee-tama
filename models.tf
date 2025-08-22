@@ -1,7 +1,7 @@
 variable "mistral_api_key" {}
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.39"
+  version = "0.3.0"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -25,7 +25,7 @@ module "mistral" {
 variable "xai_api_key" {}
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.39"
+  version = "0.3.0"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key
@@ -55,7 +55,7 @@ module "xai" {
 variable "openai_api_key" {}
 module "openai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.39"
+  version = "0.3.0"
 
   space_id = module.global.space.id
   api_key  = var.openai_api_key
@@ -85,7 +85,7 @@ module "openai" {
 variable "azure_api_key" {}
 module "azure" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.39"
+  version = "0.3.0"
 
   space_id = module.global.space.id
   api_key  = var.azure_api_key
@@ -107,7 +107,7 @@ module "azure" {
 
 module "arrakis" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.2.39"
+  version = "0.3.0"
 
   space_id = module.global.space.id
   api_key  = "dummy"
@@ -154,7 +154,7 @@ resource "tama_space_processor" "default-completion" {
   space_id = module.global.space.id
   model_id = module.arrakis.model_ids.qwen-3-14b
 
-  completion_config {
+  completion {
     temperature = 0.7
   }
 }
@@ -163,7 +163,7 @@ resource "tama_space_processor" "default-embedding" {
   space_id = module.global.space.id
   model_id = module.arrakis.model_ids["intfloat/multilingual-e5-large-instruct"]
 
-  embedding_config {
+  embedding {
     max_tokens = 512
     templates = [{
       type    = "query"
@@ -179,7 +179,7 @@ resource "tama_space_processor" "default-reranking" {
   space_id = module.global.space.id
   model_id = module.arrakis.model_ids["mixedbread-ai/mxbai-rerank-large-v1"]
 
-  reranking_config {
+  reranking {
     top_n = 3
   }
 }
