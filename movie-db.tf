@@ -14,8 +14,17 @@ module "movie-db" {
   elasticsearch_specification_id = module.elasticsearch.specification_id
   elasticsearch_query_schema     = module.elasticsearch.query_schema
 
-  generate_description_model_id = module.openai.model_ids["gpt-5-nano"]
-  generate_setting_model_id     = module.openai.model_ids["gpt-5-nano"]
+  generate_description_model_id = module.openai.model_ids.gpt-5-nano
+  generate_description_model_parameters = jsonencode({
+    reasoning_effort = "low"
+    service_tier     = "flex"
+  })
+
+  generate_setting_model_id = module.openai.model_ids.gpt-5-nano
+  generate_setting_model_parameters = jsonencode({
+    reasoning_effort = "low"
+    service_tier     = "flex"
+  })
 }
 
 module "index-mapping-generation" {

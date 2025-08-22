@@ -296,10 +296,8 @@ resource "tama_thought_processor" "generate-description" {
   model_id   = var.generate_description_model_id
 
   completion {
-    temperature = 1.0
-    parameters = jsonencode({
-      reasoning_effort = "low"
-    })
+    temperature = var.generate_description_model_temperature
+    parameters  = var.generate_description_model_parameters
   }
 }
 
@@ -337,10 +335,8 @@ resource "tama_thought_processor" "generate-setting" {
   model_id   = var.generate_setting_model_id
 
   completion {
-    temperature = 1.0
-    parameters = jsonencode({
-      reasoning_effort = "low"
-    })
+    temperature = var.generate_setting_model_temperature
+    parameters  = var.generate_setting_model_parameters
   }
 }
 

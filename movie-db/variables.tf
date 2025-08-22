@@ -38,7 +38,29 @@ variable "generate_description_model_id" {
   description = "The model to use for generating movie descriptions"
 }
 
+variable "generate_description_model_parameters" {
+  type        = string
+  description = "The parameters to use for generating movie descriptions"
+}
+
+variable "generate_description_model_temperature" {
+  type        = number
+  description = "The temperature to use for generating movie descriptions"
+  default     = 1.0
+}
+
 variable "generate_setting_model_id" {
   type        = string
   description = "The model to use for generating movie settings"
+}
+
+variable "generate_setting_model_parameters" {
+  type        = string
+  description = "The parameters to use for generating movie settings"
+}
+
+variable "generate_setting_model_temperature" {
+  type        = number
+  description = "The temperature to use for generating movie settings"
+  default     = 1.0
 }
