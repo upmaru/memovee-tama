@@ -32,17 +32,24 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 
 ### Models
 
-| Function | Model name | Model parameters |
-| --- | --- | --- |
-| Router - Message Routing | gpt-5-nano | {"reasoning_effort":"minimal"} |
-| Elasticsearch - Index Mapping Generation | gpt-5-mini | {} |
-| Movie DB - Generate Description | gpt-5-nano | {"reasoning_effort":"low","service_tier":"flex"} |
-| Movie DB - Generate Setting | gpt-5-nano | {"reasoning_effort":"low","service_tier":"flex"} |
-| Media Browsing - Tool Call | mistral-medium-latest | {} |
-| Media Detail - Tool Call | mistral-medium-latest | {} |
-| Person Browsing - Tool Call | mistral-medium-latest | {} |
-| Person Detail - Tool Call | mistral-medium-latest | {} |
-| Memovee - Reply Generation | mistral-small-latest | {} |
+OpenAI
+
+| Function | Model name | reasoning_effort | service_tier |
+| --- | --- | --- | --- |
+| Router - Message Routing | gpt-5-nano | minimal |  |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini |  |  |
+| Movie DB - Generate Description | gpt-5-nano | low | flex |
+| Movie DB - Generate Setting | gpt-5-nano | low | flex |
+
+Mistral
+
+| Function | Model name |
+| --- | --- |
+| Media Browsing - Tool Call | mistral-medium-latest |
+| Media Detail - Tool Call | mistral-medium-latest |
+| Person Browsing - Tool Call | mistral-medium-latest |
+| Person Detail - Tool Call | mistral-medium-latest |
+| Memovee - Reply Generation | mistral-small-latest |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities
