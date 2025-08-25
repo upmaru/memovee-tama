@@ -32,25 +32,20 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 
 ### Models
 
-OpenAI
+All models referenced via *_model_id, *_model_parameters, and tama_thought_processor resources:
 
-| Function | Model | Reasoning effort | Service tier |
-| --- | --- | --- | --- |
-| Router - Message Routing | gpt-5-nano | `minimal` | `default` |
-| Elasticsearch - Index Mapping Generation | gpt-5-mini | `high` | `default` |
-| Movie DB - Index Definition Generation | gpt-5-mini | `high` | `default` |
-| Movie DB - Generate Description | gpt-5-nano | `low` | `flex` |
-| Movie DB - Generate Setting | gpt-5-nano | `low` | `flex` |
-
-Mistral
-
-| Function | Model |
-| --- | --- |
-| Media Browsing - Tool Call | mistral-medium-latest |
-| Media Detail - Tool Call | mistral-medium-latest |
-| Person Browsing - Tool Call | mistral-medium-latest |
-| Person Detail - Tool Call | mistral-medium-latest |
-| Memovee - Reply Generation | mistral-small-latest |
+| Function | Model | Temperature | Reasoning effort | Service tier |
+| --- | --- | --- | --- | --- |
+| Memovee - Reply Generation | gpt-5-nano | 1.0 | minimal |  |
+| Router - Message Routing | gpt-5-mini |  | minimal |  |
+| Elasticsearch - Index Mapping Generation | gpt-5-mini | 1.0 | high |  |
+| Index Definition Generation | gpt-5-mini | 1.0 | high |  |
+| Movie DB - Generate Description | gpt-5-nano | 1.0 | low | flex |
+| Movie DB - Generate Setting | gpt-5-nano | 1.0 | low | flex |
+| Media Browsing - Tool Call | gpt-5-mini | 1.0 | low |  |
+| Media Detail - Tool Call | gpt-5-mini | 1.0 | low |  |
+| Person Browsing - Tool Call | gpt-5-mini | 1.0 | low |  |
+| Person Detail - Tool Call | gpt-5-mini | 1.0 | low |  |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities

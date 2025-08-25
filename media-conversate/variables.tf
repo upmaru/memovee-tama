@@ -33,6 +33,17 @@ variable "tool_call_model_id" {
   description = "The ID of the model for the tool call."
 }
 
+variable "tool_call_model_temperature" {
+  type        = number
+  description = "The temperature parameter of the tool call model"
+  default     = 0.0
+}
+
+variable "tool_call_model_parameters" {
+  type        = string
+  description = "The parameters of the tool call model"
+}
+
 variable "index_definition_relation" {
   type        = string
   description = "The relation of the index definition to the movie database."

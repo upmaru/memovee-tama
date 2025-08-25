@@ -58,7 +58,6 @@ resource "tama_modular_thought" "reply-generation" {
 
 locals {
   assistant_response_class_id = module.global.schemas["assistant-response"].id
-  reply_model_id              = module.mistral.model_ids["mistral-small-latest"]
   response_class_id           = module.memovee.schemas["response"].id
 
   context_metadata_input = {
@@ -69,10 +68,13 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = local.reply_model_id
+  model_id   = module.openai.model_ids.gpt-5-mini
 
   completion {
-    temperature = 0.0
+    temperature = 1.0
+    parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
   }
 }
 

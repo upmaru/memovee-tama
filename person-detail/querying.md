@@ -82,8 +82,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               "nested": {
                 "path": "person-combined-credits.cast",
                 "query": {
-                  "match": {
-                    "person-combined-credits.cast.media_type": "movie"
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["movie"]
                   }
                 },
                 "inner_hits": {
@@ -134,8 +134,224 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               "nested": {
                 "path": "person-combined-credits.cast",
                 "query": {
-                  "match": {
-                    "person-combined-credits.cast.media_type": "movie"
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["movie"]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.cast.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": [
+                    "person-combined-credits.cast.id",
+                    "person-combined-credits.cast.title",
+                    "person-combined-credits.cast.character",
+                    "person-combined-credits.cast.release_date",
+                    "person-combined-credits.cast.vote_average",
+                    "person-combined-credits.cast.media_type",
+                    "person-combined-credits.cast.poster_path"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "limit": 1,
+      "_source": [
+        "id",
+        "name"
+      ],
+    }
+  }
+  ```
+
+#### Single Item query about other tv shows a given person has been in
+**User Query**: "Which other tv show has Dwayne Johnson been in" or "Which other tv show has person with ID 12345 been in"
+- When the ID is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": { "id": 12345 }
+            }
+          ],
+          "must": [
+            {
+              "nested": {
+                "path": "person-combined-credits.cast",
+                "query": {
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["tv"]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.cast.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": [
+                    "person-combined-credits.cast.id",
+                    "person-combined-credits.cast.title",
+                    "person-combined-credits.cast.character",
+                    "person-combined-credits.cast.release_date",
+                    "person-combined-credits.cast.vote_average",
+                    "person-combined-credits.cast.media_type",
+                    "person-combined-credits.cast.poster_path"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "_source": [
+        "id",
+        "name"
+      ]
+    }
+  }
+  ```
+- When only the person's name is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "name": "Dwayne Johnson"
+              }
+            },
+            {
+              "nested": {
+                "path": "person-combined-credits.cast",
+                "query": {
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["tv"]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.cast.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": [
+                    "person-combined-credits.cast.id",
+                    "person-combined-credits.cast.title",
+                    "person-combined-credits.cast.character",
+                    "person-combined-credits.cast.release_date",
+                    "person-combined-credits.cast.vote_average",
+                    "person-combined-credits.cast.media_type",
+                    "person-combined-credits.cast.poster_path"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "limit": 1,
+      "_source": [
+        "id",
+        "name"
+      ],
+    }
+  }
+  ```
+
+#### Single Item query about other movie and tv shows a given person has been in
+**User Query**: "Which other tv show or movies has Dwayne Johnson been in" or "Which other tv show or movies has person with ID 12345 been in"
+- When the ID is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": { "id": 12345 }
+            }
+          ],
+          "must": [
+            {
+              "nested": {
+                "path": "person-combined-credits.cast",
+                "query": {
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["tv", "movie"]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.cast.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": [
+                    "person-combined-credits.cast.id",
+                    "person-combined-credits.cast.title",
+                    "person-combined-credits.cast.character",
+                    "person-combined-credits.cast.release_date",
+                    "person-combined-credits.cast.vote_average",
+                    "person-combined-credits.cast.media_type",
+                    "person-combined-credits.cast.poster_path"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "_source": [
+        "id",
+        "name"
+      ]
+    }
+  }
+  ```
+- When only the person's name is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "name": "Dwayne Johnson"
+              }
+            },
+            {
+              "nested": {
+                "path": "person-combined-credits.cast",
+                "query": {
+                  "terms": {
+                    "person-combined-credits.cast.media_type": ["tv", "movie"]
                   }
                 },
                 "inner_hits": {

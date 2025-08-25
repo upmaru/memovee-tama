@@ -39,7 +39,8 @@ resource "tama_thought_processor" "tool-calling-model" {
   model_id   = var.tool_call_model_id
 
   completion {
-    temperature = 0.0
+    temperature = var.tool_call_model_temperature
+    parameters  = var.tool_call_model_parameters
   }
 }
 
