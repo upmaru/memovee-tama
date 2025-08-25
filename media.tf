@@ -31,11 +31,9 @@ module "media-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-browsing"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
-  })
+  tool_call_model_id          = module.mistral.model_ids.mistral-medium-latest
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.media-browsing-tooling.id
   reply_prompt_id   = tama_prompt.media-browsing-reply.id
@@ -74,11 +72,9 @@ module "media-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
-  })
+  tool_call_model_id          = module.mistral.model_ids.mistral-medium-latest
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.media-detail-tooling.id
   reply_prompt_id   = tama_prompt.media-detail-reply.id
@@ -117,11 +113,9 @@ module "person-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-browsing"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
-  })
+  tool_call_model_id          = module.mistral.model_ids.mistral-medium-latest
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.person-browse-tooling.id
   reply_prompt_id   = tama_prompt.person-browse-reply.id
@@ -160,11 +154,9 @@ module "person-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
-  })
+  tool_call_model_id          = module.mistral.model_ids.mistral-medium-latest
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.person-detail-tooling.id
   reply_prompt_id   = tama_prompt.person-detail-reply.id
