@@ -13,9 +13,11 @@ module "router" {
     module.memovee.schemas["user-message"].id
   ]
 
-  routing_model_id          = module.mistral.model_ids.mistral-small-latest
-  routing_model_temperature = 0.0
-  routing_model_parameters  = jsonencode({})
+  routing_model_id          = module.openai.model_ids.gpt-5-nano
+  routing_model_temperature = 1.0
+  routing_model_parameters = jsonencode({
+    reasoning_effort = "low"
+  })
 }
 
 resource "tama_thought_path" "route-to-off-topic" {

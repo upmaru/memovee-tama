@@ -93,15 +93,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -145,15 +145,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -201,15 +201,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -253,15 +253,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -278,7 +278,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```
 
 #### Single Item query about other movie and tv shows a given person has been in
-**User Query**: "Which other tv show or movies has Dwayne Johnson been in" or "Which other tv show or movies has person with ID 12345 been in"
+**User Query**: "Which other tv show or movies has Dwayne Johnson been in" or "Which other tv show or movies has person with ID 12345 been in" or "What other works has person with ID 12345 been in" or "What other works has Dwayne Johnson been in"
 - When the ID is available in context:
   ```json
   {
@@ -309,15 +309,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -361,15 +361,15 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                       "order": "desc"
                     }
                   },
-                  "_source": [
-                    "person-combined-credits.cast.id",
-                    "person-combined-credits.cast.title",
-                    "person-combined-credits.cast.character",
-                    "person-combined-credits.cast.release_date",
-                    "person-combined-credits.cast.vote_average",
-                    "person-combined-credits.cast.media_type",
-                    "person-combined-credits.cast.poster_path"
-                  ]
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
                 }
               }
             }
@@ -607,6 +607,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 - **Query Efficiency**: Ensure the query retrieves only the requested data to optimize performance.
 - **Name-to-ID Mapping**: If the user provides a person name (e.g., "Dwayne Johnson"), assume the corresponding ID (e.g., 12345) is provided or retrieved from the index.
 - **Required Fields**: Always include `id`, `name`, and `profile_path` in the `_source` unless the user’s intent excludes them.
+- **Mimic Examples**: When constructing the Elasticsearch query, always strictly follow the structure, nesting, and field selection shown in the provided example JSON queries above. Where differences in the request occur, adapt only what is necessary to match the user's request while keeping the structure, field usage, and organization of the examples as your template.
 
 ---
 

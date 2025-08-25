@@ -1,10 +1,9 @@
-User mention specific cast or crew member by their Name or ID  and want to know more about them.
+Queries that mention a specific cast or crew member by their name or ID and ask for detailed information about that person (e.g., biography, filmography, awards, birth date, etc.).
 
   **Examples:**
-  - "Who is Sigourney Weaver?"
-  - "What are some movies Sigourney Weaver has been in?"
+    - "Who is Sigourney Weaver?"
+    - "What are some movies Sigourney Weaver has been in?"
+    - "Tell me about Keanu Reeves."
+    - "What awards has Saoirse Ronan won?"
 
-  **Routing Logic:** Route to `media-detail` when the query explicitly mentions a movie title or TV show title or when a media ID is available in the context and the query seeks specific details about that media.
-    **Examples:**
-    - "Who played role X in movie Y"
-    - "Who voiced X in Y"
+  **Routing Logic:** Route to `person-detail` when the query explicitly references a person (by name or ID) and seeks specific or general information about that person, such as their biography, filmography, or achievements.
