@@ -36,16 +36,16 @@ All models referenced via *_model_id, *_model_parameters, and tama_thought_proce
 
 | Function | Model | Temperature | Reasoning effort | Service tier |
 | --- | --- | --- | --- | --- |
-| Memovee - Reply Generation | gpt-5-nano | 1.0 | minimal |  |
-| Router - Message Routing | gpt-5-mini |  | minimal |  |
+| Memovee - Reply Generation | gpt-5-mini | 1.0 | low |  |
+| Router - Message Routing | gpt-5-mini | 1.0 | minimal |  |
 | Elasticsearch - Index Mapping Generation | gpt-5-mini | 1.0 | high |  |
 | Index Definition Generation | gpt-5-mini | 1.0 | high |  |
 | Movie DB - Generate Description | gpt-5-nano | 1.0 | low | flex |
 | Movie DB - Generate Setting | gpt-5-nano | 1.0 | low | flex |
-| Media Browsing - Tool Call | gpt-5-mini | 1.0 | low |  |
-| Media Detail - Tool Call | gpt-5-mini | 1.0 | low |  |
-| Person Browsing - Tool Call | gpt-5-mini | 1.0 | low |  |
-| Person Detail - Tool Call | gpt-5-mini | 1.0 | low |  |
+| Media Browsing - Tool Call | gpt-5 | 1.0 | low |  |
+| Media Detail - Tool Call | gpt-5 | 1.0 | low |  |
+| Person Browsing - Tool Call | gpt-5 | 1.0 | low |  |
+| Person Detail - Tool Call | gpt-5 | 1.0 | low |  |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities

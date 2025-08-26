@@ -59,17 +59,18 @@ stream =
 ```elixir
 movies =
   stream
-  |> Enum.take(5)
+  |> Enum.take(20)
 
 movies
 |> Enum.map(fn movie ->
   attrs = %{
     identifier: "#{movie.id}",
-    record: movie
+    record: movie,
+    validate_record: false
   }
 
   Memory.create_entity(ingest, movie_details_class, attrs)
 end)
 ```
 
-<!-- livebook:{"offset":1523,"stamp":{"token":"XCP.jnZScUkTgI_vffRPI-QCh7IoCYoBxKZFwJpMY5LBefExxjJ-lQYFQ35M3U0WxtEbBIVabtrEmKlmW3AkxodWn3AaMeI10aMR25tHZg","version":2}} -->
+<!-- livebook:{"offset":1552,"stamp":{"token":"XCP.-Ot0Ipwbmeaw1KMyyA29kyCwxBidCckn7kr_GWVAzg73lmdBeD2_pm9iHiP1A8kA2wkfrgH6IiH_FFvIq5Uy9zg3zCFatFaalyrWFw","version":2}} -->

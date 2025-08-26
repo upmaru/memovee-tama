@@ -35,6 +35,24 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    Previous messages included results about a specific movie.
+  </condition>
+  <user-query>
+    - Who played [character name]?
+    - Who played [character name] in the movie?
+  </user-query>
+  <routing>
+    media-detail
+  </routing>
+  <reasoning>
+    - "Who played [character name]" The user is trying to find out who played a given character or role in the movie in context, so the correct class is "media-detail".
+
+    - "the movie" refers to the specific movie from context. The query seeks a specific fact about that movie, so the correct class is "media-detail".
+  </reasoning>
+</case>
+
 
 <classes>
   {{ classes }}

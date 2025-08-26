@@ -159,10 +159,13 @@ module "arrakis" {
 
 resource "tama_space_processor" "default-completion" {
   space_id = module.global.space.id
-  model_id = module.arrakis.model_ids.qwen-3-14b
+  model_id = module.openai.model_ids.gpt-5-nano
 
   completion {
-    temperature = 0.7
+    temperature = 1.0
+    parameters = jsonencode({
+      reasoning_effort = "low"
+    })
   }
 }
 
