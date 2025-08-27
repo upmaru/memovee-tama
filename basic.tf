@@ -27,9 +27,28 @@ resource "tama_class" "curse" {
   schema_json = jsonencode(jsondecode(file("basic/curse.json")))
 }
 
+resource "tama_class" "manipulation" {
+  space_id   = tama_space.basic-conversation.id
+  depends_on = [module.global]
+  schema {
+    type  = "object"
+    title = "manipulation"
+
+    description = file("basic/manipulation.md")
+
+    properties = jsonencode({
+      origin_entity_id = {
+        type        = "string"
+        description = "The ID of the origin entity"
+      }
+    })
+    required = ["origin_entity_id"]
+  }
+}
+
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.2"
+  version = "0.3.3"
 
   depends_on = [module.global.schemas]
 
@@ -75,7 +94,7 @@ resource "tama_prompt" "check-profile-reply" {
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.2"
+  version = "0.3.3"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -153,7 +172,7 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.2"
+  version = "0.3.3"
 
   chain_id = tama_chain.upsert-profile.id
 
@@ -206,6 +225,143 @@ resource "tama_node" "handle-upsert-profile" {
   space_id = tama_space.basic-conversation.id
   class_id = tama_class.introductory.id
   chain_id = tama_chain.upsert-profile.id
+
+  type = "reactive"
+}
+
+resource "tama_space_bridge" "basic-conversation-memovee" {
+  space_id        = tama_space.basic-conversation.id
+  target_space_id = module.memovee.space.id
+}
+
+resource "tama_chain" "curse" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Handle Cursing"
+}
+
+resource "tama_modular_thought" "forward-curse" {
+  depends_on = [module.global.schemas]
+
+  chain_id = tama_chain.curse.id
+  relation = "forward"
+  index    = 0
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_prompt" "curse-reply" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Curse Reply"
+  role     = "system"
+  content  = file("basic/curse/reply.md")
+}
+
+resource "tama_thought_context" "curse-reply" {
+  thought_id = tama_modular_thought.forward-curse.id
+  prompt_id  = tama_prompt.curse-reply.id
+}
+
+resource "tama_thought_path" "forward-curse-reply" {
+  depends_on = [tama_space_bridge.basic-conversation-memovee]
+
+  thought_id      = tama_modular_thought.forward-curse.id
+  target_class_id = local.response_class_id
+}
+
+resource "tama_node" "handle-curse" {
+  space_id = tama_space.basic-conversation.id
+  class_id = tama_class.curse.id
+  chain_id = tama_chain.curse.id
+
+  type = "reactive"
+}
+
+resource "tama_chain" "off-topic" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Handle Off Topic Messages"
+}
+
+resource "tama_modular_thought" "forward-off-topic" {
+  depends_on = [module.global.schemas]
+
+  chain_id = tama_chain.off-topic.id
+  relation = "forward"
+  index    = 0
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_prompt" "off-topic-reply" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Off Topic Reply"
+  role     = "system"
+  content  = file("basic/off-topic/reply.md")
+}
+
+resource "tama_thought_context" "off-topic-reply" {
+  thought_id = tama_modular_thought.forward-off-topic.id
+  prompt_id  = tama_prompt.off-topic-reply.id
+}
+
+resource "tama_thought_path" "forward-off-topic-reply" {
+  depends_on = [tama_space_bridge.basic-conversation-memovee]
+
+  thought_id      = tama_modular_thought.forward-off-topic.id
+  target_class_id = local.response_class_id
+}
+
+resource "tama_node" "handle-off-topic" {
+  space_id = tama_space.basic-conversation.id
+  class_id = tama_class.off-topic.id
+  chain_id = tama_chain.off-topic.id
+
+  type = "reactive"
+}
+
+resource "tama_chain" "manipulation" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Handle Manipulation"
+}
+
+resource "tama_modular_thought" "forward-manipulation" {
+  depends_on = [module.global.schemas]
+
+  chain_id = tama_chain.manipulation.id
+  relation = "forward"
+  index    = 0
+
+  module {
+    reference = "tama/concepts/forward"
+  }
+}
+
+resource "tama_prompt" "manipulation-reply" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Manipulation Reply"
+  role     = "system"
+  content  = file("basic/manipulation/reply.md")
+}
+
+resource "tama_thought_context" "manipulation-reply" {
+  thought_id = tama_modular_thought.forward-manipulation.id
+  prompt_id  = tama_prompt.manipulation-reply.id
+}
+
+resource "tama_thought_path" "forward-manipulation-reply" {
+  depends_on = [tama_space_bridge.basic-conversation-memovee]
+
+  thought_id      = tama_modular_thought.forward-manipulation.id
+  target_class_id = local.response_class_id
+}
+
+resource "tama_node" "handle-manipulation" {
+  space_id = tama_space.basic-conversation.id
+  class_id = tama_class.manipulation.id
+  chain_id = tama_chain.manipulation.id
 
   type = "reactive"
 }

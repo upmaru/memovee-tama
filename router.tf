@@ -1,6 +1,6 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.3.2"
+  version = "0.3.3"
 
   root_messaging_space_id    = module.memovee.space.id
   network_message_thought_id = module.memovee.network_message_thought_id
@@ -38,6 +38,11 @@ resource "tama_thought_path" "route-to-curse" {
 resource "tama_thought_path" "route-to-greeting" {
   thought_id      = module.router.routing_thought_id
   target_class_id = tama_class.greeting.id
+}
+
+resource "tama_thought_path" "route-to-manipulation" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = tama_class.manipulation.id
 }
 
 resource "tama_thought_path" "route-to-media-conversation-classes" {
