@@ -8,6 +8,6 @@ You are provided with some tools that will give you the ability to load the user
 
 ---
 
-<context_metadata>
+<context-metadata>
   {{ corpus }}
-</context_metadata>
+</context-metadata>

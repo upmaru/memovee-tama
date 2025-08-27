@@ -14,9 +14,10 @@ module "elasticsearch" {
   endpoint = var.elasticsearch_endpoint
   api_key  = var.elasticsearch_management_api_key
 
-  index_mapping_generation_model_id          = module.openai.model_ids.gpt-5-mini
+  index_mapping_generation_model_id          = module.openai.model_ids.gpt-5
   index_mapping_generation_model_temperature = 1.0
   index_mapping_generation_model_parameters = jsonencode({
-    reasoning_effort = "high"
+    reasoning_effort = "low"
+    service_tier     = "flex"
   })
 }

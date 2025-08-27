@@ -45,9 +45,10 @@ module "index-definition-generation" {
   tmdb_specification_id  = module.movie-db.tmdb_specification_id
   elasticsearch_space_id = module.elasticsearch.space_id
 
-  index_definition_generation_model_id          = module.openai.model_ids.gpt-5-mini
+  index_definition_generation_model_id          = module.openai.model_ids.gpt-5
   index_definition_generation_model_temperature = 1.0
   index_definition_generation_model_parameters = jsonencode({
-    reasoning_effort = "high"
+    reasoning_effort = "medium"
+    service_tier     = "flex"
   })
 }

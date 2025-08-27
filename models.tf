@@ -165,6 +165,7 @@ resource "tama_space_processor" "default-completion" {
     temperature = 1.0
     parameters = jsonencode({
       reasoning_effort = "low"
+      service_tier     = "flex"
     })
   }
 }
