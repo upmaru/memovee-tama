@@ -3,7 +3,7 @@ variable "elasticsearch_movie_db_api_key" {}
 module "movie-db" {
   source = "./movie-db"
 
-  depends_on = [module.global]
+  depends_on = [module.global.schemas]
 
   tmdb_api_key     = var.tmdb_api_key
   tmdb_openapi_url = "https://developer.themoviedb.org/openapi/64542913e1f86100738e227f"
@@ -30,7 +30,7 @@ module "movie-db" {
 module "index-mapping-generation" {
   source = "./index-mapping"
 
-  depends_on = [module.global, module.movie-db]
+  depends_on = [module.global.schemas, module.movie-db]
 
   movie_db_space_id      = module.movie-db.space_id
   elasticsearch_space_id = module.elasticsearch.space_id
@@ -39,7 +39,7 @@ module "index-mapping-generation" {
 module "index-definition-generation" {
   source = "./index-definition"
 
-  depends_on = [module.global, module.movie-db]
+  depends_on = [module.global.schemas, module.movie-db]
 
   movie_db_space_id      = module.movie-db.space_id
   tmdb_specification_id  = module.movie-db.tmdb_specification_id

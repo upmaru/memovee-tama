@@ -10,10 +10,13 @@ resource "tama_modular_thought" "tooling" {
   chain_id        = tama_chain.this.id
   index           = 0
   relation        = "tooling"
-  output_class_id = data.tama_class.action-call.id
+  output_class_id = data.tama_class.tool-call.id
 
   module {
     reference = "tama/agentic/tooling"
+    parameters = jsonencode({
+      consecutive_limit = 5
+    })
   }
 }
 

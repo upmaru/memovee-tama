@@ -2,9 +2,9 @@ data "tama_space" "global" {
   id = "global"
 }
 
-data "tama_class" "action-call" {
+data "tama_class" "tool-call" {
   space_id = data.tama_space.global.id
-  name     = "action-call"
+  name     = "tool-call"
 }
 
 data "tama_action" "query-elasticsearch" {

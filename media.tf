@@ -1,7 +1,7 @@
 module "media-conversation" {
   source = "./media"
 
-  depends_on = [module.global]
+  depends_on = [module.global.schemas]
 
   movie_db_space_id        = module.movie-db.space_id
   prompt_assembly_space_id = tama_space.prompt-assembly.id
@@ -31,10 +31,10 @@ module "media-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-browsing"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
+    reasoning_effort = "minimal"
   })
 
   tooling_prompt_id = tama_prompt.media-browsing-tooling.id
@@ -74,10 +74,10 @@ module "media-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
+    reasoning_effort = "minimal"
   })
 
   tooling_prompt_id = tama_prompt.media-detail-tooling.id
@@ -117,12 +117,11 @@ module "person-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-browsing"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
+    reasoning_effort = "minimal"
   })
-
   tooling_prompt_id = tama_prompt.person-browse-tooling.id
   reply_prompt_id   = tama_prompt.person-browse-reply.id
 
@@ -160,10 +159,10 @@ module "person-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning_effort = "low"
+    reasoning_effort = "minimal"
   })
 
   tooling_prompt_id = tama_prompt.person-detail-tooling.id

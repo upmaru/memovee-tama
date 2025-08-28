@@ -5,31 +5,31 @@ resource "tama_space" "basic-conversation" {
 
 resource "tama_class" "off-topic" {
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global]
+  depends_on  = [module.global.schemas]
   schema_json = jsonencode(jsondecode(file("basic/off-topic.json")))
 }
 
 resource "tama_class" "greeting" {
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global]
+  depends_on  = [module.global.schemas]
   schema_json = jsonencode(jsondecode(file("basic/greeting.json")))
 }
 
 resource "tama_class" "introductory" {
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global]
+  depends_on  = [module.global.schemas]
   schema_json = jsonencode(jsondecode(file("basic/introductory.json")))
 }
 
 resource "tama_class" "curse" {
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global]
+  depends_on  = [module.global.schemas]
   schema_json = jsonencode(jsondecode(file("basic/curse.json")))
 }
 
 resource "tama_class" "manipulation" {
   space_id   = tama_space.basic-conversation.id
-  depends_on = [module.global]
+  depends_on = [module.global.schemas]
   schema {
     type  = "object"
     title = "manipulation"
@@ -48,7 +48,7 @@ resource "tama_class" "manipulation" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.3"
+  version = "0.3.6"
 
   depends_on = [module.global.schemas]
 
@@ -94,7 +94,7 @@ resource "tama_prompt" "check-profile-reply" {
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.3"
+  version = "0.3.6"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -172,7 +172,7 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.3"
+  version = "0.3.6"
 
   chain_id = tama_chain.upsert-profile.id
 
