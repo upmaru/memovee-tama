@@ -74,7 +74,7 @@ module "media-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
+  tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning_effort = "minimal"
@@ -159,7 +159,7 @@ module "person-detail" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-detail"]
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
+  tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning_effort = "minimal"

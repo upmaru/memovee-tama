@@ -28,7 +28,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -44,7 +44,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -63,7 +63,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ```json
 {
   "path": {
-    "index": "[the index name from the definition]"
+    "index": "[the index name from the index-definition]"
   },
   "body": {
     "query": {
@@ -82,7 +82,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -120,7 +120,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -157,6 +157,46 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       }
     }
     ```
+**User Query**: "Who is the lead actor in the movie"
+  - When the `ID` of the media is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              { "term": { "id": 1241982 } }
+            ],
+            "must": [
+              {
+                "nested": {
+                  "path": "movie-credits.cast",
+                  "query": {
+                    "match": {
+                      "movie-credits.cast.order": 0
+                    }
+                  },
+                  "inner_hits": {
+                    "_source": [
+                      "movie-credits.cast.id",
+                      "movie-credits.cast.name",
+                      "movie-credits.cast.job",
+                      "movie-credits.cast.profile_path"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "_source": ["id", "title"]
+      }
+    }
+    ```
+    Explanation: This query retrieves the lead actor's information for a specific movie by using the `ID` of the movie. The `movie-credits.cast.order` shows the order of significance of the cast member. The lower the number the more significant the cast member is.
 
 #### Single Item, Crew-Related Query
 **User Query**: "Who is the director of Moana 2"
@@ -164,7 +204,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -202,7 +242,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -246,7 +286,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -269,7 +309,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -296,7 +336,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -320,7 +360,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
