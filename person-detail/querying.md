@@ -39,7 +39,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "id": [12345]
         }
       },
-      "_source": ["id", "name", "known_for_department", "popularity", "profile_path"]
+      "_source": ["id", "name", "biography", "birthday", "known_for_department", "popularity", "profile_path"]
     }
   }
   ```
@@ -56,7 +56,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         }
       },
       "limit": 1,
-      "_source": ["id", "name", "known_for_department", "popularity", "profile_path"]
+      "_source": ["id", "name", "biography", "birthday", "known_for_department", "popularity", "profile_path"]
     }
   }
   ```
@@ -512,23 +512,92 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   }
   ```
 
+#### Single Item query about whether a given cast member has been in a particular tv show or movie
+**User Query**: "Has Dwayne Johnson been in the movie 'The Dark Knight'?" or "Has she been in a tv show called The Bear?" or "Is she in a tv show called The Bear?"
+- When ID of the person is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the index-definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": { "id": 2195140 }
+            }
+          ],
+          "must": [
+            {
+              "nested": {
+                "path": "person-combined-credits.cast",
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "match": {
+                          // for tv shows use the person-combined-credits.cast.name
+                          // for movie use person-combined-credits.cast.title
+                          "person-combined-credits.cast.name": "The Bear"
+                        }
+                      },
+                      {
+                        "terms": {
+                          // change the media_type between tv and movie
+                          "person-combined-credits.cast.media_type": ["tv", "movie"]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "inner_hits": {
+                  "size": 1,
+                  "sort": {
+                    "person-combined-credits.cast.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.cast.order",
+                      "person-combined-credits.cast.overview",
+                      "person-combined-credits.cast.backdrop_path",
+                      "person-combined-credits.cast.credit_id",
+                      "person-combined-credits.cast.genre_ids"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "_source": [
+        "id",
+        "name"
+      ]
+    }
+  }
+  ```
+
 #### Multiple Items Query (General Details)
 **User Query**: "Persons with IDs 1, 2, 3"
-```json
-{
-  "path": {
-    "index": "[the index name from the index-definition]"
-  },
-  "body": {
-    "query": {
-      "terms": {
-        "id": [1, 2, 3]
-      }
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the index-definition]"
     },
-    "_source": ["id", "name", "known_for_department", "popularity", "profile_path"]
+    "body": {
+      "query": {
+        "terms": {
+          "id": [1, 2, 3]
+        }
+      },
+      "_source": ["id", "name", "biography", "known_for_department", "popularity", "profile_path"]
+    }
   }
-}
-```
+  ```
 
 #### Single Item, Department-Related Query
 **User Query**: "What department is Dwayne Johnson known for"
@@ -553,7 +622,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           ]
         }
       },
-      "_source": ["id", "name", "known_for_department", "profile_path"]
+      "_source": ["id", "name", "biography", "known_for_department", "profile_path"]
     }
   }
   ```
@@ -581,7 +650,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         }
       },
       "limit": 1,
-      "_source": ["id", "name", "known_for_department", "profile_path"]
+      "_source": ["id", "name", "biography", "known_for_department", "profile_path"]
     }
   }
   ```

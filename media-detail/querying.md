@@ -76,6 +76,61 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 }
 ```
 
+#### Single Item, Asked about characters in a movie
+**User Query**: "Can you show me some characters in Moana 2" or "Characters in Inside Out 2"
+  - When the `ID` is available in context:
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id",
+          "title",
+          "poster_path",
+          "overview",
+          "movie-credits.cast.id",
+          "movie-credits.cast.name",
+          "movie-credits.cast.character",
+          "movie-credits.cast.profile_path"
+        ],
+        "limit": 1,
+        "query": {
+          "term": {
+            "id": 12345
+          }
+        }
+      },
+      "path": {
+        "index": "[the index name from the index-definition]"
+      }
+    }
+    ```
+  - When the title of the movie is available in context:
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id",
+          "title",
+          "poster_path",
+          "overview",
+          "movie-credits.cast.id",
+          "movie-credits.cast.name",
+          "movie-credits.cast.character",
+          "movie-credits.cast.profile_path"
+        ],
+        "limit": 1,
+        "query": {
+          "match": {
+            "title": "Inside Out 2"
+          }
+        }
+      },
+      "path": {
+        "index": "[the index name from the index-definition]"
+      }
+    }
+    ```
+
 #### Single Item, Cast-Related Query
 **User Query**: "Who played Maui in Moana 2"
   - When the `ID` is available in context:

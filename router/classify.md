@@ -53,6 +53,27 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    The user has been discussing a specific cast or crew member.
+
+    You have a given cast or crew member's list of media in context.
+  </condition>
+  <user-query>
+    Can you sort the movies by release date showing the recent ones first.
+  </user-query>
+  <routing>
+    person-detail
+  </routing>
+  <reasoning>
+    - The user is asking about the media associated with a specific cast or crew member, so the correct class is "person-detail".
+
+    - The user is asking to modify the list of movies associated with a specific cast or crew member, so the correct class is "person-detail".
+
+    - Routing to "person-detail" will provide access to tooling that will allow the modification of the results.
+  </reasoning>
+</case>
+
 
 <classes>
   {{ classes }}
