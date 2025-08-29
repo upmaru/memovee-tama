@@ -25,7 +25,7 @@ resource "tama_prompt" "media-browsing-reply" {
 module "media-browsing" {
   source = "./media-conversate"
 
-  depends_on = [module.global, module.index-definition-generation]
+  depends_on = [module.global.schemas, module.index-definition-generation]
 
   name                        = "Media Browsing"
   media_conversation_space_id = module.media-conversation.space_id
@@ -66,7 +66,7 @@ module "media-detail" {
   source = "./media-conversate"
 
   depends_on = [
-    module.global,
+    module.global.schemas,
     module.index-definition-generation
   ]
 

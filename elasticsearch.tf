@@ -5,7 +5,7 @@ module "elasticsearch" {
   version = "0.3.6"
 
   depends_on = [
-    module.global
+    module.global.schemas
   ]
 
   name           = "Elasticsearch"
@@ -18,6 +18,5 @@ module "elasticsearch" {
   index_mapping_generation_model_temperature = 1.0
   index_mapping_generation_model_parameters = jsonencode({
     reasoning_effort = "low"
-    service_tier     = "flex"
   })
 }

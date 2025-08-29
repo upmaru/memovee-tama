@@ -31,7 +31,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -47,7 +47,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -61,13 +61,140 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   }
   ```
 
-#### Single Item query about other movies a given person has been in
+#### Single Item query about other movies a given crew member has been in with specific job
+**User Query**: "Which other movie has David directed** in this case based on context David is the director of the movie
+- When the ID is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the index-definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": { "id": 12345 }
+            }
+          ],
+          "must": [
+            {
+              "nested": {
+                "path": "person-combined-credits.crew",
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "terms": {
+                          "person-combined-credits.crew.media_type": ["movie"]
+                        }
+                      },
+                      {
+                        "terms": {
+                          "person-combined-credits.crew.job": ["Director"]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.crew.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.crew.order",
+                      "person-combined-credits.crew.overview",
+                      "person-combined-credits.crew.backdrop_path",
+                      "person-combined-credits.crew.credit_id",
+                      "person-combined-credits.crew.genre_ids"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "_source": [
+        "id",
+        "name"
+      ]
+    }
+  }
+  ```
+
+#### Single Item query about other movies or tv shows a given crew member has been in
+**User Query**: "Which other movie or tv show has David been involved in** in this case based on context David is the director of the movie
+- When the ID is available in context:
+  ```json
+  {
+    "path": {
+      "index": "[the index name from the index-definition]"
+    },
+    "body": {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": { "id": 12345 }
+            }
+          ],
+          "must": [
+            {
+              "nested": {
+                "path": "person-combined-credits.crew",
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "terms": {
+                          "person-combined-credits.crew.media_type": ["movie", "tv"]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "inner_hits": {
+                  "size": 100,
+                  "sort": {
+                    "person-combined-credits.crew.vote_average": {
+                      "order": "desc"
+                    }
+                  },
+                  "_source": {
+                    "excludes": [
+                      "person-combined-credits.crew.order",
+                      "person-combined-credits.crew.overview",
+                      "person-combined-credits.crew.backdrop_path",
+                      "person-combined-credits.crew.credit_id",
+                      "person-combined-credits.crew.genre_ids"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "_source": [
+        "id",
+        "name"
+      ]
+    }
+  }
+  ```
+
+#### Single Item query about other movies a given cast member has been in
 **User Query**: "Which other movie has Dwayne Johnson been in" or "Which other movie has person with ID 12345 been in"
 - When the ID is available in context:
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -119,7 +246,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -169,13 +296,13 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   }
   ```
 
-#### Single Item query about other tv shows a given person has been in
+#### Single Item query about other tv shows a given cast member has been in
 **User Query**: "Which other tv show has Dwayne Johnson been in" or "Which other tv show has person with ID 12345 been in"
 - When the ID is available in context:
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -227,7 +354,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -283,7 +410,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -335,7 +462,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -390,7 +517,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ```json
 {
   "path": {
-    "index": "[the index name from the definition]"
+    "index": "[the index name from the index-definition]"
   },
   "body": {
     "query": {
@@ -409,7 +536,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -434,7 +561,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -501,7 +628,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```json
   {
     "path": {
-      "index": "[the index name from the definition]"
+      "index": "[the index name from the index-definition]"
     },
     "body": {
       "query": {
@@ -537,7 +664,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
       "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -580,7 +707,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     ```json
     {
     "path": {
-        "index": "[the index name from the definition]"
+        "index": "[the index name from the index-definition]"
       },
       "body": {
         "query": {
@@ -608,6 +735,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 - **Name-to-ID Mapping**: If the user provides a person name (e.g., "Dwayne Johnson"), assume the corresponding ID (e.g., 12345) is provided or retrieved from the index.
 - **Required Fields**: Always include `id`, `name`, and `profile_path` in the `_source` unless the user’s intent excludes them.
 - **Mimic Examples**: When constructing the Elasticsearch query, always strictly follow the structure, nesting, and field selection shown in the provided example JSON queries above. Where differences in the request occur, adapt only what is necessary to match the user's request while keeping the structure, field usage, and organization of the examples as your template.
+
+## Constraints
+- The `path.index` **MUST** only use the index name in the `<index-definition>` for your query.
 
 ---
 

@@ -29,6 +29,9 @@ resource "tama_modular_thought" "this" {
 
   module {
     reference = "tama/agentic/generate"
+    parameters = jsonencode({
+      timeout_seconds = 1200
+    })
   }
 }
 

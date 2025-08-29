@@ -59,7 +59,7 @@ stream =
 ```elixir
 movies =
   stream
-  |> Enum.take(20)
+  |> Enum.take(5)
 
 movies
 |> Enum.map(fn movie ->
@@ -73,4 +73,4 @@ movies
 end)
 ```
 
-<!-- livebook:{"offset":1552,"stamp":{"token":"XCP.-Ot0Ipwbmeaw1KMyyA29kyCwxBidCckn7kr_GWVAzg73lmdBeD2_pm9iHiP1A8kA2wkfrgH6IiH_FFvIq5Uy9zg3zCFatFaalyrWFw","version":2}} -->
+<!-- livebook:{"offset":1551,"stamp":{"token":"XCP.5criBTz0VA0nR3zpHneTwcy6LciV7IGCL5tiLIX1ViuqndzTMno4bEDC6XDgg8h-2sQOrDmLa8DN8vtIdt3mo8LnToe0SzOyo0FURw","version":2}} -->

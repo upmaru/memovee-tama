@@ -13,10 +13,10 @@
         }
       },
       "field": "preload.concept.content.merge",
-      "inference_id": "jinaai-rerank",
+      "inference_id": "voyageai-rerank",
       "inference_text": "{{ data.query }}",
       "rank_window_size": 100,
-      "min_score": 0.3
+      "min_score": 0.5
     }
   },
   "size": {{ data.limit | default: 3 }},

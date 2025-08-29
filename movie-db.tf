@@ -48,7 +48,6 @@ module "index-definition-generation" {
   index_definition_generation_model_id          = module.openai.model_ids.gpt-5
   index_definition_generation_model_temperature = 1.0
   index_definition_generation_model_parameters = jsonencode({
-    reasoning_effort = "medium"
-    service_tier     = "flex"
+    reasoning_effort = "low"
   })
 }

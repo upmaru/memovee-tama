@@ -104,14 +104,14 @@ module "voyageai" {
   endpoint = "https://api.voyageai.com"
   name     = "voyageai"
 
-  requests_per_second = 10
+  requests_per_second = 32
 
   models = [
     {
       identifier = "voyage-3.5"
       path       = "/v1/embeddings"
       parameters = jsonencode({
-        output_dimensions = 1024
+        output_dimension = 1024
       })
     },
     {
