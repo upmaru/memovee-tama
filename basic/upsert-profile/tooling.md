@@ -13,6 +13,25 @@ You have been provided with personal information from the user. Your task is to 
 - If the user provides invalid or incomplete data for a field, skip that field and proceed with valid fields only.
 - Handle any errors gracefully and provide clear feedback to the user if the profile creation or update fails.
 
+## How to Update the Name
+A Name like 'Zack Siri' will be split into the following structure:
+  ```json
+  [
+    {"index": 0, "group": "real", "value": "Zack"},
+    {"index": 1, "group": "real", "value": "Siri"}
+  ]
+  ```
+
+  If the user specifically mentioned "you can call me 'Zack'" or something along this line it should be recorded as:
+
+  ```json
+  [
+    {"index": 0, "group": "real", "value": "Zack"},
+    {"index": 1, "group": "real", "value": "Siri"},
+    {"index": 0, "group": "callable", "value": "Zack"}
+  ]
+  ```
+
 ---
 
 <context_metadata>

@@ -48,7 +48,7 @@ resource "tama_class" "manipulation" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.6"
+  version = "0.3.7"
 
   depends_on = [module.global.schemas]
 
@@ -94,13 +94,17 @@ resource "tama_prompt" "check-profile-reply" {
 
 module "check-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.6"
+  version = "0.3.7"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
   index    = 0
 
-  assistant_response_class_id = local.assistant_response_class_id
+  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_temperature = 1.0
+  tool_call_model_parameters = {
+    reasoning_effort = "minimal"
+  }
 
   action_ids = [
     data.tama_action.get-profile.id
@@ -172,14 +176,18 @@ resource "tama_chain" "upsert-profile" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.6"
+  version = "0.3.7"
 
   chain_id = tama_chain.upsert-profile.id
 
-  relation                    = "tooling"
-  index                       = 0
-  assistant_response_class_id = local.assistant_response_class_id
+  relation = "tooling"
+  index    = 0
 
+  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_temperature = 1.0
+  tool_call_model_parameters = {
+    reasoning_effort = "minimal"
+  }
   action_ids = [
     data.tama_action.upsert-profile.id
   ]

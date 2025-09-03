@@ -50,27 +50,7 @@ components:
             - other
           type: string
         names:
-          description: |
-            The names of the actor.
-
-            A Name like 'Zack Siri' will be split into the following structure:
-
-            ```json
-            [
-              {"index": 0, "group": "real", "value": "Zack"},
-              {"index": 1, "group": "real", "value": "Siri"}
-            ]
-            ```
-
-            If the user specifically mentioned "you can call me 'Zack'" or something along this line it should be recorded as:
-
-            ```json
-            [
-              {"index": 0, "group": "real", "value": "Zack"},
-              {"index": 1, "group": "real", "value": "Siri"},
-              {"index": 0, "group": "callable", "value": "Zack"}
-            ]
-            ```
+          description: The names of the actor.
           items:
             properties:
               group:
