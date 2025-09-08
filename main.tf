@@ -1,11 +1,11 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.3.7"
+  version = "0.3.8"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.3.7"
+  version = "0.3.8"
 
   depends_on = [module.global.schemas]
 
@@ -56,7 +56,7 @@ resource "tama_chain" "reply-generation" {
 resource "tama_modular_thought" "reply-artifact" {
   chain_id = tama_chain.reply-generation.id
   index    = 0
-  relation = "artifact"
+  relation = "create-artifact"
 
   depends_on = [
     module.global.schemas
@@ -77,9 +77,25 @@ resource "tama_prompt" "reply-artifact" {
   content = file("memovee-ui/artifact.md")
 }
 
-resource "tama_thought_context" "artifact-context" {
+module "artifact-context" {
+  source  = "upmaru/base/tama//modules/thought-context"
+  version = "0.3.8"
+
   thought_id = tama_modular_thought.reply-artifact.id
-  prompt_id  = tama_prompt.reply-artifact.id
+  contexts = {
+    artifact = {
+      prompt_id = tama_prompt.reply-artifact.id
+      layer     = 0
+    }
+
+    reply = {
+      prompt_id = tama_prompt.reply-template.id
+      layer     = 1
+      inputs = [
+        local.context_metadata_input
+      ]
+    }
+  }
 }
 
 data "tama_action" "create-artifact" {
@@ -91,6 +107,18 @@ data "tama_action" "create-artifact" {
 resource "tama_thought_tool" "create-artifact-tool" {
   thought_id = tama_modular_thought.reply-artifact.id
   action_id  = data.tama_action.create-artifact.id
+}
+
+resource "tama_thought_processor" "artifact-processor" {
+  thought_id = tama_modular_thought.reply-artifact.id
+  model_id   = module.openai.model_ids.gpt-5-mini
+
+  completion {
+    temperature = 1.0
+    parameters = jsonencode({
+      reasoning_effort = "low"
+    })
+  }
 }
 
 //
@@ -132,7 +160,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.3.7"
+  version = "0.3.8"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {

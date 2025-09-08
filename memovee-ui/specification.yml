@@ -63,16 +63,14 @@ components:
       properties:
         type:
           type: string
-          enum: [list, detail]
+          enum: [list, detail, metric]
           description: The mode of retrieval, either a list of artifacts or detailed information.
         index:
           type: integer
-          description: Index order of the artifact to that will be displayed. Lower number shows first higher number shows later.
-        items:
-          type: array
-          description: List of artifact identifiers.
-          items:
-            type: string
+          description: The index of the artifact. Lower index value renders first.
+        reference:
+          type: string
+          description: The tool_call_id of the artifact.
         properties:
           type: array
           description: List of properties with their relevance scores.
@@ -87,6 +85,9 @@ components:
                 description: Relevance score for this property.
       required:
         - type
+        - index
+        - reference
+        - properties
 
     artifact-response:
       title: artifact-response

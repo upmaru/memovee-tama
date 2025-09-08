@@ -14,10 +14,10 @@ You are operating a heads up display (HUD) for an information system. You will u
       "body": {
         "artifact": {
           "type": "list",
-          // the index of the artifact, lower number means higher priority
+          // the index name of the data source. should come from the function argument `path.index`
           "index": 0,
-          // the list _ids of the items to display in the table.
-          "items": ["12431234", "54308928"],
+          // the layer of the artifact, lower number means higher priority
+          "reference": "[the tool_call_id in context for the search]",
           // the properties to display in the table, higher relevance means columns come first. In the below case the poster_path will be the first column followed by the title, and then the id.
           "properties": [
             {
