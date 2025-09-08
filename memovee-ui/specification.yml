@@ -61,33 +61,39 @@ components:
       description: Request body for creating or retrieving message artifacts.
       type: object
       properties:
-        type:
-          type: string
-          enum: [list, detail, metric]
-          description: The mode of retrieval, either a list of artifacts or detailed information.
-        index:
-          type: integer
-          description: The index of the artifact. Lower index value renders first.
-        reference:
-          type: string
-          description: The tool_call_id of the artifact.
-        properties:
-          type: array
-          description: List of properties with their relevance scores.
-          items:
-            type: object
+        artifact:
+          type: object
+          description: The artifact object containing request details.
+          properties:
+            type:
+              type: string
+              enum: [list, detail, metric]
+              description: The mode of retrieval, either a list of artifacts or detailed information.
+            index:
+              type: integer
+              description: The index of the artifact. Lower index value renders first.
+            reference:
+              type: string
+              description: The tool_call_id from the search results to display.
             properties:
-              name:
-                type: string
-                description: Property name.
-              relevance:
-                type: integer
-                description: Relevance score for this property.
+              type: array
+              description: List of properties with their relevance scores.
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Property name.
+                  relevance:
+                    type: integer
+                    description: Relevance score for this property.
+          required:
+            - type
+            - index
+            - reference
+            - properties
       required:
-        - type
-        - index
-        - reference
-        - properties
+        - artifact
 
     artifact-response:
       title: artifact-response
