@@ -34,6 +34,6 @@ A Name like 'Zack Siri' will be split into the following structure:
 
 ---
 
-<context_metadata>
+<context-metadata>
   {{ corpus }}
-</context_metadata>
+</context-metadata>
