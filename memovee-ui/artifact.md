@@ -171,7 +171,20 @@ You are operating a heads up display (HUD) for an information system. You will u
     }
     ```
 **Data in context:** You have a single item that you want to display in the HUD.
-  - Render the `detail` type layout with the following:
+  - When the top level `hits.total.value` is 1, render the `detail` type layout:
+    Search Results:
+    ```json
+    {
+      "hits": {
+        "total": {
+          "value": 1,
+          "relation": "eq"
+        }
+      }
+    }
+    ```
+
+    Render the `detail` type layout with the following:
     ```json
     {
       "path": {
