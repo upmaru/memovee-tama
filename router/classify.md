@@ -74,6 +74,46 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    The user refer to existing results.
+
+    The user is asking to modify the list of results to a different format.
+  </condition>
+  <user-query>
+    - Can you display these results with larger images
+    - Can you render the results in a table
+  </user-query>
+  <routing>
+    patch
+  </routing>
+  <reasoning>
+    - The user is asking to modify the list of results to a different format, so the correct class is "patch".
+
+    - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user is asking to add new properties to the existing set of data in context.
+
+    The user is asking to modify the list of results with additional properties.
+  </condition>
+  <user-query>
+    - Can you show me the ratings of these movies
+    - Can you show me which company produced these movies?
+    - Can you show me the release date of the movies?
+  </user-query>
+  <routing>
+    media-browsing
+  </routing>
+  <reasoning>
+    - The user is asking for additional properties for "these movies".
+
+    - Routing to "media-browsing" will provide access to tooling that will allow adding additional properties to the existing set of data in context.
+  </reasoning>
+</case>
 
 <classes>
   {{ classes }}
