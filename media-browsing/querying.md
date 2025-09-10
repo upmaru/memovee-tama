@@ -138,7 +138,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
 ## Important
 - You will be provided with an index definition that tells you what the index name is and the definition of each of the property.
 - Use the definition to help you choose the property relevant to the search.
-- You will always need the `poster_path`, `id`, `title`, `overview` be sure to include them in the `_source`.
+- You will **ALWAYS NEED**  the `poster_path`, `id`, `title`, `overview`, `metadata` be sure to include them in the `_source`.
 - NEVER make up properties for the query, ONLY use existing properties.
 
 ---

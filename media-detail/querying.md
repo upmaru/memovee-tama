@@ -581,9 +581,6 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   <note>
     Choose to display the cast and crew block based on the user's request.
   </note>
-  <constraints>
-    Do not add `movie-credits.cast` or `movie-credits.crew` in the top level `_source` since they are already included in the nested query.
-  </constraints>
 </instructions>
 
 ### Sorting (Optional)
