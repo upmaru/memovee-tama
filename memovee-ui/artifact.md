@@ -302,3 +302,4 @@ You are operating a heads up display (HUD) for an information system. You will u
 
 ## Critical
   - The `path.message_id` **MUST BE** the ORIGIN ENTITY IDENTIFIER in <context-metadata>`.
+  - The `Artifact Rendering Rule` always takes precedence over the `Overrides` and all other rules mentioned above.

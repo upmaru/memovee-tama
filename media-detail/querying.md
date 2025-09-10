@@ -23,7 +23,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ### Query Examples
 #### Single Item Query (General Details)
 **User Query**: "Details about Moana 2" or "Movie with ID 1241982"
-  - When the ID is available in context:
+  - When the `id` or `_id` number for a particular movie (example: 1241982) is available in context:
     ```json
     {
       "path": {
@@ -66,7 +66,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status"
         ],
         "query": {
-          "match": {
+          "match_phrase": {
             "title": "Moana 2"
           }
         },
@@ -313,7 +313,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         "query": {
           "bool": {
             "filter": [
-              { "term": { "id": 1241982 } }
+              { "term": { "id": "1241982" } }
             ],
             "must": [
               {
@@ -728,7 +728,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ## Important
 - If the user does not specify sorting, omit the `sort` object.
 - Handle both single and multiple ID queries appropriately.
-- You will always need the `poster_path`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status` be sure to include them in the `_source`.
+- You will always need the `poster_path`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status`, `metadata`, `genres`, `production_companies`, `runtime`, `budget`, `popularity` be sure to include them in the `_source`.
 - For crew or cast queries, use `match` searches in `nested` queries (e.g., "Director" for crew roles).
 - Ensure all query components (`query`, `_source`, and optional `sort`, `limit`) are always wrapped inside a `body` object, and include a `path` object with the index name from the provided index definition in every response.
 - **NEVER** put the `_source` inside the `query` object. The `_source` is always inside the `body` object.

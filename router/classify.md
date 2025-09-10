@@ -115,6 +115,21 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    Previous messages included results about a specific movie.
+  </condition>
+  <user-query>
+    - Can you show me the cast list?
+  </user-query>
+  <routing>
+    media-detail
+  </routing>
+  <reasoning>
+    - The user is asking for the cast list of the movie in context.
+  </reasoning>
+</case>
+
 <classes>
   {{ classes }}
 </classes>
