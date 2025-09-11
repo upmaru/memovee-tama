@@ -51,12 +51,20 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     },
     "body": {
       "query": {
-        "match": {
+        "match_phrase": {
           "name": "Dwayne Johnson"
         }
       },
       "limit": 1,
-      "_source": ["id", "name", "biography", "birthday", "known_for_department", "popularity", "profile_path"]
+      "_source": [
+        "id",
+        "name",
+        "biography",
+        "birthday",
+        "known_for_department",
+        "popularity",
+        "profile_path"
+      ]
     }
   }
   ```
@@ -121,7 +129,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       },
       "_source": [
         "id",
-        "name"
+        "name",
+        "biography",
+        "metadata"
       ]
     }
   }
@@ -161,7 +171,16 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                 "inner_hits": {
                   "size": 100,
                   "sort": {
+                    // Sort by vote_average in descending order for crew
                     "person-combined-credits.crew.vote_average": {
+                      "order": "desc"
+                    },
+                    // Sort by first_air_date in descending order for tv
+                    "person-combined-credits.crew.first_air_date": {
+                      "order": "desc"
+                    },
+                    // Sort by release_date in ascending order for movies
+                    "person-combined-credits.crew.release_date": {
                       "order": "desc"
                     }
                   },
@@ -182,7 +201,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       },
       "_source": [
         "id",
-        "name"
+        "name",
+        "biography",
+        "metadata"
       ]
     }
   }
@@ -190,327 +211,349 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 
 #### Single Item query about other movies a given cast member has been in
 **User Query**: "Which other movie has Dwayne Johnson been in" or "Which other movie has person with ID 12345 been in"
-- When the ID is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "filter": [
-            {
-              "term": { "id": 12345 }
-            }
-          ],
-          "must": [
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["movie"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
+  - When the ID is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "term": { "id": 12345 }
+              }
+            ],
+            "must": [
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["movie"]
                     }
                   },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      // Sort by vote average in descending order
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      },
+                      // Sort by release date in ascending order used for movies. Adjust based on user's request.
+                      "person-combined-credits.cast.release_date": {
+                        "order": "asc"
+                      }
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "_source": [
-        "id",
-        "name"
-      ]
+            ]
+          }
+        },
+        "_source": [
+          "id",
+          "name",
+          "biography",
+          "metadata"
+        ]
+      }
     }
-  }
-  ```
-- When only the person's name is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "must": [
-            {
-              "match": {
-                "name": "Dwayne Johnson"
-              }
-            },
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["movie"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
+    ```
+  - When only the person's name is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "match_phrase": {
+                  "name": "Dwayne Johnson"
+                }
+              },
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["movie"]
                     }
                   },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      }
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "limit": 1,
-      "_source": [
-        "id",
-        "name"
-      ],
+            ]
+          }
+        },
+        "limit": 1,
+        "_source": [
+          "id",
+          "name",
+          "biography",
+          "metadata"
+        ],
+      }
     }
-  }
-  ```
+    ```
 
 #### Single Item query about other tv shows a given cast member has been in
 **User Query**: "Which other tv show has Dwayne Johnson been in" or "Which other tv show has person with ID 12345 been in"
-- When the ID is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "filter": [
-            {
-              "term": { "id": 12345 }
-            }
-          ],
-          "must": [
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["tv"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
+  - When the ID is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "term": { "id": 12345 }
+              }
+            ],
+            "must": [
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["tv"]
                     }
                   },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      // Sort by vote average in descending order
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      },
+                      // Sort by first air date in descending order. Adjust based on user's request
+                      "person-combined-credits.cast.first_air_date": {
+                        "order": "desc"
+                      },
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "_source": [
-        "id",
-        "name"
-      ]
+            ]
+          }
+        },
+        "_source": [
+          "id",
+          "name"
+        ]
+      }
     }
-  }
-  ```
-- When only the person's name is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "must": [
-            {
-              "match": {
-                "name": "Dwayne Johnson"
-              }
-            },
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["tv"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
+    ```
+  - When only the person's name is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "match_phrase": {
+                  "name": "Dwayne Johnson"
+                }
+              },
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["tv"]
                     }
                   },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      }
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "limit": 1,
-      "_source": [
-        "id",
-        "name"
-      ],
+            ]
+          }
+        },
+        "limit": 1,
+        "_source": [
+          "id",
+          "name"
+        ],
+      }
     }
-  }
-  ```
+    ```
 
 #### Single Item query about other movie and tv shows a given person has been in
 **User Query**: "Which other tv show or movies has Dwayne Johnson been in" or "Which other tv show or movies has person with ID 12345 been in" or "What other works has person with ID 12345 been in" or "What other works has Dwayne Johnson been in"
-- When the ID is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "filter": [
-            {
-              "term": { "id": 12345 }
-            }
+  - When the ID is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "term": { "id": 12345 }
+              }
+            ],
+            "must": [
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["tv", "movie"]
+                    }
+                  },
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      },
+                      // Sort by first_air_date in descending order for tv
+                      "person-combined-credits.crew.first_air_date": {
+                        "order": "desc"
+                      },
+                      // Sort by release_date in ascending order for movies
+                      "person-combined-credits.crew.release_date": {
+                        "order": "desc"
+                      }
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "_source": [
+          "id",
+          "name"
+        ]
+      }
+    }
+    ```
+  - When only the person's name is available in context:
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "query": {
+          "_source": [
+            "id",
+            "name"
           ],
-          "must": [
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["tv", "movie"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
+          "bool": {
+            "must": [
+              {
+                "match_phrase": {
+                  "name": "Dwayne Johnson"
+                }
+              },
+              {
+                "nested": {
+                  "path": "person-combined-credits.cast",
+                  "query": {
+                    "terms": {
+                      "person-combined-credits.cast.media_type": ["tv", "movie"]
                     }
                   },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
+                  "inner_hits": {
+                    "size": 100,
+                    "sort": {
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
+                      }
+                    },
+                    "_source": {
+                      "excludes": [
+                        "person-combined-credits.cast.order",
+                        "person-combined-credits.cast.overview",
+                        "person-combined-credits.cast.backdrop_path",
+                        "person-combined-credits.cast.credit_id",
+                        "person-combined-credits.cast.genre_ids"
+                      ]
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "_source": [
-        "id",
-        "name"
-      ]
+            ]
+          }
+        },
+        "limit": 1
+      }
     }
-  }
-  ```
-- When only the person's name is available in context:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the index-definition]"
-    },
-    "body": {
-      "query": {
-        "bool": {
-          "must": [
-            {
-              "match": {
-                "name": "Dwayne Johnson"
-              }
-            },
-            {
-              "nested": {
-                "path": "person-combined-credits.cast",
-                "query": {
-                  "terms": {
-                    "person-combined-credits.cast.media_type": ["tv", "movie"]
-                  }
-                },
-                "inner_hits": {
-                  "size": 100,
-                  "sort": {
-                    "person-combined-credits.cast.vote_average": {
-                      "order": "desc"
-                    }
-                  },
-                  "_source": {
-                    "excludes": [
-                      "person-combined-credits.cast.order",
-                      "person-combined-credits.cast.overview",
-                      "person-combined-credits.cast.backdrop_path",
-                      "person-combined-credits.cast.credit_id",
-                      "person-combined-credits.cast.genre_ids"
-                    ]
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "limit": 1,
-      "_source": [
-        "id",
-        "name"
-      ],
-    }
-  }
-  ```
+    ```
 
 #### Single Item query about whether a given cast member has been in a particular tv show or movie
 **User Query**: "Has Dwayne Johnson been in the movie 'The Dark Knight'?" or "Has she been in a tv show called The Bear?" or "Is she in a tv show called The Bear?"
@@ -615,7 +658,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           ],
           "must": [
             {
-              "match": {
+              "match_phrase": {
                 "known_for_department": "Acting"
               }
             }
@@ -637,7 +680,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         "bool": {
           "must": [
             {
-              "match": {
+              "match_phrase": {
                 "name": "Dwayne Johnson"
               }
             },
@@ -700,12 +743,13 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "index": "[the index name from the index-definition]"
     },
     "body": {
+      "_source": ["id", "name", "profile_path"],
       "query": {
         "term": {
           "id": 12345
         }
       },
-      "_source": ["id", "name", "profile_path"]
+      "limit": 1
     }
   }
   ```
@@ -716,13 +760,13 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "index": "[the index name from the definition]"
     },
     "body": {
+      "_source": ["id", "name", "profile_path", "biography"],
       "query": {
         "match": {
           "name": "Dwayne Johnson"
         }
       },
-      "limit": 1,
-      "_source": ["id", "name", "profile_path", "biography"]
+      "limit": 1
     }
   }
   ```
@@ -736,6 +780,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         "index": "[the index name from the index-definition]"
       },
       "body": {
+        "_source": ["id", "name", "popularity", "profile_path"],
         "query": {
           "terms": {
             "id": [1, 2, 3]
@@ -747,8 +792,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               "order": "desc"
             }
           }
-        ],
-        "_source": ["id", "name", "popularity", "profile_path"]
+        ]
       }
     }
     ```
@@ -816,6 +860,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 - If the user does not specify sorting, omit the `sort` object.
 - Handle both single and multiple ID queries appropriately.
 - For department-related queries, use `match` searches for `known_for_department` (e.g., "Acting", "Directing").
+- **ALWAYS INCLUDE**  `adult`, `also_known_as`, `biography`, `birthday`, `deathday`, `gender`, `id`, `imdb_id`, `known_for_department`, `name`, `profile_path`, `place_of_birth`, `popularity`, `metadata` be sure to include them in the `_source`.
 - Ensure all query components (`query`, `_source`, and optional `sort`, `limit`) are always wrapped inside a `body` object, and include a `path` object with the index name extracted from the provided index definition (replacing `[the index name from the definition]` with the actual index name, e.g., `tama-movie-db-person-details`).
 - **NEVER** put the `_source` inside the `query` object. The `_source` is always inside the `body` object.
 - Always infer the index name from the provided index definition in the `corpus` or context and use it in the `path` object.

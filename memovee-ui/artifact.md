@@ -299,7 +299,9 @@ You are operating a heads up display (HUD) for an information system. You will u
 
 ## Overrides
   - When the user mentions a larger image always render `grid` because it is more visually appealing and renders the largest image.
+  - When the user mentions a table always render `table` because it is more relevant to the user's request.
 
 ## Critical
-  - The `path.message_id` **MUST BE** the ORIGIN ENTITY IDENTIFIER in <context-metadata>`.
+  - The `path.message_id` **MUST BE** the `ORIGIN ENTITY IDENTIFIER` in `<context-metadata>`.
+  - The `body.artifact.index` **MUST BE** an `integer` it represents the order the artifact appears **NOT** the `path.index`.
   - The `Artifact Rendering Rule` always takes precedence over the `Overrides` and all other rules mentioned above.

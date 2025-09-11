@@ -17,6 +17,7 @@ You are an Elasticsearch querying expert.
       "index": "[the index name from the definition]"
     },
     "body": {
+      "_source": ["id", "name", "metadata"],
       "query": {
         "terms": {
           "id": [1, 2, 3]
@@ -28,8 +29,7 @@ You are an Elasticsearch querying expert.
             "order": "desc"
           }
         }
-      ],
-      "_source": ["id", "name"]
+      ]
     }
   }
   ```
@@ -59,6 +59,7 @@ You are an Elasticsearch querying expert.
         "index": "[the index name from the definition]"
       },
       "body": {
+        "_source": ["id", "name", "biography", "metadata"],
         "query": {
           "terms": {
             "id": [996701, 1397778]
@@ -70,8 +71,7 @@ You are an Elasticsearch querying expert.
               "order": "desc"
             }
           }
-        ],
-        "_source": ["id", "name", "biography"]
+        ]
       }
     }
     ```
@@ -91,5 +91,5 @@ To generate a high-quality Elasticsearch query with a natural language query:
 ## Important
 - You will be provided with an index definition that tells you what the index name is and the definition of each property.
 - Use the definition to help you choose the properties relevant to the search.
-- You will always need the `profile_path`, `id`, `name`, `biography` properties; be sure to include them in the `_source`.
+- You will always need the `profile_path`, `id`, `name`, `biography`, `metadata` properties; be sure to include them in the `_source`.
 - NEVER make up properties for the query, ONLY use existing properties.
