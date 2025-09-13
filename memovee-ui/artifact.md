@@ -37,7 +37,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     ```json
     {
       "path": {
-        "message_id": "[the ORIGIN ENTITY IDENTIFIER in context-metadata]"
+        "message_id": "[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]"
       },
       "body": {
         "artifact": {
@@ -84,7 +84,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     ```json
     {
       "path": {
-        "message_id": "[the ORIGIN ENTITY IDENTIFIER in context-metadata]"
+        "message_id": "[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]"
       },
       "body": {
         "artifact": {
@@ -143,7 +143,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     ```json
     {
       "path": {
-        "message_id": "[the ORIGIN ENTITY IDENTIFIER in context-metadata]"
+        "message_id": "[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]"
       },
       "body": {
         "artifact": {
@@ -193,7 +193,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     ```json
     {
       "path": {
-        "message_id": "[the ORIGIN ENTITY IDENTIFIER in context-metadata]"
+        "message_id": "[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]"
       },
       "body": {
         "artifact": {
@@ -260,7 +260,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     ```json
     {
       "path": {
-        "message_id": "[the ORIGIN ENTITY IDENTIFIER in context-metadata]"
+        "message_id": "[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]"
       },
       "body": {
         "artifact": {

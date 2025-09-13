@@ -66,6 +66,9 @@ resource "tama_modular_thought" "reply-artifact" {
 
   module {
     reference = "tama/agentic/tooling"
+    parameters = jsonencode({
+      look_back_limit = 3
+    })
   }
 }
 
@@ -133,6 +136,9 @@ resource "tama_modular_thought" "reply-generation" {
 
   module {
     reference = "tama/agentic/reply"
+    parameters = jsonencode({
+      look_back_limit = 3
+    })
   }
 }
 
