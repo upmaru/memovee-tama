@@ -32,6 +32,11 @@ data "tama_class" "movie-credits" {
   name             = "movie-credits"
 }
 
+data "tama_class" "movie-keywords" {
+  specification_id = tama_specification.tmdb.id
+  name             = "movie-keywords"
+}
+
 data "tama_class" "movie-details" {
   specification_id = tama_specification.tmdb.id
   name             = "movie-details"
@@ -41,4 +46,10 @@ data "tama_action" "get-movie-credits" {
   specification_id = tama_specification.tmdb.id
   method           = "GET"
   path             = "/3/movie/{movie_id}/credits"
+}
+
+data "tama_action" "get-movie-keywords" {
+  specification_id = tama_specification.tmdb.id
+  method           = "GET"
+  path             = "/3/movie/{movie_id}/keywords"
 }

@@ -1,7 +1,7 @@
 variable "mistral_api_key" {}
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.3.8"
+  version = "0.3.9"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -25,7 +25,7 @@ module "mistral" {
 variable "xai_api_key" {}
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.3.8"
+  version = "0.3.9"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key
@@ -60,7 +60,7 @@ module "xai" {
 variable "openai_api_key" {}
 module "openai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.3.8"
+  version = "0.3.9"
 
   space_id = module.global.space.id
   api_key  = var.openai_api_key
@@ -97,7 +97,7 @@ module "openai" {
 variable "voyageai_api_key" {}
 module "voyageai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.3.8"
+  version = "0.3.9"
 
   space_id = module.global.space.id
   api_key  = var.voyageai_api_key

@@ -23,25 +23,33 @@ client = TamaEx.client(base_url: "http://localhost:4000/provision")
 
 <!-- livebook:{"branch_parent_index":0} -->
 
-## Movie Details Class
+## Generate Movie Details Embedding
+
+```elixir
+{:ok, movie_details_class} = 
+  Neural.get_class(client, movie_db_space, "movie-details")
+
+{:ok, generate_embeddings_chain} = 
+  Perception.get_chain(client, movie_db_space, "generate-embeddings-class-entities") 
+
+Neural.create_class_operation(client, movie_details_class, %{
+  chain_ids: [generate_embeddings_chain.id]
+})
+```
+
+<!-- livebook:{"branch_parent_index":0} -->
+
+## Index Movie Details Class
 
 Load the `movie-details` class
 
 ```elixir
 {:ok, movie_details_class} = 
   Neural.get_class(client, movie_db_space, "movie-details")
-```
 
-Load the sample for movie index generation chain.
-
-```elixir
 {:ok, movie_index_chain} = 
-  Perception.get_chain(client, movie_db_space, "sample-for-movie-index-generation") 
-```
+  Perception.get_chain(client, movie_db_space, "sample-for-movie-index-generation")
 
-Run the chain.
-
-```elixir
 Neural.create_class_operation(client, movie_details_class, %{
   chain_ids: [movie_index_chain.id]
 })
