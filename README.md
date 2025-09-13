@@ -46,6 +46,9 @@ All models referenced via *_model_id, *_model_parameters, and tama_thought_proce
 | Media Detail - Tool Call | gpt-5 | 1.0 | minimal |  |
 | Person Browsing - Tool Call | gpt-5-mini | 1.0 | minimal |  |
 | Person Detail - Tool Call | gpt-5 | 1.0 | minimal |  |
+| Memovee - Artifact Creation | gpt-5-mini | 1.0 | low |  |
+| Basic - Check Profile Tooling | gpt-5 | 1.0 | minimal |  |
+| Basic - Upsert Profile Tooling | gpt-5 | 1.0 | minimal |  |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities
