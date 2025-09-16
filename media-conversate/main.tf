@@ -9,13 +9,25 @@ resource "tama_chain" "this" {
 resource "tama_modular_thought" "tooling" {
   chain_id        = tama_chain.this.id
   index           = 0
-  relation        = "tooling"
+  relation        = "search-tooling"
   output_class_id = data.tama_class.tool-call.id
 
   module {
     reference = "tama/agentic/tooling"
     parameters = jsonencode({
       consecutive_limit = 5
+      thread = {
+        limit = 2
+        classes = {
+          author  = var.author_class_name
+          thread  = var.thread_class_name
+          message = var.message_class_name
+        }
+        relations = {
+          routing    = var.routing_thought_relation
+          threadable = ["tooling", "search-tooling", "reply"]
+        }
+      }
     })
   }
 }

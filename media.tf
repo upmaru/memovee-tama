@@ -31,6 +31,12 @@ module "media-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-browsing"]
 
+  author_class_name  = module.memovee.schemas.actor.name
+  thread_class_name  = module.memovee.schemas.thread.name
+  message_class_name = module.memovee.schemas.user-message.name
+
+  routing_thought_relation = module.router.routing_thought_relation
+
   tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
@@ -73,6 +79,12 @@ module "media-detail" {
   name                        = "Media Detail"
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["media-detail"]
+
+  author_class_name  = module.memovee.schemas.actor.name
+  thread_class_name  = module.memovee.schemas.thread.name
+  message_class_name = module.memovee.schemas.user-message.name
+
+  routing_thought_relation = module.router.routing_thought_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0
@@ -117,6 +129,12 @@ module "person-browsing" {
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-browsing"]
 
+  author_class_name  = module.memovee.schemas.actor.name
+  thread_class_name  = module.memovee.schemas.thread.name
+  message_class_name = module.memovee.schemas.user-message.name
+
+  routing_thought_relation = module.router.routing_thought_relation
+
   tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
@@ -158,6 +176,12 @@ module "person-detail" {
   name                        = "Person Detail"
   media_conversation_space_id = module.media-conversation.space_id
   target_class_id             = module.media-conversation.class_ids["person-detail"]
+
+  author_class_name  = module.memovee.schemas.actor.name
+  thread_class_name  = module.memovee.schemas.thread.name
+  message_class_name = module.memovee.schemas.user-message.name
+
+  routing_thought_relation = module.router.routing_thought_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0

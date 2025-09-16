@@ -1,16 +1,15 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.3.9"
+  version = "0.3.13"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.3.9"
+  version = "0.3.13"
 
   depends_on = [module.global.schemas]
 
-  name                    = "memovee"
-  entity_network_class_id = module.global.schemas["entity-network"].id
+  name = "memovee"
 }
 
 
@@ -50,13 +49,18 @@ resource "tama_chain" "reply-generation" {
   name     = "Memovee Reply Generation"
 }
 
+locals {
+  create_artifact_relation = "create-artifact"
+  reply_relation           = "reply"
+}
+
 //
 // Create Artifact Tooling
 //
 resource "tama_modular_thought" "reply-artifact" {
   chain_id = tama_chain.reply-generation.id
   index    = 0
-  relation = "create-artifact"
+  relation = local.create_artifact_relation
 
   depends_on = [
     module.global.schemas
@@ -67,7 +71,22 @@ resource "tama_modular_thought" "reply-artifact" {
   module {
     reference = "tama/agentic/tooling"
     parameters = jsonencode({
-      look_back_limit = 3
+      thread = {
+        limit = 1
+        classes = {
+          author  = module.memovee.schemas.actor.name
+          thread  = module.memovee.schemas.thread.name
+          message = module.memovee.schemas.user-message.name
+        }
+        relations = {
+          routing = module.router.routing_thought_relation
+          threadable = [
+            "tooling",
+            "search-tooling",
+            local.reply_relation
+          ]
+        }
+      }
     })
   }
 }
@@ -82,7 +101,7 @@ resource "tama_prompt" "reply-artifact" {
 
 module "artifact-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.3.9"
+  version = "0.3.13"
 
   thought_id = tama_modular_thought.reply-artifact.id
   contexts = {
@@ -130,14 +149,30 @@ resource "tama_thought_processor" "artifact-processor" {
 resource "tama_modular_thought" "reply-generation" {
   chain_id = tama_chain.reply-generation.id
   index    = 1
-  relation = "reply"
+  relation = local.reply_relation
 
   output_class_id = local.assistant_response_class_id
 
   module {
     reference = "tama/agentic/reply"
     parameters = jsonencode({
-      look_back_limit = 3
+      thread = {
+        limit = 1
+        classes = {
+          author  = module.memovee.schemas.actor.name
+          thread  = module.memovee.schemas.thread.name
+          message = module.memovee.schemas.user-message.name
+        }
+        relations = {
+          routing = module.router.routing_thought_relation
+          threadable = [
+            "tooling",
+            "search-tooling",
+            local.create_artifact_relation,
+            local.reply_relation
+          ]
+        }
+      }
     })
   }
 }
@@ -166,7 +201,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.3.9"
+  version = "0.3.13"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {

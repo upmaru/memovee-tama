@@ -58,3 +58,23 @@ variable "reply_prompt_id" {
   type        = string
   description = "The ID of the prompt for the reply."
 }
+
+variable "routing_thought_relation" {
+  type        = string
+  description = "The relation of the routing thought to the movie database."
+}
+
+variable "author_class_name" {
+  type        = string
+  description = "The name of the author class."
+}
+
+variable "thread_class_name" {
+  type        = string
+  description = "The name of the thread class."
+}
+
+variable "message_class_name" {
+  type        = string
+  description = "The name of the message class."
+}
