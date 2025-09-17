@@ -256,3 +256,39 @@ The user's message may reference a piece of information or data in a search resu
     - They are specifically asking for more details about the movie about the Cat.
   </reasoning>
 </case>
+
+## Disambiguation between media or person
+Sometimes the user query may mention a person's name but with the intent of finding a movie with a certain criteria.
+
+### Examples
+  <case>
+    <condition>
+      The user is starting a new query not relevant to the previous search results.
+    </condition>
+    <user-query>
+      -  Find me movies that take place in space and has Robert Downey Jr in it
+    </user-query>
+    <routing>
+      media-browsing
+    </routing>
+    <reasoning>
+      - The user is asking to find movies with a specific criteria related to space AND starring Robert Downey Jr.
+
+      - The query contains requirement that is not only the actor's name. Example "take place in space".
+    </reasoning>
+  </case>
+
+  <case>
+    <condition>
+      The user is starting a new query not relevant to the previous search results.
+    </condition>
+    <user-query>
+      -  Find me movies that has Robert Downey Jr in it
+    </user-query>
+    <routing>
+      person-detail
+    </routing>
+    <reasoning>
+      - The user is asking to find movies with the actor Robert Downey Jr being the ONLY criteria.
+    </reasoning>
+  </case>
