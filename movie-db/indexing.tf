@@ -31,7 +31,7 @@ resource "tama_modular_thought" "index-movie-details" {
 
 module "movie-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.3.13"
+  version = "0.3.15"
 
   thought_id = tama_modular_thought.index-movie-details.id
   class_id   = data.tama_class.movie-details.id
@@ -125,7 +125,7 @@ resource "tama_modular_thought" "index-person-details" {
 
 module "person-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.3.13"
+  version = "0.3.15"
 
   thought_id = tama_modular_thought.index-person-details.id
   class_id   = data.tama_class.person-details.id

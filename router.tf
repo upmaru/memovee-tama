@@ -1,13 +1,13 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.3.13"
+  version = "0.3.15"
 
   root_messaging_space_id = module.memovee.space.id
   author_class_name       = module.memovee.schemas.actor.name
   thread_class_name       = module.memovee.schemas.thread.name
   message_class_name      = module.memovee.schemas.user-message.name
 
-  threadable_relations = ["tooling", "create-artifact", "reply"]
+  focus_relations = ["tooling", "search-tooling", "reply"]
 
   message_routing_class_id = module.global.schemas["message-routing"].id
 

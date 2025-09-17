@@ -5,7 +5,7 @@ resource "tama_space" "movie-db" {
 
 module "extract-nested-properties-movie-db" {
   source  = "upmaru/base/tama//modules/extract-nested-properties"
-  version = "0.3.13"
+  version = "0.3.15"
 
   class_names      = ["movie-credits"]
   specification_id = tama_specification.tmdb.id
@@ -34,7 +34,7 @@ resource "tama_class_corpus" "movie-details-mapping" {
 
 module "crawl-movie-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name            = "Crawl Movie Credits"
   space_id        = tama_space.movie-db.id
@@ -56,7 +56,7 @@ locals {
 
 module "crawl-movie-keywords" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name            = "Crawl Movie Keywords"
   space_id        = tama_space.movie-db.id
@@ -82,7 +82,7 @@ resource "tama_node" "crawl-movie-keywords-explicit" {
 
 module "spread-cast-and-crew" {
   source  = "upmaru/base/tama//modules/spread"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name = "Spread Cast and Crew"
 
@@ -95,7 +95,7 @@ module "spread-cast-and-crew" {
 
 module "network-movie-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name     = "Network Movie Credits"
   space_id = tama_space.movie-db.id
@@ -111,7 +111,7 @@ module "network-movie-credits" {
 
 module "network-movie-keywords" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name     = "Network Movie Keywords"
   space_id = tama_space.movie-db.id
@@ -128,7 +128,7 @@ module "network-movie-keywords" {
 
 module "network-cast-and-crew" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name     = "Network Cast and Crew"
   space_id = tama_space.movie-db.id
@@ -145,7 +145,7 @@ module "network-cast-and-crew" {
 
 module "network-person-details" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name     = "Network Person Details"
   space_id = tama_space.movie-db.id
@@ -180,7 +180,7 @@ data "tama_action" "get-person-details" {
 
 module "crawl-cast-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name            = "Crawl Cast Details"
   space_id        = tama_space.movie-db.id
@@ -198,7 +198,7 @@ module "crawl-cast-details" {
 
 module "crawl-crew-details" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name            = "Crawl Crew Details"
   space_id        = tama_space.movie-db.id
@@ -228,7 +228,7 @@ resource "tama_class_corpus" "person-details-mapping" {
 
 module "crawl-person-credits" {
   source  = "upmaru/base/tama//modules/crawler"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name            = "Crawl Person Combined Credits"
   space_id        = tama_space.movie-db.id
@@ -251,7 +251,7 @@ data "tama_class" "person-combined-credits" {
 
 module "network-person-credits" {
   source  = "upmaru/base/tama//modules/build-relations"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name     = "Network Person Credits"
   space_id = tama_space.movie-db.id
@@ -267,7 +267,7 @@ module "network-person-credits" {
 
 module "extract-embed-movie-overview" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name      = "Extract and Embed Movie Overview"
   space_id  = tama_space.movie-db.id
@@ -280,7 +280,7 @@ module "extract-embed-movie-overview" {
 
 module "extract-embed-person-biography" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.13"
+  version = "0.3.15"
 
   name      = "Extract and Embed Person Biography"
   space_id  = tama_space.movie-db.id
@@ -346,7 +346,7 @@ resource "tama_modular_thought" "generate-description" {
 
 module "movie-keywords-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.3.13"
+  version = "0.3.15"
 
   thought_id = tama_modular_thought.generate-description.id
   class_id   = data.tama_class.movie-details.id

@@ -24,8 +24,8 @@ resource "tama_modular_thought" "tooling" {
           message = var.message_class_name
         }
         relations = {
-          routing    = var.routing_thought_relation
-          threadable = ["tooling", "search-tooling", "reply"]
+          routing = var.routing_thought_relation
+          focus   = ["tooling", "search-tooling", "reply"]
         }
       }
     })

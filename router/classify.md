@@ -133,3 +133,126 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 <classes>
   {{ classes }}
 </classes>
+
+## Referenced Tool Call IDS
+The user's message may reference a piece of information or data in a search result that is relevant to the context of the conversation. You are to also fill the `referenced_tool_call_ids` array with the IDs of the tool calls that were referenced in the user's message.
+
+### Examples
+<case>
+  <condition>
+    Previous messages in context contains tool call results.
+  </condition>
+  <tool-call-result>
+    ```json
+    {
+      "_shards": {
+        "failed": 0,
+        "skipped": 0,
+        "successful": 1,
+        "total": 1
+      },
+      "hits": {
+        "hits": [
+          {
+            "_id": "1361184",
+            "_index": "tama-movie-db-movie-details-1757659893",
+            "_score": null,
+            "_source": {
+              "id": 1361184,
+              "metadata": {
+                "class": "movie-details",
+                "space": "movie-db"
+              },
+              "origin_country": [
+                "US"
+              ],
+              "overview": "Mysteriously transformed into mini versions of themselves, Goku and his friends travel to the Demon Realm to uncover the truth and find a cure.  The world English dub premiere of Dragon Ball DAIMA, the newest series in the Dragon Ball universe, featuring the first three episodes of the series. Before the film, there will be a special introduction from the Japanese voice of Goku, Masako Nozawa.",
+              "poster_path": "/5h3okzbCgJ9iEGelXoXVh1tlqGi.jpg",
+              "release_date": "2024-11-10",
+              "title": "Dragon Ball DAIMA",
+              "vote_average": 8.333,
+              "vote_count": 6
+            },
+            "sort": [
+              8.333,
+              6
+            ]
+          },
+          {
+            "_id": "1184918",
+            "_index": "tama-movie-db-movie-details-1757659893",
+            "_score": null,
+            "_source": {
+              "id": 1184918,
+              "metadata": {
+                "class": "movie-details",
+                "space": "movie-db"
+              },
+              "origin_country": [
+                "US"
+              ],
+              "overview": "After a shipwreck, an intelligent robot called Roz is stranded on an uninhabited island. To survive the harsh environment, Roz bonds with the island's animals and cares for an orphaned baby goose.",
+              "poster_path": "/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg",
+              "release_date": "2024-09-12",
+              "title": "The Wild Robot",
+              "vote_average": 8.3,
+              "vote_count": 4437
+            },
+            "sort": [
+              8.3,
+              4437
+            ]
+          },
+          {
+            "_id": "823219",
+            "_index": "tama-movie-db-movie-details-1757659893",
+            "_score": null,
+            "_source": {
+              "id": 823219,
+              "metadata": {
+                "class": "movie-details",
+                "space": "movie-db"
+              },
+              "origin_country": [
+                "LV"
+              ],
+              "overview": "A solitary cat, displaced by a great flood, finds refuge on a boat with various species and must navigate the challenges of adapting to a transformed world together.",
+              "poster_path": "/imKSymKBK7o73sajciEmndJoVkR.jpg",
+              "release_date": "2024-08-29",
+              "title": "Flow",
+              "vote_average": 8.3,
+              "vote_count": 1264
+            },
+            "sort": [
+              8.3,
+              1264
+            ]
+          }
+        ],
+        "max_score": null,
+        "total": {
+          "relation": "eq",
+          "value": 200
+        }
+      },
+      "timed_out": false,
+      "took": 433,
+      "tool_call_id": "call_eMYytf6D9GKlPSx4U1CIaVsi"
+    }
+    ```
+  </tool-call-result>
+  <user-query>
+    Can you give me more details for the movie about the Cat?
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <referenced-tool-call-ids>
+    - call_eMYytf6D9GKlPSx4U1CIaVsi
+  </referenced-tool-call-ids>
+  <reasoning>
+    - The user is talking about one of the movies in the search results.
+
+    - They are specifically asking for more details about the movie about the Cat.
+  </reasoning>
+</case>
