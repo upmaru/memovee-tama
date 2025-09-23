@@ -1,0 +1,63 @@
+{%- assign selected_region = options["region"] -%}
+{%- assign watch_data = results[selected_region] -%}
+
+{%- if watch_data -%}
+{
+  "region": "{{ selected_region }}",
+  "link": "{{ watch_data.link }}"{% if watch_data.flatrate %},
+  "flatrate": [
+    {%- for provider in watch_data.flatrate -%}
+    {
+      "logo_path": "{{ provider.logo_path }}",
+      "provider_id": {{ provider.provider_id }},
+      "provider_name": "{{ provider.provider_name }}",
+      "display_priority": {{ provider.display_priority }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]{% endif %}{% if watch_data.rent %},
+  "rent": [
+    {%- for provider in watch_data.rent -%}
+    {
+      "logo_path": "{{ provider.logo_path }}",
+      "provider_id": {{ provider.provider_id }},
+      "provider_name": "{{ provider.provider_name }}",
+      "display_priority": {{ provider.display_priority }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]{% endif %}{% if watch_data.buy %},
+  "buy": [
+    {%- for provider in watch_data.buy -%}
+    {
+      "logo_path": "{{ provider.logo_path }}",
+      "provider_id": {{ provider.provider_id }},
+      "provider_name": "{{ provider.provider_name }}",
+      "display_priority": {{ provider.display_priority }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]{% endif %}{% if watch_data.ads %},
+  "ads": [
+    {%- for provider in watch_data.ads -%}
+    {
+      "logo_path": "{{ provider.logo_path }}",
+      "provider_id": {{ provider.provider_id }},
+      "provider_name": "{{ provider.provider_name }}",
+      "display_priority": {{ provider.display_priority }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]{% endif %}{% if watch_data.free %},
+  "free": [
+    {%- for provider in watch_data.free -%}
+    {
+      "logo_path": "{{ provider.logo_path }}",
+      "provider_id": {{ provider.provider_id }},
+      "provider_name": "{{ provider.provider_name }}",
+      "display_priority": {{ provider.display_priority }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]{% endif %}
+}
+{%- else -%}
+{
+  "error": "Region '{{ selected_region }}' not found"
+}
+{%- endif -%}

@@ -7,7 +7,6 @@ module "media-conversation" {
   prompt_assembly_space_id = tama_space.prompt-assembly.id
 }
 
-
 resource "tama_prompt" "media-browsing-tooling" {
   space_id = module.media-conversation.space_id
   name     = "Media Browsing Tooling"
@@ -22,10 +21,16 @@ resource "tama_prompt" "media-browsing-reply" {
   content  = file("${path.module}/media-browsing/reply.md")
 }
 
+//
+// Media Browsing
+//
 module "media-browsing" {
   source = "./media-conversate"
 
-  depends_on = [module.global.schemas, module.index-definition-generation]
+  depends_on = [
+    module.global.schemas,
+    module.index-definition-generation
+  ]
 
   name                        = "Media Browsing"
   media_conversation_space_id = module.media-conversation.space_id
@@ -54,6 +59,10 @@ module "media-browsing" {
   index_definition_relation = module.index-definition-generation.relations.movie-index
 }
 
+
+//
+// Media Detail
+//
 resource "tama_prompt" "media-detail-tooling" {
   space_id = module.media-conversation.space_id
   name     = "Media Detail Tooling"
@@ -103,6 +112,30 @@ module "media-detail" {
   index_definition_relation = module.index-definition-generation.relations.movie-index
 }
 
+module "watch-providers" {
+  source = "./watch-providers"
+
+  tmdb_specification_id = module.movie-db.tmdb_specification_id
+}
+
+resource "tama_thought_tool" "watch-providers" {
+  thought_id = module.media-detail.tooling_thought_id
+  action_id  = module.watch-providers.action_id
+}
+
+resource "tama_thought_tool_output" "watch-providers-output" {
+  thought_tool_id = tama_thought_tool.watch-providers.id
+  class_corpus_id = module.watch-providers.class_corpus_id
+}
+
+resource "tama_tool_output_option" "watch-providers-region" {
+  thought_tool_output_id = tama_thought_tool_output.watch-providers-output.id
+  action_modifier_id     = module.watch-providers.action_modifier_id
+}
+
+//
+// Person Browsing
+//
 resource "tama_prompt" "person-browse-tooling" {
   space_id = module.media-conversation.space_id
   name     = "Person Browse Tooling"

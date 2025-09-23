@@ -64,6 +64,7 @@ resource "tama_thought_tool" "query-elasticsearch" {
   action_id  = data.tama_action.query-elasticsearch.id
 }
 
+
 resource "tama_thought_tool_initializer" "import-index-definition" {
   thought_tool_id = tama_thought_tool.query-elasticsearch.id
   index           = 0

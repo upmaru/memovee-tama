@@ -121,9 +121,9 @@ module "artifact-context" {
 }
 
 data "tama_action" "create-artifact" {
-  specification_id = tama_specification.ui.id
+  specification_id = tama_specification.memovee-ui.id
   method           = "POST"
-  path             = "/conversation/messages/{message_id}/artifacts"
+  path             = "/tama/conversation/messages/{message_id}/artifacts"
 }
 
 resource "tama_thought_tool" "create-artifact-tool" {
