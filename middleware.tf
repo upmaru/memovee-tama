@@ -47,8 +47,20 @@ resource "tama_source_identity" "memovee-ui-oauth" {
   }
 }
 
-data "tama_action" "check-user-preferences" {
+data "tama_action" "get-user-preferences" {
   specification_id = tama_specification.memovee-ui.id
   method           = "GET"
   path             = "/tama/accounts/users/{user_id}/preferences"
+}
+
+data "tama_action" "get-user" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "GET"
+  path             = "/tama/accounts/users/{id}"
+}
+
+data "tama_action" "update-user" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "PUT"
+  path             = "/tama/accounts/users/{id}"
 }

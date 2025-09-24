@@ -82,9 +82,9 @@ module "extract-embed-basic-conversation" {
   ]
 }
 
-resource "tama_space_bridge" "basic-conversation-personalization" {
+resource "tama_space_bridge" "basic-conversation-memovee-ui" {
   space_id        = tama_space.basic-conversation.id
-  target_space_id = tama_space.personalization.id
+  target_space_id = tama_space.ui.id
 }
 
 resource "tama_space_bridge" "basic-conversation-prompt-assembly" {
@@ -126,7 +126,7 @@ module "check-profile-tooling" {
   }
 
   action_ids = [
-    data.tama_action.get-profile.id
+    data.tama_action.get-user.id
   ]
 
   contexts = {
@@ -208,7 +208,7 @@ module "upsert-profile-tooling" {
     reasoning_effort = "minimal"
   }
   action_ids = [
-    data.tama_action.upsert-profile.id
+    data.tama_action.update-user.id
   ]
 
   contexts = {

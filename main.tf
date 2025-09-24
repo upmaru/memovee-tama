@@ -230,7 +230,7 @@ resource "tama_node" "handle-reply-generation" {
 
 resource "tama_listener" "memovee-ui-listener" {
   space_id = module.memovee.space.id
-  endpoint = "http://localhost:4001/tama/broadcasts"
+  endpoint = "http://localhost:4001/tama/hook/broadcasts"
 }
 
 resource "tama_listener_topic" "user-message-topic" {

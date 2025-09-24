@@ -146,7 +146,7 @@ resource "tama_thought_tool" "media-detail-check-user-preferences" {
   depends_on = [module.media-conversation]
 
   thought_id = module.media-detail.tooling_thought_id
-  action_id  = data.tama_action.check-user-preferences.id
+  action_id  = data.tama_action.get-user-preferences.id
 }
 
 
