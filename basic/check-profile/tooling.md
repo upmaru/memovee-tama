@@ -11,3 +11,15 @@ You are provided with some tools that will give you the ability to load the user
 <context-metadata>
   {{ corpus }}
 </context-metadata>
+
+
+## Instructions for `get-user` tool
+- The ACTOR IDENTIFIER should be used in the `path.id` parameter.
+  ```json
+  {
+    "path": {
+      "id": "<ACTOR IDENTIFIER>"
+    },
+    "next": null
+  }
+  ```
