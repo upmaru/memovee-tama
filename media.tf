@@ -5,6 +5,7 @@ module "media-conversation" {
 
   movie_db_space_id        = module.movie-db.space_id
   prompt_assembly_space_id = tama_space.prompt-assembly.id
+  memovee_ui_space_id      = tama_space.ui.id
 }
 
 resource "tama_prompt" "media-browsing-tooling" {
@@ -58,6 +59,8 @@ module "media-browsing" {
 
   index_definition_relation = module.index-definition-generation.relations.movie-index
 }
+
+
 
 
 //
@@ -118,6 +121,9 @@ module "watch-providers" {
   tmdb_specification_id = module.movie-db.tmdb_specification_id
 }
 
+//
+// Watch Providers Tooling
+//
 resource "tama_thought_tool" "watch-providers" {
   thought_id = module.media-detail.tooling_thought_id
   action_id  = module.watch-providers.action_id
@@ -132,6 +138,17 @@ resource "tama_tool_output_option" "watch-providers-region" {
   thought_tool_output_id = tama_thought_tool_output.watch-providers-output.id
   action_modifier_id     = module.watch-providers.action_modifier_id
 }
+
+//
+// Check User Preferences Tooling
+//
+resource "tama_thought_tool" "media-detail-check-user-preferences" {
+  depends_on = [module.media-conversation]
+
+  thought_id = module.media-detail.tooling_thought_id
+  action_id  = data.tama_action.check-user-preferences.id
+}
+
 
 //
 // Person Browsing

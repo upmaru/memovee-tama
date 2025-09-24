@@ -24,6 +24,8 @@ resource "tama_specification" "memovee-ui" {
   }
 }
 
+variable "memovee_ui_client_id" {}
+variable "memovee_ui_client_secret" {}
 resource "tama_source_identity" "memovee-ui-oauth" {
   specification_id = tama_specification.memovee-ui.id
   identifier       = "oauth"
@@ -31,10 +33,22 @@ resource "tama_source_identity" "memovee-ui-oauth" {
   client_id     = var.memovee_ui_client_id
   client_secret = var.memovee_ui_client_secret
 
+  validation {
+    path   = "/tama/health"
+    method = "GET"
+    codes  = [200]
+  }
+
   wait_for {
     field {
       name = "current_state"
-      in   = ["completed", "failed"]
+      in   = ["active", "failed"]
     }
   }
+}
+
+data "tama_action" "check-user-preferences" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "GET"
+  path             = "/tama/accounts/users/{user_id}/preferences"
 }

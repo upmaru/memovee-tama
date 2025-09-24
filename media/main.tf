@@ -104,3 +104,8 @@ resource "tama_space_bridge" "media-conversation-to-prompt-assembly" {
   space_id        = tama_space.this.id
   target_space_id = var.prompt_assembly_space_id
 }
+
+resource "tama_space_bridge" "media-conversation-to-memovee-ui" {
+  space_id        = tama_space.this.id
+  target_space_id = var.memovee_ui_space_id
+}
