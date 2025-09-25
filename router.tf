@@ -54,6 +54,11 @@ resource "tama_thought_path" "route-to-patch" {
   target_class_id = tama_class.patch.id
 }
 
+resource "tama_thought_path" "route-to-personalization" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = tama_class.personalization.id
+}
+
 resource "tama_thought_path" "route-to-media-conversation-classes" {
   for_each = module.media-conversation.class_ids
 

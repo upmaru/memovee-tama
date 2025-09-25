@@ -130,9 +130,22 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
-<classes>
-  {{ classes }}
-</classes>
+<case>
+  <condition>
+    Previous messages include the assistant asked the user for their region.
+  </condition>
+  <user-query>
+    - I'm in Thailand
+    - I'm in the US
+    - I'm streaming from Thailand
+  </user-query>
+  <routing>
+    personalization
+  </routing>
+  <reasoning>
+    - The user is answering the assistant's request for the user's regional data.
+  </reasoning>
+</case>
 
 ## Referenced Tool Call IDS
 The user's message may reference a piece of information or data in a search result that is relevant to the context of the conversation. You are to also fill the `referenced_tool_call_ids` array with the IDs of the tool calls that were referenced in the user's message.
@@ -292,3 +305,9 @@ Sometimes the user query may mention a person's name but with the intent of find
       - The user is asking to find movies with the actor Robert Downey Jr being the ONLY criteria.
     </reasoning>
   </case>
+
+---
+
+<classes>
+  {{ classes }}
+</classes>

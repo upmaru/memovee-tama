@@ -53,6 +53,18 @@ data "tama_action" "get-user-preferences" {
   path             = "/tama/accounts/users/{user_id}/preferences"
 }
 
+data "tama_action" "create-user-preference" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "POST"
+  path             = "/tama/accounts/users/{user_id}/preferences"
+}
+
+data "tama_action" "update-user-preference" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "PUT"
+  path             = "/tama/accounts/users/{user_id}/preferences/{id}"
+}
+
 data "tama_action" "get-user" {
   specification_id = tama_specification.memovee-ui.id
   method           = "GET"

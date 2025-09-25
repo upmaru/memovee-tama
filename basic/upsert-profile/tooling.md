@@ -13,6 +13,7 @@ You have been provided with personal information from the user. Your task is to 
 A Name like 'Zack Siri' will be split into the following structure:
   ```json
   {
+    "next": null,
     "body": {
       "user": {
         "names": [
@@ -29,6 +30,7 @@ A Name like 'Zack Siri' will be split into the following structure:
 
   ```json
   {
+    "next": null,
     "body": {
       "user": {
         "names": [

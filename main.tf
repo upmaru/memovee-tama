@@ -228,12 +228,12 @@ resource "tama_node" "handle-reply-generation" {
   type = "reactive"
 }
 
-resource "tama_listener" "memovee-ui-listener" {
-  space_id = module.memovee.space.id
-  endpoint = "http://localhost:4001/tama/hook/broadcasts"
-}
+# resource "tama_listener" "memovee-ui-listener" {
+#   space_id = module.memovee.space.id
+#   endpoint = "http://localhost:4001/tama/hook/broadcasts"
+# }
 
-resource "tama_listener_topic" "user-message-topic" {
-  listener_id = tama_listener.memovee-ui-listener.id
-  class_id    = module.memovee.schemas.user-message.id
-}
+# resource "tama_listener_topic" "user-message-topic" {
+#   listener_id = tama_listener.memovee-ui-listener.id
+#   class_id    = module.memovee.schemas.user-message.id
+# }
