@@ -52,6 +52,7 @@ resource "tama_chain" "reply-generation" {
 locals {
   create_artifact_relation = "create-artifact"
   reply_relation           = "reply"
+  forwarding_relation      = "forwarding"
 }
 
 //

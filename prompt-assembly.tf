@@ -38,9 +38,10 @@ resource "tama_modular_thought" "context-merge" {
 resource "tama_modular_thought" "forward-to-reply" {
   depends_on = [module.global.schemas]
 
-  chain_id = tama_chain.reply-context-assembly.id
-  index    = 1
-  relation = "forward"
+  chain_id        = tama_chain.reply-context-assembly.id
+  output_class_id = module.global.schemas.forwarding.id
+  index           = 1
+  relation        = local.forwarding_relation
 
   module {
     reference = "tama/concepts/forward"

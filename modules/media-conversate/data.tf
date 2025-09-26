@@ -57,3 +57,8 @@ data "tama_class" "context-component" {
   space_id = var.prompt_assembly_space_id
   name     = "context-component"
 }
+
+data "tama_class" "forwarding" {
+  space_id = data.tama_space.global.id
+  name     = "forwarding"
+}

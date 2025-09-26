@@ -6,9 +6,10 @@ resource "tama_chain" "patch-reply" {
 resource "tama_modular_thought" "forward-patch" {
   depends_on = [module.global.schemas]
 
-  chain_id = tama_chain.patch-reply.id
-  relation = "forward"
-  index    = 0
+  chain_id        = tama_chain.patch-reply.id
+  output_class_id = module.global.schemas.forwarding.id
+  relation        = local.forwarding_relation
+  index           = 0
 
   module {
     reference = "tama/concepts/forward"

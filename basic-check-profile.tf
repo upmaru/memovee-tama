@@ -42,9 +42,10 @@ module "check-profile-tooling" {
 resource "tama_modular_thought" "forward-check-profile" {
   depends_on = [module.global.schemas]
 
-  chain_id = tama_chain.load-profile-and-greet.id
-  relation = "forward"
-  index    = 1
+  chain_id        = tama_chain.load-profile-and-greet.id
+  output_class_id = module.global.schemas.forwarding.id
+  relation        = local.forwarding_relation
+  index           = 1
 
   module {
     reference = "tama/concepts/forward"

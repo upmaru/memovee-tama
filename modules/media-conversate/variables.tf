@@ -78,3 +78,8 @@ variable "message_class_name" {
   type        = string
   description = "The name of the message class."
 }
+
+variable "forwarding_relation" {
+  type        = string
+  description = "The relation for forwarding thoughts."
+}

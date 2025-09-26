@@ -48,9 +48,10 @@ module "update-user-perference" {
 resource "tama_modular_thought" "forward-personalization" {
   depends_on = [module.global.schemas]
 
-  chain_id = tama_chain.handle-personalization.id
-  relation = "forwarding"
-  index    = 1
+  chain_id        = tama_chain.handle-personalization.id
+  output_class_id = module.global.schemas.forwarding.id
+  relation        = local.forwarding_relation
+  index           = 1
 
   module {
     reference = "tama/concepts/forward"

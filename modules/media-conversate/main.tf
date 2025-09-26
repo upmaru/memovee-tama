@@ -96,9 +96,10 @@ resource "tama_thought_tool_input" "standard-search-request-body" {
 // Browse Media Forwarding
 //
 resource "tama_modular_thought" "forward-to-prompt-assembly" {
-  chain_id = tama_chain.this.id
-  index    = 1
-  relation = "forwarding"
+  chain_id        = tama_chain.this.id
+  output_class_id = data.tama_class.forwarding.id
+  index           = 1
+  relation        = var.forwarding_relation
 
   module {
     reference = "tama/concepts/forward"

@@ -6,9 +6,10 @@ resource "tama_chain" "off-topic" {
 resource "tama_modular_thought" "forward-off-topic" {
   depends_on = [module.global.schemas]
 
-  chain_id = tama_chain.off-topic.id
-  relation = "forward"
-  index    = 0
+  chain_id        = tama_chain.off-topic.id
+  output_class_id = module.global.schemas.forwarding.id
+  relation        = local.forwarding_relation
+  index           = 0
 
   module {
     reference = "tama/concepts/forward"

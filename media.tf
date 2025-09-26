@@ -42,6 +42,7 @@ module "media-browsing" {
   message_class_name = module.memovee.schemas.user-message.name
 
   routing_thought_relation = module.router.routing_thought_relation
+  forwarding_relation      = local.forwarding_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
@@ -59,9 +60,6 @@ module "media-browsing" {
 
   index_definition_relation = module.index-definition-generation.relations.movie-index
 }
-
-
-
 
 //
 // Media Detail
@@ -97,6 +95,7 @@ module "media-detail" {
   message_class_name = module.memovee.schemas.user-message.name
 
   routing_thought_relation = module.router.routing_thought_relation
+  forwarding_relation      = local.forwarding_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0
@@ -184,6 +183,7 @@ module "person-browsing" {
   message_class_name = module.memovee.schemas.user-message.name
 
   routing_thought_relation = module.router.routing_thought_relation
+  forwarding_relation      = local.forwarding_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
@@ -232,6 +232,7 @@ module "person-detail" {
   message_class_name = module.memovee.schemas.user-message.name
 
   routing_thought_relation = module.router.routing_thought_relation
+  forwarding_relation      = local.forwarding_relation
 
   tool_call_model_id          = module.openai.model_ids.gpt-5
   tool_call_model_temperature = 1.0
