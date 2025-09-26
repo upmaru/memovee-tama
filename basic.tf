@@ -87,7 +87,7 @@ resource "tama_class" "manipulation" {
 
 module "extract-embed-basic-conversation" {
   source  = "upmaru/base/tama//modules/extract-embed"
-  version = "0.3.16"
+  version = "0.4.0"
 
   depends_on = [module.global.schemas]
 

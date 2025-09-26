@@ -16,7 +16,7 @@ resource "tama_prompt" "handle-personalization" {
 
 module "update-user-perference" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.3.16"
+  version = "0.4.0"
 
   chain_id = tama_chain.handle-personalization.id
 

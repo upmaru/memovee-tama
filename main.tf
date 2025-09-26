@@ -1,11 +1,11 @@
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.3.16"
+  version = "0.4.0"
 }
 
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.3.16"
+  version = "0.4.0"
 
   depends_on = [module.global.schemas]
 
@@ -102,7 +102,7 @@ resource "tama_prompt" "reply-artifact" {
 
 module "artifact-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.3.16"
+  version = "0.4.0"
 
   thought_id = tama_modular_thought.reply-artifact.id
   contexts = {
@@ -202,7 +202,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.3.16"
+  version = "0.4.0"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {

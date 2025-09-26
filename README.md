@@ -138,29 +138,29 @@ To get started with the Memovee Tama project, you'll need to:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_artifact-context"></a> [artifact-context](#module\_artifact-context) | upmaru/base/tama//modules/thought-context | 0.3.16 |
-| <a name="module_check-profile-tooling"></a> [check-profile-tooling](#module\_check-profile-tooling) | upmaru/base/tama//modules/tooling | 0.3.16 |
-| <a name="module_elasticsearch"></a> [elasticsearch](#module\_elasticsearch) | upmaru/base/tama//modules/elasticsearch | 0.3.16 |
-| <a name="module_extract-embed-basic-conversation"></a> [extract-embed-basic-conversation](#module\_extract-embed-basic-conversation) | upmaru/base/tama//modules/extract-embed | 0.3.16 |
-| <a name="module_global"></a> [global](#module\_global) | upmaru/base/tama | 0.3.16 |
+| <a name="module_artifact-context"></a> [artifact-context](#module\_artifact-context) | upmaru/base/tama//modules/thought-context | 0.4.0 |
+| <a name="module_check-profile-tooling"></a> [check-profile-tooling](#module\_check-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.0 |
+| <a name="module_elasticsearch"></a> [elasticsearch](#module\_elasticsearch) | upmaru/base/tama//modules/elasticsearch | 0.4.0 |
+| <a name="module_extract-embed-basic-conversation"></a> [extract-embed-basic-conversation](#module\_extract-embed-basic-conversation) | upmaru/base/tama//modules/extract-embed | 0.4.0 |
+| <a name="module_global"></a> [global](#module\_global) | upmaru/base/tama | 0.4.0 |
 | <a name="module_index-definition-generation"></a> [index-definition-generation](#module\_index-definition-generation) | ./modules/index-definition | n/a |
 | <a name="module_index-mapping-generation"></a> [index-mapping-generation](#module\_index-mapping-generation) | ./modules/index-mapping | n/a |
 | <a name="module_media-browsing"></a> [media-browsing](#module\_media-browsing) | ./modules/media-conversate | n/a |
 | <a name="module_media-conversation"></a> [media-conversation](#module\_media-conversation) | ./modules/media-space | n/a |
 | <a name="module_media-detail"></a> [media-detail](#module\_media-detail) | ./modules/media-conversate | n/a |
-| <a name="module_memovee"></a> [memovee](#module\_memovee) | upmaru/base/tama//modules/messaging | 0.3.16 |
-| <a name="module_mistral"></a> [mistral](#module\_mistral) | upmaru/base/tama//modules/inference-service | 0.3.16 |
+| <a name="module_memovee"></a> [memovee](#module\_memovee) | upmaru/base/tama//modules/messaging | 0.4.0 |
+| <a name="module_mistral"></a> [mistral](#module\_mistral) | upmaru/base/tama//modules/inference-service | 0.4.0 |
 | <a name="module_movie-db"></a> [movie-db](#module\_movie-db) | ./modules/movie-db | n/a |
-| <a name="module_openai"></a> [openai](#module\_openai) | upmaru/base/tama//modules/inference-service | 0.3.16 |
+| <a name="module_openai"></a> [openai](#module\_openai) | upmaru/base/tama//modules/inference-service | 0.4.0 |
 | <a name="module_person-browsing"></a> [person-browsing](#module\_person-browsing) | ./modules/media-conversate | n/a |
 | <a name="module_person-detail"></a> [person-detail](#module\_person-detail) | ./modules/media-conversate | n/a |
-| <a name="module_reply-context"></a> [reply-context](#module\_reply-context) | upmaru/base/tama//modules/thought-context | 0.3.16 |
-| <a name="module_router"></a> [router](#module\_router) | upmaru/base/tama//modules/router | 0.3.16 |
-| <a name="module_update-user-perference"></a> [update-user-perference](#module\_update-user-perference) | upmaru/base/tama//modules/tooling | 0.3.16 |
-| <a name="module_upsert-profile-tooling"></a> [upsert-profile-tooling](#module\_upsert-profile-tooling) | upmaru/base/tama//modules/tooling | 0.3.16 |
-| <a name="module_voyageai"></a> [voyageai](#module\_voyageai) | upmaru/base/tama//modules/inference-service | 0.3.16 |
+| <a name="module_reply-context"></a> [reply-context](#module\_reply-context) | upmaru/base/tama//modules/thought-context | 0.4.0 |
+| <a name="module_router"></a> [router](#module\_router) | upmaru/base/tama//modules/router | 0.4.0 |
+| <a name="module_update-user-perference"></a> [update-user-perference](#module\_update-user-perference) | upmaru/base/tama//modules/tooling | 0.4.0 |
+| <a name="module_upsert-profile-tooling"></a> [upsert-profile-tooling](#module\_upsert-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.0 |
+| <a name="module_voyageai"></a> [voyageai](#module\_voyageai) | upmaru/base/tama//modules/inference-service | 0.4.0 |
 | <a name="module_watch-providers"></a> [watch-providers](#module\_watch-providers) | ./modules/watch-providers | n/a |
-| <a name="module_xai"></a> [xai](#module\_xai) | upmaru/base/tama//modules/inference-service | 0.3.16 |
+| <a name="module_xai"></a> [xai](#module\_xai) | upmaru/base/tama//modules/inference-service | 0.4.0 |
 
 
 ## Resources

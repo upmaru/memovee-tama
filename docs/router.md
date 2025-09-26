@@ -64,7 +64,7 @@ The router is configured to handle messages from the `user-message` class and ro
 The router is implemented as a Tama module with the following key components:
 
 - **Module Source**: `upmaru/base/tama//modules/router`
-- **Version**: `0.3.16`
+- **Version**: `0.4.0`
 - **Root Messaging Space**: `module.memovee.space.id`
 - **Network Message Thought**: `module.memovee.network_message_thought_id`
 - **Message Routing Class**: `module.global.schemas["message-routing"].id`
