@@ -23,9 +23,9 @@ variable "movie_db_elasticsearch_specification_id" {
   description = "The ID of the Elasticsearch specification for the movie database."
 }
 
-variable "prompt_assembly_space_id" {
+variable "response_class_id" {
   type        = string
-  description = "The ID of the space for the prompt assembly."
+  description = "The ID of the class for the response."
 }
 
 variable "tool_call_model_id" {

@@ -20,6 +20,7 @@ module "person-browsing" {
 
   depends_on = [
     module.global,
+    module.media-conversation,
     module.index-definition-generation
   ]
 
@@ -45,7 +46,7 @@ module "person-browsing" {
   reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
-  prompt_assembly_space_id = tama_space.prompt-assembly.id
+  response_class_id = local.response_class_id
 
   movie_db_space_id                       = module.movie-db.space_id
   movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id

@@ -53,10 +53,6 @@ resource "tama_modular_thought" "forward-upsert-profile" {
 }
 
 resource "tama_thought_path" "forward-upsert-profile" {
-  depends_on = [
-    tama_space_bridge.basic-conversation-prompt-assembly
-  ]
-
   thought_id      = tama_modular_thought.forward-upsert-profile.id
   target_class_id = local.response_class_id
 }

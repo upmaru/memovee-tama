@@ -107,11 +107,6 @@ resource "tama_space_bridge" "basic-conversation-memovee-ui" {
   target_space_id = tama_space.ui.id
 }
 
-resource "tama_space_bridge" "basic-conversation-prompt-assembly" {
-  space_id        = tama_space.basic-conversation.id
-  target_space_id = tama_space.prompt-assembly.id
-}
-
 resource "tama_space_bridge" "basic-conversation-memovee" {
   space_id        = tama_space.basic-conversation.id
   target_space_id = module.memovee.space.id

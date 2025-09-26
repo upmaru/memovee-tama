@@ -108,7 +108,7 @@ resource "tama_modular_thought" "forwarding" {
 
 resource "tama_thought_path" "forwarding" {
   thought_id      = tama_modular_thought.forwarding.id
-  target_class_id = data.tama_class.context-component.id
+  target_class_id = var.response_class_id
 }
 
 resource "tama_thought_path_directive" "reply-directive" {
