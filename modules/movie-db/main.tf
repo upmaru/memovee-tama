@@ -29,7 +29,7 @@ locals {
 resource "tama_class_corpus" "movie-details-mapping" {
   class_id = data.tama_class.movie-details.id
   name     = "Crawl Movie Details"
-  template = file("movie-db/movie-id-mapping.liquid")
+  template = file("${path.module}/movie-id-mapping.liquid")
 }
 
 module "crawl-movie-credits" {
@@ -163,13 +163,13 @@ module "network-person-details" {
 resource "tama_class_corpus" "movie-details-cast-mapping" {
   class_id = local.cast_class_id
   name     = "Crawl Cast Details"
-  template = file("movie-db/person-id-mapping.liquid")
+  template = file("${path.module}/person-id-mapping.liquid")
 }
 
 resource "tama_class_corpus" "movie-details-crew-mapping" {
   class_id = local.crew_class_id
   name     = "Crawl Crew Details"
-  template = file("movie-db/person-id-mapping.liquid")
+  template = file("${path.module}/person-id-mapping.liquid")
 }
 
 data "tama_action" "get-person-details" {
@@ -223,7 +223,7 @@ data "tama_action" "get-person-combined-credits" {
 resource "tama_class_corpus" "person-details-mapping" {
   class_id = data.tama_class.person-details.id
   name     = "Crawl Person Detail Mapping"
-  template = file("movie-db/person-id-mapping.liquid")
+  template = file("${path.module}/person-id-mapping.liquid")
 }
 
 module "crawl-person-credits" {
@@ -295,20 +295,20 @@ resource "tama_prompt" "generate-description" {
   space_id = tama_space.movie-db.id
   name     = "Generate Description"
   role     = "user"
-  content  = file("movie-db/generate-description.md")
+  content  = file("${path.module}/generate-description.md")
 }
 
 resource "tama_prompt" "generate-setting" {
   space_id = tama_space.movie-db.id
   name     = "Generate Setting"
   role     = "user"
-  content  = file("movie-db/setting-extraction.md")
+  content  = file("${path.module}/setting-extraction.md")
 }
 
 resource "tama_class" "movie-setting" {
   space_id = tama_space.movie-db.id
 
-  schema_json = jsonencode(jsondecode(file("movie-db/setting.json")))
+  schema_json = jsonencode(jsondecode(file("${path.module}/setting.json")))
 }
 
 resource "tama_class_corpus" "setting-embedding-corpus" {

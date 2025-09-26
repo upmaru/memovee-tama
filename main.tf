@@ -228,12 +228,80 @@ resource "tama_node" "handle-reply-generation" {
   type = "reactive"
 }
 
-# resource "tama_listener" "memovee-ui-listener" {
-#   space_id = module.memovee.space.id
-#   endpoint = "http://localhost:4001/tama/hook/broadcasts"
-# }
+variable "memovee_listener_secret" {
+  type = string
+}
 
-# resource "tama_listener_topic" "user-message-topic" {
-#   listener_id = tama_listener.memovee-ui-listener.id
-#   class_id    = module.memovee.schemas.user-message.id
-# }
+resource "tama_listener" "memovee-ui-listener" {
+  space_id = module.memovee.space.id
+  endpoint = "http://localhost:4001/tama/hook/broadcasts"
+  secret   = var.memovee_listener_secret
+}
+
+resource "tama_listener_topic" "user-message-topic" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  class_id    = module.memovee.schemas.user-message.id
+}
+
+//
+// Listener Filters
+//
+resource "tama_listener_filter" "reply-generation" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.reply-generation.id
+}
+
+resource "tama_listener_filter" "load-profile-and-greet" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.load-profile-and-greet.id
+}
+
+resource "tama_listener_filter" "upsert-profile" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.upsert-profile.id
+}
+
+resource "tama_listener_filter" "curse" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.curse.id
+}
+
+resource "tama_listener_filter" "off-topic" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.off-topic.id
+}
+
+resource "tama_listener_filter" "manipulation" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.manipulation.id
+}
+
+resource "tama_listener_filter" "patch-reply" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.patch-reply.id
+}
+
+resource "tama_listener_filter" "personalization" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.handle-personalization.id
+}
+
+resource "tama_listener_filter" "media-browsing" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.media-browsing.chain_id
+}
+
+resource "tama_listener_filter" "media-detail" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.media-detail.chain_id
+}
+
+resource "tama_listener_filter" "person-browsing" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.person-browsing.chain_id
+}
+
+resource "tama_listener_filter" "person-detail" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.person-detail.chain_id
+}

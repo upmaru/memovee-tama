@@ -1,7 +1,7 @@
 variable "tmdb_api_key" {}
 variable "elasticsearch_movie_db_api_key" {}
 module "movie-db" {
-  source = "./movie-db"
+  source = "./modules/movie-db"
 
   depends_on = [module.global.schemas]
 
@@ -28,7 +28,7 @@ module "movie-db" {
 }
 
 module "index-mapping-generation" {
-  source = "./index-mapping"
+  source = "./modules/index-mapping"
 
   depends_on = [module.global.schemas, module.movie-db]
 
@@ -37,7 +37,7 @@ module "index-mapping-generation" {
 }
 
 module "index-definition-generation" {
-  source = "./index-definition"
+  source = "./modules/index-definition"
 
   depends_on = [module.global.schemas, module.movie-db]
 

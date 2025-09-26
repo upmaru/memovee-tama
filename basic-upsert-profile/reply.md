@@ -6,6 +6,3 @@
 2. **Handle Profile Create or Update Error:**
     * **If the profile could not be created or updated:**
         * **Action:** Inform the user that the profile could not be updated. If the error response provides information related to the user input inform the user why the input does not work.
-
-### Artifact Rendering Rule
-- Use the `no-call` and **DO NOT** Render any artifact.

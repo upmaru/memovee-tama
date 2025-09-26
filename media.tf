@@ -1,5 +1,5 @@
 module "media-conversation" {
-  source = "./media"
+  source = "./modules/media-space"
 
   depends_on = [module.global.schemas]
 
@@ -26,7 +26,7 @@ resource "tama_prompt" "media-browsing-reply" {
 // Media Browsing
 //
 module "media-browsing" {
-  source = "./media-conversate"
+  source = "./modules/media-conversate"
 
   depends_on = [
     module.global.schemas,
@@ -81,7 +81,7 @@ resource "tama_prompt" "media-detail-reply" {
 }
 
 module "media-detail" {
-  source = "./media-conversate"
+  source = "./modules/media-conversate"
 
   depends_on = [
     module.global.schemas,
@@ -116,7 +116,7 @@ module "media-detail" {
 }
 
 module "watch-providers" {
-  source = "./watch-providers"
+  source = "./modules/watch-providers"
 
   tmdb_specification_id = module.movie-db.tmdb_specification_id
 }
@@ -168,7 +168,7 @@ resource "tama_prompt" "person-browse-reply" {
 }
 
 module "person-browsing" {
-  source = "./media-conversate"
+  source = "./modules/media-conversate"
 
   depends_on = [
     module.global,
@@ -216,7 +216,7 @@ resource "tama_prompt" "person-detail-reply" {
 }
 
 module "person-detail" {
-  source = "./media-conversate"
+  source = "./modules/media-conversate"
 
   depends_on = [
     module.global,

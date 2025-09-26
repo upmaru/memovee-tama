@@ -4,7 +4,7 @@
 resource "tama_class_corpus" "movie-details-indexing" {
   class_id = data.tama_class.movie-details.id
   name     = "Movie Details Indexing"
-  template = file("movie-db/document-indexing.liquid")
+  template = file("${path.module}/document-indexing.liquid")
 }
 
 data "tama_action" "index-document" {
@@ -104,7 +104,7 @@ resource "tama_node" "index-movie-details-explicit" {
 resource "tama_class_corpus" "person-details-indexing" {
   class_id = data.tama_class.person-details.id
   name     = "Person Details Indexing"
-  template = file("movie-db/document-indexing.liquid")
+  template = file("${path.module}/document-indexing.liquid")
 }
 
 resource "tama_chain" "index-person-details" {
