@@ -83,3 +83,13 @@ variable "forwarding_relation" {
   type        = string
   description = "The relation for forwarding thoughts."
 }
+
+variable "reply_artifact_thought_id" {
+  type        = string
+  description = "The ID of the thought for reply artifact."
+}
+
+variable "reply_generation_thought_id" {
+  type        = string
+  description = "The ID of the thought for reply generation."
+}

@@ -95,7 +95,7 @@ resource "tama_thought_tool_input" "standard-search-request-body" {
 //
 // Browse Media Forwarding
 //
-resource "tama_modular_thought" "forward-to-prompt-assembly" {
+resource "tama_modular_thought" "forwarding" {
   chain_id        = tama_chain.this.id
   output_class_id = data.tama_class.forwarding.id
   index           = 1
@@ -106,14 +106,15 @@ resource "tama_modular_thought" "forward-to-prompt-assembly" {
   }
 }
 
-resource "tama_thought_path" "forward-to-prompt-assembly" {
-  thought_id      = tama_modular_thought.forward-to-prompt-assembly.id
+resource "tama_thought_path" "forwarding" {
+  thought_id      = tama_modular_thought.forwarding.id
   target_class_id = data.tama_class.context-component.id
 }
 
-resource "tama_thought_context" "forward-to-prompt-assembly" {
-  thought_id = tama_modular_thought.forward-to-prompt-assembly.id
-  prompt_id  = var.reply_prompt_id
+resource "tama_thought_path_directive" "reply-directive" {
+  thought_path_id   = tama_thought_path.forwarding.id
+  prompt_id         = var.reply_prompt_id
+  target_thought_id = var.reply_generation_thought_id
 }
 
 resource "tama_node" "this" {
