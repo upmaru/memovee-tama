@@ -36,27 +36,27 @@ resource "tama_thought_path" "route-to-introductory" {
 
 resource "tama_thought_path" "route-to-curse" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.curse.id
+  target_class_id = module.curse.class.id
 }
 
 resource "tama_thought_path" "route-to-greeting" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.greeting.id
+  target_class_id = module.greeting.class.id
 }
 
 resource "tama_thought_path" "route-to-manipulation" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.manipulation.id
+  target_class_id = module.manipulation.class.id
 }
 
 resource "tama_thought_path" "route-to-patch" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.patch.id
+  target_class_id = module.patch.class.id
 }
 
 resource "tama_thought_path" "route-to-personalization" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.personalization.id
+  target_class_id = module.personalization.class.id
 }
 
 resource "tama_thought_path" "route-to-media-conversation-classes" {

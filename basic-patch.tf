@@ -51,7 +51,7 @@ resource "tama_thought_path_directive" "forward-patch-reply" {
 
 resource "tama_node" "handle-patch" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.patch.id
+  class_id = module.patch.class.id
   chain_id = tama_chain.patch-reply.id
 
   type = "reactive"

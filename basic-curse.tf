@@ -38,7 +38,7 @@ resource "tama_thought_path_directive" "curse-reply" {
 
 resource "tama_node" "handle-curse" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.curse.id
+  class_id = module.curse.class.id
   chain_id = tama_chain.curse.id
 
   type = "reactive"

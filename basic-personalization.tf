@@ -93,7 +93,7 @@ resource "tama_thought_path_directive" "personalization-reply" {
 
 resource "tama_node" "handle-personalization" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.personalization.id
+  class_id = module.personalization.class.id
   chain_id = tama_chain.handle-personalization.id
 
   type = "reactive"

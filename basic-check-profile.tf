@@ -72,7 +72,7 @@ resource "tama_thought_path_directive" "check-profile-reply" {
 
 resource "tama_node" "handle-check-profile" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.greeting.id
+  class_id = module.greeting.class.id
   chain_id = tama_chain.load-profile-and-greet.id
 
   type = "reactive"

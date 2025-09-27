@@ -38,7 +38,7 @@ resource "tama_thought_path_directive" "manipulation-reply" {
 
 resource "tama_node" "handle-manipulation" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.manipulation.id
+  class_id = module.manipulation.class.id
   chain_id = tama_chain.manipulation.id
 
   type = "reactive"
