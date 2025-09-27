@@ -19,10 +19,15 @@ module "greeting" {
   description = file("basic/greeting.md")
 }
 
-resource "tama_class" "introductory" {
+
+module "introductory" {
+  source     = "upmaru/base/tama//modules/forwardable-class"
+  version    = "0.4.0"
+  depends_on = [module.global.schemas]
+
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global.schemas]
-  schema_json = jsonencode(jsondecode(file("basic/introductory.json")))
+  title       = "introductory"
+  description = file("basic/introductory.md")
 }
 
 module "curse" {

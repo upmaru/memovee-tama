@@ -85,7 +85,7 @@ resource "tama_thought_path_directive" "upsert-profile-artifact" {
 
 resource "tama_node" "handle-upsert-profile" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.introductory.id
+  class_id = module.introductory.class.id
   chain_id = tama_chain.upsert-profile.id
 
   type = "reactive"
