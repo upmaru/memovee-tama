@@ -109,5 +109,5 @@ resource "tama_space_bridge" "basic-conversation-memovee-ui" {
 
 resource "tama_space_bridge" "basic-conversation-memovee" {
   space_id        = tama_space.basic-conversation.id
-  target_space_id = module.memovee.space.id
+  target_space_id = module.memovee.space_id
 }

@@ -2,7 +2,7 @@ module "router" {
   source  = "upmaru/base/tama//modules/router"
   version = "0.4.0"
 
-  root_messaging_space_id = module.memovee.space.id
+  root_messaging_space_id = module.memovee.space_id
   author_class_name       = module.memovee.schemas.actor.name
   thread_class_name       = module.memovee.schemas.thread.name
   message_class_name      = module.memovee.schemas.user-message.name

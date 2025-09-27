@@ -14,7 +14,7 @@ module "memovee" {
 
 
 resource "tama_prompt" "memovee" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
 
   name    = "Memovee Personality"
   role    = "system"
@@ -22,22 +22,22 @@ resource "tama_prompt" "memovee" {
 }
 
 resource "tama_space_bridge" "memovee-basic" {
-  space_id        = module.memovee.space.id
+  space_id        = module.memovee.space_id
   target_space_id = tama_space.basic-conversation.id
 }
 
 resource "tama_space_bridge" "memovee-media" {
-  space_id        = module.memovee.space.id
+  space_id        = module.memovee.space_id
   target_space_id = module.media-conversation.space_id
 }
 
 resource "tama_space_bridge" "memovee-ui" {
-  space_id        = module.memovee.space.id
+  space_id        = module.memovee.space_id
   target_space_id = tama_space.ui.id
 }
 
 resource "tama_prompt" "reply-template" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
 
   name    = "Memovee Reply Template"
   role    = "system"
@@ -45,7 +45,7 @@ resource "tama_prompt" "reply-template" {
 }
 
 resource "tama_chain" "reply-generation" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
   name     = "Memovee Reply Generation"
 }
 
@@ -93,7 +93,7 @@ resource "tama_modular_thought" "reply-artifact" {
 }
 
 resource "tama_prompt" "reply-artifact" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
 
   name    = "Memovee Reply Artifact"
   role    = "system"
@@ -222,7 +222,7 @@ module "reply-context" {
 }
 
 resource "tama_node" "handle-reply-generation" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
   class_id = local.response_class_id
   chain_id = tama_chain.reply-generation.id
 
@@ -234,7 +234,7 @@ variable "memovee_listener_secret" {
 }
 
 resource "tama_listener" "memovee-ui-listener" {
-  space_id = module.memovee.space.id
+  space_id = module.memovee.space_id
   endpoint = "http://localhost:4001/tama/hook/broadcasts"
   secret   = var.memovee_listener_secret
 }
