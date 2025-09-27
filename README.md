@@ -140,20 +140,29 @@ To get started with the Memovee Tama project, you'll need to:
 |------|--------|---------|
 | <a name="module_artifact-context"></a> [artifact-context](#module\_artifact-context) | upmaru/base/tama//modules/thought-context | 0.4.0 |
 | <a name="module_check-profile-tooling"></a> [check-profile-tooling](#module\_check-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.0 |
+| <a name="module_curse"></a> [curse](#module\_curse) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_elasticsearch"></a> [elasticsearch](#module\_elasticsearch) | upmaru/base/tama//modules/elasticsearch | 0.4.0 |
-| <a name="module_extract-embed-basic-conversation"></a> [extract-embed-basic-conversation](#module\_extract-embed-basic-conversation) | upmaru/base/tama//modules/extract-embed | 0.4.0 |
 | <a name="module_global"></a> [global](#module\_global) | upmaru/base/tama | 0.4.0 |
+| <a name="module_greeting"></a> [greeting](#module\_greeting) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_index-definition-generation"></a> [index-definition-generation](#module\_index-definition-generation) | ./modules/index-definition | n/a |
 | <a name="module_index-mapping-generation"></a> [index-mapping-generation](#module\_index-mapping-generation) | ./modules/index-mapping | n/a |
+| <a name="module_introductory"></a> [introductory](#module\_introductory) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
+| <a name="module_manipulation"></a> [manipulation](#module\_manipulation) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_media-browsing"></a> [media-browsing](#module\_media-browsing) | ./modules/media-conversate | n/a |
-| <a name="module_media-conversation"></a> [media-conversation](#module\_media-conversation) | ./modules/media-space | n/a |
+| <a name="module_media-browsing-forwardable"></a> [media-browsing-forwardable](#module\_media-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_media-detail"></a> [media-detail](#module\_media-detail) | ./modules/media-conversate | n/a |
+| <a name="module_media-detail-forwardable"></a> [media-detail-forwardable](#module\_media-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_memovee"></a> [memovee](#module\_memovee) | upmaru/base/tama//modules/messaging | 0.4.0 |
 | <a name="module_mistral"></a> [mistral](#module\_mistral) | upmaru/base/tama//modules/inference-service | 0.4.0 |
 | <a name="module_movie-db"></a> [movie-db](#module\_movie-db) | ./modules/movie-db | n/a |
+| <a name="module_off-topic"></a> [off-topic](#module\_off-topic) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_openai"></a> [openai](#module\_openai) | upmaru/base/tama//modules/inference-service | 0.4.0 |
+| <a name="module_patch"></a> [patch](#module\_patch) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_person-browsing"></a> [person-browsing](#module\_person-browsing) | ./modules/media-conversate | n/a |
+| <a name="module_person-browsing-forwardable"></a> [person-browsing-forwardable](#module\_person-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_person-detail"></a> [person-detail](#module\_person-detail) | ./modules/media-conversate | n/a |
+| <a name="module_person-detail-forwardable"></a> [person-detail-forwardable](#module\_person-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
+| <a name="module_personalization"></a> [personalization](#module\_personalization) | upmaru/base/tama//modules/forwardable-class | 0.4.0 |
 | <a name="module_reply-context"></a> [reply-context](#module\_reply-context) | upmaru/base/tama//modules/thought-context | 0.4.0 |
 | <a name="module_router"></a> [router](#module\_router) | upmaru/base/tama//modules/router | 0.4.0 |
 | <a name="module_update-user-perference"></a> [update-user-perference](#module\_update-user-perference) | upmaru/base/tama//modules/tooling | 0.4.0 |
@@ -175,13 +184,6 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_chain.patch-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/chain) | resource |
 | [tama_chain.reply-generation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/chain) | resource |
 | [tama_chain.upsert-profile](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/chain) | resource |
-| [tama_class.curse](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.greeting](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.introductory](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.manipulation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.off-topic](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.patch](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
-| [tama_class.personalization](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/class) | resource |
 | [tama_listener.memovee-ui-listener](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/listener) | resource |
 | [tama_listener_filter.curse](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/listener_filter) | resource |
 | [tama_listener_filter.load-profile-and-greet](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/listener_filter) | resource |
@@ -239,9 +241,13 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_prompt.upsert-profile-tooling](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_source_identity.memovee-ui-oauth](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/source_identity) | resource |
 | [tama_space.basic-conversation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
+| [tama_space.media-conversation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
 | [tama_space.ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
 | [tama_space_bridge.basic-conversation-memovee](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.basic-conversation-memovee-ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
+| [tama_space_bridge.media-conversation-to-memovee](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
+| [tama_space_bridge.media-conversation-to-memovee-ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
+| [tama_space_bridge.media-conversation-to-movie-db](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.memovee-basic](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.memovee-media](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.memovee-ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
@@ -260,9 +266,12 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_thought_path.route-to-greeting](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-introductory](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-manipulation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
-| [tama_thought_path.route-to-media-conversation-classes](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path.route-to-media-browsing](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path.route-to-media-detail](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-off-topic](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-patch](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path.route-to-person-browsing](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path.route-to-person-detail](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-personalization](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path_directive.check-profile-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_path_directive.curse-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
