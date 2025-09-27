@@ -3,10 +3,14 @@ resource "tama_space" "ui" {
   type = "component"
 }
 
-variable "memovee_ui_endpoint" {}
-variable "memovee_ui_openapi_url" {}
-data "http" "memovee-ui" {
-  url = var.memovee_ui_openapi_url
+variable "memovee_ui_endpoint" {
+  type        = string
+  description = "The endpoint URL of the Memovee UI"
+}
+
+variable "memovee_ui_openapi_url" {
+  type        = string
+  description = "The OpenAPI URL of the Memovee UI"
 }
 
 resource "tama_specification" "memovee-ui" {
@@ -24,8 +28,16 @@ resource "tama_specification" "memovee-ui" {
   }
 }
 
-variable "memovee_ui_client_id" {}
-variable "memovee_ui_client_secret" {}
+variable "memovee_ui_client_id" {
+  type        = string
+  description = "The client ID for the Memovee UI OAuth client"
+}
+
+variable "memovee_ui_client_secret" {
+  type        = string
+  description = "The client secret for the Memovee UI OAuth client"
+}
+
 resource "tama_source_identity" "memovee-ui-oauth" {
   specification_id = tama_specification.memovee-ui.id
   identifier       = "oauth"
@@ -45,6 +57,16 @@ resource "tama_source_identity" "memovee-ui-oauth" {
       in   = ["active", "failed"]
     }
   }
+}
+
+data "http" "memovee-ui" {
+  url = var.memovee_ui_openapi_url
+}
+
+data "tama_action" "create-artifact" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "POST"
+  path             = "/tama/conversation/messages/{message_id}/artifacts"
 }
 
 data "tama_action" "get-user-preferences" {

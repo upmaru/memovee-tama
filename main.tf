@@ -12,7 +12,6 @@ module "memovee" {
   name = "memovee"
 }
 
-
 resource "tama_prompt" "memovee" {
   space_id = module.memovee.space_id
 
@@ -121,11 +120,6 @@ module "artifact-context" {
   }
 }
 
-data "tama_action" "create-artifact" {
-  specification_id = tama_specification.memovee-ui.id
-  method           = "POST"
-  path             = "/tama/conversation/messages/{message_id}/artifacts"
-}
 
 resource "tama_thought_tool" "create-artifact-tool" {
   thought_id = tama_modular_thought.reply-artifact.id
@@ -230,7 +224,8 @@ resource "tama_node" "handle-reply-generation" {
 }
 
 variable "memovee_listener_secret" {
-  type = string
+  type        = string
+  description = "The secret for the Memovee UI listener"
 }
 
 resource "tama_listener" "memovee-ui-listener" {

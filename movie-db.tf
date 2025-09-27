@@ -1,5 +1,13 @@
-variable "tmdb_api_key" {}
-variable "elasticsearch_movie_db_api_key" {}
+variable "tmdb_api_key" {
+  type        = string
+  description = "The API key for the TMDB inference service"
+}
+
+variable "elasticsearch_movie_db_api_key" {
+  type        = string
+  description = "The API key for the Elasticsearch Movie DB inference service"
+}
+
 module "movie-db" {
   source = "./modules/movie-db"
 

@@ -1,5 +1,13 @@
-variable "elasticsearch_endpoint" {}
-variable "elasticsearch_management_api_key" {}
+variable "elasticsearch_endpoint" {
+  type        = string
+  description = "The endpoint URL of the Elasticsearch instance"
+}
+
+variable "elasticsearch_management_api_key" {
+  type        = string
+  description = "The API key for the Elasticsearch management API"
+}
+
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
   version = "0.4.0"

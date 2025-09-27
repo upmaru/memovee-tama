@@ -1,4 +1,8 @@
-variable "mistral_api_key" {}
+variable "mistral_api_key" {
+  type        = string
+  description = "The API key for the Mistral inference service"
+}
+
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
   version = "0.4.0"
@@ -22,7 +26,11 @@ module "mistral" {
   ]
 }
 
-variable "xai_api_key" {}
+variable "xai_api_key" {
+  type        = string
+  description = "The API key for the XAI inference service"
+}
+
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
   version = "0.4.0"
@@ -57,7 +65,11 @@ module "xai" {
   ]
 }
 
-variable "openai_api_key" {}
+variable "openai_api_key" {
+  type        = string
+  description = "The API key for the OpenAI inference service"
+}
+
 module "openai" {
   source  = "upmaru/base/tama//modules/inference-service"
   version = "0.4.0"
@@ -94,7 +106,11 @@ module "openai" {
   ]
 }
 
-variable "voyageai_api_key" {}
+variable "voyageai_api_key" {
+  type        = string
+  description = "The API key for the VoyageAI inference service"
+}
+
 module "voyageai" {
   source  = "upmaru/base/tama//modules/inference-service"
   version = "0.4.0"
