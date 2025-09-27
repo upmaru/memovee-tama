@@ -2,14 +2,14 @@
 // Media Detail
 //
 resource "tama_prompt" "media-detail-tooling" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Media Detail Tooling"
   role     = "system"
   content  = file("media-detail/querying.md")
 }
 
 resource "tama_prompt" "media-detail-reply" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Media Detail Reply"
   role     = "system"
   content  = file("media-detail/reply.md")
@@ -20,14 +20,12 @@ module "media-detail" {
 
   depends_on = [
     module.global.schemas,
-    module.media-conversation,
-
     module.index-definition-generation
   ]
 
   name                        = "Media Detail"
-  media_conversation_space_id = module.media-conversation.space_id
-  target_class_id             = module.media-conversation.class_ids["media-detail"]
+  media_conversation_space_id = tama_space.media-conversation.id
+  target_class_id             = module.media-detail-forwardable.class.id
 
   author_class_name  = module.memovee.schemas.actor.name
   thread_class_name  = module.memovee.schemas.thread.name
@@ -83,8 +81,6 @@ resource "tama_tool_output_option" "watch-providers-region" {
 // Check User Preferences Tooling
 //
 resource "tama_thought_tool" "media-detail-check-user-preferences" {
-  depends_on = [module.media-conversation]
-
   thought_id = module.media-detail.tooling_thought_id
   action_id  = data.tama_action.get-user-preferences.id
 }

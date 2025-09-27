@@ -1,12 +1,12 @@
 resource "tama_prompt" "person-detail-tooling" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Person Detail Tooling"
   role     = "system"
   content  = file("media-person-detail/querying.md")
 }
 
 resource "tama_prompt" "person-detail-reply" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Person Detail Reply"
   role     = "system"
   content  = file("media-person-detail/reply.md")
@@ -17,13 +17,12 @@ module "person-detail" {
 
   depends_on = [
     module.global,
-    module.media-conversation,
     module.index-definition-generation
   ]
 
   name                        = "Person Detail"
-  media_conversation_space_id = module.media-conversation.space_id
-  target_class_id             = module.media-conversation.class_ids["person-detail"]
+  media_conversation_space_id = tama_space.media-conversation.id
+  target_class_id             = module.person-detail-forwardable.class.id
 
   author_class_name  = module.memovee.schemas.actor.name
   thread_class_name  = module.memovee.schemas.thread.name

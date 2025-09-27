@@ -28,7 +28,7 @@ resource "tama_space_bridge" "memovee-basic" {
 
 resource "tama_space_bridge" "memovee-media" {
   space_id        = module.memovee.space_id
-  target_space_id = module.media-conversation.space_id
+  target_space_id = tama_space.media-conversation.id
 }
 
 resource "tama_space_bridge" "memovee-ui" {

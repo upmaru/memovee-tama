@@ -1,12 +1,12 @@
 resource "tama_prompt" "media-browsing-tooling" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Media Browsing Tooling"
   role     = "system"
   content  = file("media-browsing/querying.md")
 }
 
 resource "tama_prompt" "media-browsing-reply" {
-  space_id = module.media-conversation.space_id
+  space_id = tama_space.media-conversation.id
   name     = "Media Browsing Reply"
   role     = "system"
   content  = file("media-browsing/reply.md")
@@ -20,13 +20,12 @@ module "media-browsing" {
 
   depends_on = [
     module.global.schemas,
-    module.media-conversation,
     module.index-definition-generation
   ]
 
   name                        = "Media Browsing"
-  media_conversation_space_id = module.media-conversation.space_id
-  target_class_id             = module.media-conversation.class_ids["media-browsing"]
+  media_conversation_space_id = tama_space.media-conversation.id
+  target_class_id             = module.media-browsing-forwardable.class.id
 
   author_class_name  = module.memovee.schemas.actor.name
   thread_class_name  = module.memovee.schemas.thread.name
