@@ -7,7 +7,7 @@ resource "tama_prompt" "check-profile-tooling" {
   space_id = tama_space.basic-conversation.id
   name     = "Check Profile Tooling"
   role     = "system"
-  content  = file("basic-check-profile/tooling.md")
+  content  = file("basic-greeting/tooling.md")
 }
 
 module "check-profile-tooling" {
@@ -61,7 +61,7 @@ resource "tama_prompt" "check-profile-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Check Profile Reply"
   role     = "system"
-  content  = file("basic-check-profile/reply.md")
+  content  = file("basic-greeting/reply.md")
 }
 
 resource "tama_thought_path_directive" "check-profile-reply" {

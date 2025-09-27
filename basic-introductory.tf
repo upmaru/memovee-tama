@@ -7,7 +7,7 @@ resource "tama_prompt" "upsert-profile-tooling" {
   space_id = tama_space.basic-conversation.id
   name     = "Upsert Profile Tooling"
   role     = "system"
-  content  = file("basic-upsert-profile/tooling.md")
+  content  = file("basic-introductory/tooling.md")
 }
 
 module "upsert-profile-tooling" {
@@ -61,7 +61,7 @@ resource "tama_prompt" "upsert-profile-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Upsert Profile Reply"
   role     = "system"
-  content  = file("basic-upsert-profile/reply.md")
+  content  = file("basic-introductory/reply.md")
 }
 
 resource "tama_thought_path_directive" "upsert-profile-reply" {
@@ -74,7 +74,7 @@ resource "tama_prompt" "upsert-profile-artifact" {
   space_id = tama_space.basic-conversation.id
   name     = "Upsert Profile Artifact"
   role     = "system"
-  content  = file("basic-upsert-profile/artifact.md")
+  content  = file("basic-introductory/artifact.md")
 }
 
 resource "tama_thought_path_directive" "upsert-profile-artifact" {
