@@ -305,21 +305,21 @@ To get started with the Memovee Tama project, you'll need to:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_elasticsearch_endpoint"></a> [elasticsearch\_endpoint](#input\_elasticsearch\_endpoint) | n/a | `any` | n/a | yes |
-| <a name="input_elasticsearch_management_api_key"></a> [elasticsearch\_management\_api\_key](#input\_elasticsearch\_management\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_elasticsearch_movie_db_api_key"></a> [elasticsearch\_movie\_db\_api\_key](#input\_elasticsearch\_movie\_db\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_memovee_listener_secret"></a> [memovee\_listener\_secret](#input\_memovee\_listener\_secret) | n/a | `string` | n/a | yes |
-| <a name="input_memovee_ui_client_id"></a> [memovee\_ui\_client\_id](#input\_memovee\_ui\_client\_id) | n/a | `any` | n/a | yes |
-| <a name="input_memovee_ui_client_secret"></a> [memovee\_ui\_client\_secret](#input\_memovee\_ui\_client\_secret) | n/a | `any` | n/a | yes |
-| <a name="input_memovee_ui_endpoint"></a> [memovee\_ui\_endpoint](#input\_memovee\_ui\_endpoint) | n/a | `any` | n/a | yes |
-| <a name="input_memovee_ui_openapi_url"></a> [memovee\_ui\_openapi\_url](#input\_memovee\_ui\_openapi\_url) | n/a | `any` | n/a | yes |
-| <a name="input_mistral_api_key"></a> [mistral\_api\_key](#input\_mistral\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_openai_api_key"></a> [openai\_api\_key](#input\_openai\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_tama_api_key"></a> [tama\_api\_key](#input\_tama\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_tama_base_url"></a> [tama\_base\_url](#input\_tama\_base\_url) | n/a | `any` | n/a | yes |
-| <a name="input_tmdb_api_key"></a> [tmdb\_api\_key](#input\_tmdb\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_voyageai_api_key"></a> [voyageai\_api\_key](#input\_voyageai\_api\_key) | n/a | `any` | n/a | yes |
-| <a name="input_xai_api_key"></a> [xai\_api\_key](#input\_xai\_api\_key) | n/a | `any` | n/a | yes |
+| <a name="input_elasticsearch_endpoint"></a> [elasticsearch\_endpoint](#input\_elasticsearch\_endpoint) | The endpoint URL of the Elasticsearch instance | `string` | n/a | yes |
+| <a name="input_elasticsearch_management_api_key"></a> [elasticsearch\_management\_api\_key](#input\_elasticsearch\_management\_api\_key) | The API key for the Elasticsearch management API | `string` | n/a | yes |
+| <a name="input_elasticsearch_movie_db_api_key"></a> [elasticsearch\_movie\_db\_api\_key](#input\_elasticsearch\_movie\_db\_api\_key) | The API key for the Elasticsearch Movie DB inference service | `string` | n/a | yes |
+| <a name="input_memovee_listener_secret"></a> [memovee\_listener\_secret](#input\_memovee\_listener\_secret) | The secret for the Memovee UI listener | `string` | n/a | yes |
+| <a name="input_memovee_ui_client_id"></a> [memovee\_ui\_client\_id](#input\_memovee\_ui\_client\_id) | The client ID for the Memovee UI OAuth client | `string` | n/a | yes |
+| <a name="input_memovee_ui_client_secret"></a> [memovee\_ui\_client\_secret](#input\_memovee\_ui\_client\_secret) | The client secret for the Memovee UI OAuth client | `string` | n/a | yes |
+| <a name="input_memovee_ui_endpoint"></a> [memovee\_ui\_endpoint](#input\_memovee\_ui\_endpoint) | The endpoint URL of the Memovee UI | `string` | n/a | yes |
+| <a name="input_memovee_ui_openapi_url"></a> [memovee\_ui\_openapi\_url](#input\_memovee\_ui\_openapi\_url) | The OpenAPI URL of the Memovee UI | `string` | n/a | yes |
+| <a name="input_mistral_api_key"></a> [mistral\_api\_key](#input\_mistral\_api\_key) | The API key for the Mistral inference service | `string` | n/a | yes |
+| <a name="input_openai_api_key"></a> [openai\_api\_key](#input\_openai\_api\_key) | The API key for the OpenAI inference service | `string` | n/a | yes |
+| <a name="input_tama_api_key"></a> [tama\_api\_key](#input\_tama\_api\_key) | The API key for the Tama API | `string` | n/a | yes |
+| <a name="input_tama_base_url"></a> [tama\_base\_url](#input\_tama\_base\_url) | The base URL of the Tama API | `string` | n/a | yes |
+| <a name="input_tmdb_api_key"></a> [tmdb\_api\_key](#input\_tmdb\_api\_key) | The API key for the TMDB inference service | `string` | n/a | yes |
+| <a name="input_voyageai_api_key"></a> [voyageai\_api\_key](#input\_voyageai\_api\_key) | The API key for the VoyageAI inference service | `string` | n/a | yes |
+| <a name="input_xai_api_key"></a> [xai\_api\_key](#input\_xai\_api\_key) | The API key for the XAI inference service | `string` | n/a | yes |
 
 
 ## Outputs
