@@ -3,10 +3,14 @@ resource "tama_space" "basic-conversation" {
   type = "component"
 }
 
-resource "tama_class" "off-topic" {
+module "off-topic" {
+  source     = "upmaru/base/tama//modules/forwardable-class"
+  version    = "0.4.0"
+  depends_on = [module.global.schemas]
+
   space_id    = tama_space.basic-conversation.id
-  depends_on  = [module.global.schemas]
-  schema_json = jsonencode(jsondecode(file("basic/off-topic.json")))
+  title       = "off-topic"
+  description = file("basic/off-topic.md")
 }
 
 module "greeting" {

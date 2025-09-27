@@ -26,7 +26,7 @@ module "router" {
 
 resource "tama_thought_path" "route-to-off-topic" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = tama_class.off-topic.id
+  target_class_id = module.off-topic.class.id
 }
 
 resource "tama_thought_path" "route-to-introductory" {

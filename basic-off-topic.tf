@@ -38,7 +38,7 @@ resource "tama_thought_path_directive" "off-topic-reply" {
 
 resource "tama_node" "handle-off-topic" {
   space_id = tama_space.basic-conversation.id
-  class_id = tama_class.off-topic.id
+  class_id = module.off-topic.class.id
   chain_id = tama_chain.off-topic.id
 
   type = "reactive"
