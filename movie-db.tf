@@ -40,8 +40,9 @@ module "index-mapping-generation" {
 
   depends_on = [module.global.schemas, module.movie-db]
 
-  movie_db_space_id      = module.movie-db.space_id
-  elasticsearch_space_id = module.elasticsearch.space_id
+  movie_db_space_id           = module.movie-db.space_id
+  elasticsearch_space_id      = module.elasticsearch.space_id
+  index_generation_thought_id = module.elasticsearch.index_generation_thought_id
 }
 
 module "index-definition-generation" {

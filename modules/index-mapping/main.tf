@@ -14,7 +14,7 @@ resource "tama_prompt" "person-db-index-constraints" {
 
 module "sample-movies-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.4.0"
+  version = "0.4.1"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Movie Index Generation"
@@ -38,12 +38,13 @@ module "sample-movies-for-index-generation" {
   target_class_id = data.tama_class.movie-details.id
   prompt_id       = tama_prompt.movie-db-index-constraints.id
 
-  forward_to_class_id = data.tama_class.index-generation.id
+  forward_to_class_id   = data.tama_class.index-generation.id
+  forward_to_thought_id = var.index_generation_thought_id
 }
 
 module "sample-people-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.4.0"
+  version = "0.4.1"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Person Index Generation"
@@ -67,5 +68,6 @@ module "sample-people-for-index-generation" {
   target_class_id = data.tama_class.person-details.id
   prompt_id       = tama_prompt.person-db-index-constraints.id
 
-  forward_to_class_id = data.tama_class.index-generation.id
+  forward_to_class_id   = data.tama_class.index-generation.id
+  forward_to_thought_id = var.index_generation_thought_id
 }

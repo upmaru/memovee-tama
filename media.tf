@@ -5,7 +5,7 @@ resource "tama_space" "media-conversation" {
 
 module "media-detail-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.0"
+  version    = "0.4.1"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
@@ -15,7 +15,7 @@ module "media-detail-forwardable" {
 
 module "media-browsing-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.0"
+  version    = "0.4.1"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
@@ -25,7 +25,7 @@ module "media-browsing-forwardable" {
 
 module "person-detail-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.0"
+  version    = "0.4.1"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
@@ -35,7 +35,7 @@ module "person-detail-forwardable" {
 
 module "person-browsing-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.0"
+  version    = "0.4.1"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
