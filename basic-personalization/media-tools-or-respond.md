@@ -34,9 +34,9 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 
     4. The assistant saves the preferences and then should use the new information to query the tools in `media-detail`.
 
-    5. Tool call successfully created.
+    5. Tool call was successful.
 
-    6. Next is to use the data to query the tools in `media-detail`.
+    6. Next step is to use the data to query the tools in `media-detail`.
   </reasoning>
 </case>
 
