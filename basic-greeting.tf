@@ -57,6 +57,19 @@ resource "tama_thought_path" "check-profile-reply" {
   target_class_id = local.response_class_id
 }
 
+resource "tama_prompt" "check-profile-artifact" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Check Profile Artifact"
+  role     = "system"
+  content  = file("basic-greeting/artifact.md")
+}
+
+resource "tama_thought_path_directive" "check-profile-artifact" {
+  thought_path_id   = tama_thought_path.check-profile-reply.id
+  prompt_id         = tama_prompt.check-profile-artifact.id
+  target_thought_id = tama_modular_thought.reply-artifact.id
+}
+
 resource "tama_prompt" "check-profile-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Check Profile Reply"
