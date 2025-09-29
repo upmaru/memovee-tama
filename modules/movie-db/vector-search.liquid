@@ -1,0 +1,27 @@
+{%- capture vectorize_input -%}
+  {"thought_id":"{{ data.metadata.thought_id }}","text":"{{ data.query }}"}
+{%- endcapture -%}
+{
+  "retriever": {
+    "text_similarity_reranker": {
+      "retriever": {
+        "knn": {
+          "field": "concepts.chunks.embedding",
+          "query_vector": {{ vectorize_input | vectorize }},
+          "k": 5,
+          "num_candidates": 10
+        }
+      },
+      "field": "preload.concept.content.merge",
+      "inference_id": "voyageai-rerank",
+      "inference_text": "{{ data.query }}",
+      "rank_window_size": 100,
+      "min_score": 0.5
+    }
+  },
+  "size": {{ data.limit | default: 3 }},
+  "_source": {
+    "includes": {{ data._source | json }},
+    "excludes": ["*.embedding"]
+  }
+}

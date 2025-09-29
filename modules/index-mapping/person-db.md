@@ -1,0 +1,26 @@
+## Person DB Specific Constraints
+- The ID should be of the type `long`.
+- Make sure that the following fields are of type `nested`:
+  - `person-combined-credits`
+  - `person-combined-credits.cast`
+  - `person-combined-credits.crew`
+- Make sure that the following fields are of type `date`:
+  - `deathday`
+  - `birthday`
+  - `person-combined-credits.cast.release_date`
+  - `person-combined-credits.crew.release_date`
+- Make sure that the following fields are of type `text`:
+  - `name`
+  - `biography`
+  - `also_known_as`
+  - `person-combined-credits.crew.overview`
+  - `person-combined-credits.cast.overview`
+- Make sure that the following fields are of type `keyword`:
+  - `known_for_department`
+  - `imdb_id`
+  - `metadata.class`
+  - `metadata.space`
+  - `person-combined-credits.crew.media_type`
+  - `person-combined-credits.cast.media_type`
+- **NEVER** make up mapping for fields that do not exist.
+  - Example: If a field name is `person-combined-credits`, **NEVER** convert it to `person_combined_credits`.

@@ -1,0 +1,76 @@
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/Users/zacksiri/Development/notebooks/movies.json"},"name":"movies.json","type":"file"}]} -->
+
+# Ingest Data
+
+```elixir
+Mix.install([
+  {:explorer, "~> 0.10.1"},
+  {:kino, "~> 0.15"},
+  {:tama_ex, github: "upmaru/tama-ex"}
+])
+```
+
+## Setup Client
+
+```elixir
+alias TamaEx.Neural
+alias TamaEx.Perception
+alias TamaEx.Memory
+
+provision = TamaEx.client(base_url: "http://localhost:4000/provision")
+ingest = TamaEx.client(base_url: "http://localhost:4000/ingest")
+
+{:ok, movie_db_space} = Neural.get_space(provision, "movie-db")
+
+{:ok, movie_details_class} = 
+  Neural.get_class(provision, movie_db_space, "movie-details")
+```
+
+## Load dataset
+
+```elixir
+alias Explorer.DataFrame
+alias Explorer.Series
+
+require Explorer.DataFrame
+
+df =
+  Kino.FS.file_path("movies.json")
+  |> DataFrame.from_ndjson!()
+
+df = DataFrame.mutate(df,
+  release_date: Series.cast(release_date, :date)
+)
+
+df =
+  df
+  |> DataFrame.filter(year(release_date) >= 2020)
+  |> DataFrame.filter(not(adult))
+  |> DataFrame.filter(status == "Released")
+  |> DataFrame.filter(lengths(split(overview, " ")) > 5)
+  |> DataFrame.sort_by(desc: popularity)
+
+stream =
+  DataFrame.to_rows_stream(df, atom_keys: true, chunk_size: 500)
+```
+
+## Push into Tama
+
+```elixir
+movies =
+  stream
+  |> Enum.take(200)
+
+movies
+|> Enum.map(fn movie ->
+  attrs = %{
+    identifier: "#{movie.id}",
+    record: movie,
+    validate_record: false
+  }
+
+  Memory.create_entity(ingest, movie_details_class, attrs)
+end)
+```
+
+<!-- livebook:{"offset":1553,"stamp":{"token":"XCP.dWfQauGgRio7Ov4StX_z1UulCN96SS71WlG7Bdzm_PEwznvaDoWnfDnuV2Jx7Iv368uWjLMdUwD1enrx9V4UneQvVZvO0ex_deDB0Q","version":2}} -->

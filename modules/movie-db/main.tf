@@ -1,0 +1,534 @@
+resource "tama_space" "movie-db" {
+  name = "Movie DB"
+  type = "component"
+}
+
+module "extract-nested-properties-movie-db" {
+  source  = "upmaru/base/tama//modules/extract-nested-properties"
+  version = "0.4.3"
+
+  class_names      = ["movie-credits"]
+  specification_id = tama_specification.tmdb.id
+  space_id         = tama_space.movie-db.id
+
+  types = ["array"]
+  depth = 1
+
+  expected_class_names = [
+    "movie-credits.cast",
+    "movie-credits.crew"
+  ]
+}
+
+locals {
+  spread_class_ids = values(module.extract-nested-properties-movie-db.extracted_class_ids)
+  cast_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.cast"]
+  crew_class_id    = module.extract-nested-properties-movie-db.extracted_class_ids["movie-credits.crew"]
+}
+
+resource "tama_class_corpus" "movie-details-mapping" {
+  class_id = data.tama_class.movie-details.id
+  name     = "Crawl Movie Details"
+  template = file("${path.module}/movie-id-mapping.liquid")
+}
+
+module "crawl-movie-credits" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.4.3"
+
+  name            = "Crawl Movie Credits"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = data.tama_class.movie-details.id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-mapping.id
+
+  request_relation  = "get-movie-credits"
+  request_action_id = data.tama_action.get-movie-credits.id
+
+  response_relation = "create-movie-credits"
+
+  validate_record = false
+}
+
+locals {
+  create_movie_keywords_relation = "create-movie-keywords"
+}
+
+module "crawl-movie-keywords" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.4.3"
+
+  name            = "Crawl Movie Keywords"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = data.tama_class.movie-details.id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-mapping.id
+
+  request_relation  = "get-movie-keywords"
+  request_action_id = data.tama_action.get-movie-keywords.id
+
+  response_relation = local.create_movie_keywords_relation
+
+  validate_record = false
+}
+
+resource "tama_node" "crawl-movie-keywords-explicit" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = module.crawl-movie-keywords.chain_id
+
+  type = "explicit"
+}
+
+module "spread-cast-and-crew" {
+  source  = "upmaru/base/tama//modules/spread"
+  version = "0.4.3"
+
+  name = "Spread Cast and Crew"
+
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-credits.id
+  fields   = ["cast", "crew"]
+
+  target_class_ids = local.spread_class_ids
+}
+
+module "network-movie-credits" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.4.3"
+
+  name     = "Network Movie Credits"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.movie-credits.id
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.movie-details.id
+  ]
+}
+
+module "network-movie-keywords" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.4.3"
+
+  name     = "Network Movie Keywords"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.movie-keywords.id
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.movie-details.id
+  ]
+}
+
+
+module "network-cast-and-crew" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.4.3"
+
+  name     = "Network Cast and Crew"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    local.crew_class_id,
+    local.cast_class_id
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.movie-credits.id
+  ]
+}
+
+module "network-person-details" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.4.3"
+
+  name     = "Network Person Details"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.person-details.id,
+  ]
+
+  can_belong_to_class_ids = [
+    local.cast_class_id,
+    local.crew_class_id
+  ]
+}
+
+resource "tama_class_corpus" "movie-details-cast-mapping" {
+  class_id = local.cast_class_id
+  name     = "Crawl Cast Details"
+  template = file("${path.module}/person-id-mapping.liquid")
+}
+
+resource "tama_class_corpus" "movie-details-crew-mapping" {
+  class_id = local.crew_class_id
+  name     = "Crawl Crew Details"
+  template = file("${path.module}/person-id-mapping.liquid")
+}
+
+data "tama_action" "get-person-details" {
+  specification_id = tama_specification.tmdb.id
+  method           = "GET"
+  path             = "/3/person/{person_id}"
+}
+
+module "crawl-cast-details" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.4.3"
+
+  name            = "Crawl Cast Details"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = local.cast_class_id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-cast-mapping.id
+
+  request_relation  = "get-cast-person-details"
+  request_action_id = data.tama_action.get-person-details.id
+
+  response_relation = "create-cast-person-details"
+
+  validate_record = false
+}
+
+module "crawl-crew-details" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.4.3"
+
+  name            = "Crawl Crew Details"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = local.crew_class_id
+
+  request_input_corpus_id = tama_class_corpus.movie-details-crew-mapping.id
+
+  request_relation  = "get-crew-person-details"
+  request_action_id = data.tama_action.get-person-details.id
+
+  response_relation = "create-crew-person-details"
+
+  validate_record = false
+}
+
+data "tama_action" "get-person-combined-credits" {
+  specification_id = tama_specification.tmdb.id
+  method           = "GET"
+  path             = "/3/person/{person_id}/combined_credits"
+}
+
+resource "tama_class_corpus" "person-details-mapping" {
+  class_id = data.tama_class.person-details.id
+  name     = "Crawl Person Detail Mapping"
+  template = file("${path.module}/person-id-mapping.liquid")
+}
+
+module "crawl-person-credits" {
+  source  = "upmaru/base/tama//modules/crawler"
+  version = "0.4.3"
+
+  name            = "Crawl Person Combined Credits"
+  space_id        = tama_space.movie-db.id
+  origin_class_id = data.tama_class.person-details.id
+
+  request_input_corpus_id = tama_class_corpus.person-details-mapping.id
+
+  request_relation  = "get-person-combined-credits"
+  request_action_id = data.tama_action.get-person-combined-credits.id
+
+  response_relation = "create-person-combined-credits"
+
+  validate_record = false
+}
+
+data "tama_class" "person-combined-credits" {
+  specification_id = tama_specification.tmdb.id
+  name             = "person-combined-credits"
+}
+
+module "network-person-credits" {
+  source  = "upmaru/base/tama//modules/build-relations"
+  version = "0.4.3"
+
+  name     = "Network Person Credits"
+  space_id = tama_space.movie-db.id
+
+  class_ids = [
+    data.tama_class.person-combined-credits.id,
+  ]
+
+  can_belong_to_class_ids = [
+    data.tama_class.person-details.id
+  ]
+}
+
+module "extract-embed-movie-overview" {
+  source  = "upmaru/base/tama//modules/extract-embed"
+  version = "0.4.3"
+
+  name      = "Extract and Embed Movie Overview"
+  space_id  = tama_space.movie-db.id
+  relations = ["overview"]
+
+  embeddable_class_ids = [
+    data.tama_class.movie-details.id
+  ]
+}
+
+module "extract-embed-person-biography" {
+  source  = "upmaru/base/tama//modules/extract-embed"
+  version = "0.4.3"
+
+  name      = "Extract and Embed Person Biography"
+  space_id  = tama_space.movie-db.id
+  relations = ["biography"]
+
+  embeddable_class_ids = [
+    data.tama_class.person-details.id
+  ]
+}
+
+resource "tama_prompt" "generate-description" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Description"
+  role     = "user"
+  content  = file("${path.module}/generate-description.md")
+}
+
+resource "tama_prompt" "generate-setting" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Setting"
+  role     = "user"
+  content  = file("${path.module}/setting-extraction.md")
+}
+
+resource "tama_class" "movie-setting" {
+  space_id = tama_space.movie-db.id
+
+  schema_json = jsonencode(jsondecode(file("${path.module}/setting.json")))
+}
+
+resource "tama_class_corpus" "setting-embedding-corpus" {
+  class_id = tama_class.movie-setting.id
+  name     = "Setting Embedding Corpus"
+  template = "{{ data.reason }}"
+}
+
+resource "tama_chain" "generate-description-and-setting-and-embed" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Description and Setting and Embed"
+}
+
+locals {
+  description_relation = "description"
+  setting_relation     = "setting"
+}
+
+resource "tama_modular_thought" "generate-description" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  index    = 0
+  relation = local.description_relation
+
+  module {
+    reference = "tama/agentic/generate"
+    parameters = jsonencode({
+      await = {
+        relations               = [local.create_movie_keywords_relation]
+        created_in_last_seconds = 604800
+      }
+    })
+  }
+}
+
+module "movie-keywords-preloader" {
+  source  = "upmaru/base/tama//modules/initializer-preload"
+  version = "0.4.3"
+
+  thought_id = tama_modular_thought.generate-description.id
+  class_id   = data.tama_class.movie-details.id
+  index      = 0
+
+  children = [
+    {
+      class = "movie-keywords"
+      as    = "object"
+      record = {
+        rejections = [
+          { element = "value", matches = [""] }
+        ]
+      }
+    }
+  ]
+}
+
+resource "tama_thought_processor" "generate-description" {
+  thought_id = tama_modular_thought.generate-description.id
+  model_id   = var.generate_description_model_id
+
+  completion {
+    temperature = var.generate_description_model_temperature
+    parameters  = var.generate_description_model_parameters
+  }
+}
+
+resource "tama_thought_context" "generate-description-context" {
+  thought_id = tama_modular_thought.generate-description.id
+  layer      = 0
+  prompt_id  = tama_prompt.generate-description.id
+}
+
+data "tama_class_corpus" "movie-details-default-json" {
+  class_id = data.tama_class.movie-details.id
+  slug     = "entity-json-schema"
+}
+
+resource "tama_thought_context_input" "entity-corpus-input" {
+  thought_context_id = tama_thought_context.generate-description-context.id
+  type               = "entity"
+  class_corpus_id    = data.tama_class_corpus.movie-details-default-json.id
+}
+
+resource "tama_modular_thought" "generate-setting" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  index           = 1
+  relation        = local.setting_relation
+  output_class_id = tama_class.movie-setting.id
+
+  module {
+    reference = "tama/agentic/generate"
+  }
+}
+
+resource "tama_thought_processor" "generate-setting" {
+  thought_id = tama_modular_thought.generate-setting.id
+  model_id   = var.generate_setting_model_id
+
+  completion {
+    temperature = var.generate_setting_model_temperature
+    parameters  = var.generate_setting_model_parameters
+  }
+}
+
+resource "tama_thought_context" "generate-setting-context" {
+  thought_id = tama_modular_thought.generate-setting.id
+  layer      = 0
+  prompt_id  = tama_prompt.generate-setting.id
+}
+
+resource "tama_thought_context_input" "generate-setting-context-input" {
+  thought_context_id = tama_thought_context.generate-setting-context.id
+  type               = "concept"
+  class_corpus_id    = data.tama_class_corpus.answer-content.id
+}
+
+resource "tama_modular_thought" "embed-description" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  index    = 2
+  relation = "embed-${local.description_relation}"
+
+  module {
+    reference = "tama/concepts/embed"
+    parameters = jsonencode({
+      relation = local.description_relation
+    })
+  }
+}
+
+resource "tama_thought_module_input" "embed-description-input" {
+  thought_id      = tama_modular_thought.embed-description.id
+  type            = "concept"
+  class_corpus_id = data.tama_class_corpus.answer-content.id
+}
+
+resource "tama_modular_thought" "embed-setting" {
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  index    = 3
+  relation = "embed-${local.setting_relation}"
+
+  module {
+    reference = "tama/concepts/embed"
+    parameters = jsonencode({
+      relation = local.setting_relation
+    })
+  }
+}
+
+resource "tama_thought_module_input" "embed-setting-input" {
+  thought_id      = tama_modular_thought.embed-setting.id
+  type            = "concept"
+  class_corpus_id = tama_class_corpus.setting-embedding-corpus.id
+}
+
+resource "tama_node" "movie-details-embedding-explicit" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  type = "explicit"
+}
+
+resource "tama_node" "handle-movie-details-embedding" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.movie-details.id
+  chain_id = tama_chain.generate-description-and-setting-and-embed.id
+
+  type = "reactive"
+}
+
+resource "tama_space_bridge" "movie-db-elasticsearch" {
+  space_id        = tama_space.movie-db.id
+  target_space_id = var.elasticsearch_space_id
+}
+
+//
+// Class level re-generation of description and setting.
+//
+resource "tama_chain" "generate-embeddings-class-entities" {
+  space_id = tama_space.movie-db.id
+  name     = "Generate Embeddings Class Entities"
+}
+
+resource "tama_modular_thought" "generate-embeddings" {
+  chain_id        = tama_chain.generate-embeddings-class-entities.id
+  output_class_id = data.tama_class.task-result.id
+  index           = 0
+  relation        = "generate-details"
+
+  module {
+    reference = "tama/classes/process"
+  }
+}
+
+resource "tama_thought_path" "generate-embeddings-for-movie-details" {
+  thought_id      = tama_modular_thought.generate-embeddings.id
+  target_class_id = data.tama_class.movie-details.id
+}
+
+resource "tama_thought_path_activation" "crawl-movie-keywords" {
+  depends_on = [
+    tama_node.crawl-movie-keywords-explicit
+  ]
+
+  thought_path_id = tama_thought_path.generate-embeddings-for-movie-details.id
+  chain_id        = module.crawl-movie-keywords.chain_id
+}
+
+resource "tama_thought_path_activation" "generate-description-and-setting-chain" {
+  thought_path_id = tama_thought_path.generate-embeddings-for-movie-details.id
+  chain_id        = tama_chain.generate-description-and-setting-and-embed.id
+}
+
+resource "tama_node" "explicit-movie-details-embedding" {
+  space_id = tama_space.movie-db.id
+  class_id = data.tama_class.class-proxy.id
+  chain_id = tama_chain.generate-embeddings-class-entities.id
+
+  type = "explicit"
+}
