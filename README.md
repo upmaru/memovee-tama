@@ -131,7 +131,7 @@ To get started with the Memovee Tama project, you'll need to:
 | Name | Version |
 |------|---------|
 | <a name="provider_http"></a> [http](#provider\_http) | 3.5.0 |
-| <a name="provider_tama"></a> [tama](#provider\_tama) | 0.4.3 |
+| <a name="provider_tama"></a> [tama](#provider\_tama) | 0.4.2 |
 
 
 ## Modules
@@ -215,6 +215,7 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_node.handle-personalization](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/node) | resource |
 | [tama_node.handle-reply-generation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/node) | resource |
 | [tama_node.handle-upsert-profile](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/node) | resource |
+| [tama_prompt.check-profile-artifact](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.check-profile-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.check-profile-tooling](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.curse-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
@@ -224,6 +225,7 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_prompt.media-browsing-tooling](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.media-detail-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.media-detail-tooling](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
+| [tama_prompt.media-tools-or-respond](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.memovee](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.off-topic-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
 | [tama_prompt.patch-artifact](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/prompt) | resource |
@@ -243,6 +245,7 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_space.basic-conversation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
 | [tama_space.media-conversation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
 | [tama_space.ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space) | resource |
+| [tama_space_bridge.basic-conversation-media-conversation](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.basic-conversation-memovee](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.basic-conversation-memovee-ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
 | [tama_space_bridge.media-conversation-to-memovee](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_bridge) | resource |
@@ -255,11 +258,13 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_space_processor.default-embedding](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_processor) | resource |
 | [tama_space_processor.default-reranking](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/space_processor) | resource |
 | [tama_specification.memovee-ui](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/specification) | resource |
+| [tama_thought_context.personalization-routing-context](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_context) | resource |
 | [tama_thought_path.check-profile-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-curse-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-manipulation-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-off-topic-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-patch-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path.forward-personalization-media-detail](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-personalization-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.forward-upsert-profile](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-curse](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
@@ -273,6 +278,7 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_thought_path.route-to-person-browsing](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-person-detail](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
 | [tama_thought_path.route-to-personalization](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path) | resource |
+| [tama_thought_path_directive.check-profile-artifact](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_path_directive.check-profile-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_path_directive.curse-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_path_directive.forward-patch-artifact](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
@@ -284,6 +290,7 @@ To get started with the Memovee Tama project, you'll need to:
 | [tama_thought_path_directive.upsert-profile-artifact](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_path_directive.upsert-profile-reply](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_path_directive) | resource |
 | [tama_thought_processor.artifact-processor](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_processor) | resource |
+| [tama_thought_processor.personalization-routing-processor](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_processor) | resource |
 | [tama_thought_processor.reply-processor](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_processor) | resource |
 | [tama_thought_tool.create-artifact-tool](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_tool) | resource |
 | [tama_thought_tool.media-detail-check-user-preferences](https://registry.terraform.io/providers/upmaru/tama/latest/docs/resources/thought_tool) | resource |
@@ -315,6 +322,8 @@ To get started with the Memovee Tama project, you'll need to:
 | <a name="input_memovee_ui_openapi_url"></a> [memovee\_ui\_openapi\_url](#input\_memovee\_ui\_openapi\_url) | The OpenAPI URL of the Memovee UI | `string` | n/a | yes |
 | <a name="input_mistral_api_key"></a> [mistral\_api\_key](#input\_mistral\_api\_key) | The API key for the Mistral inference service | `string` | n/a | yes |
 | <a name="input_openai_api_key"></a> [openai\_api\_key](#input\_openai\_api\_key) | The API key for the OpenAI inference service | `string` | n/a | yes |
+| <a name="input_router_classification_class_name"></a> [router\_classification\_class\_name](#input\_router\_classification\_class\_name) | The name of the classification class | `string` | `"class"` | no |
+| <a name="input_router_classification_properties"></a> [router\_classification\_properties](#input\_router\_classification\_properties) | The properties of the classification class | `list(string)` | <pre>[<br>  "class",<br>  "confidence",<br>  "referenced_tool_call_ids"<br>]</pre> | no |
 | <a name="input_tama_api_key"></a> [tama\_api\_key](#input\_tama\_api\_key) | The API key for the Tama API | `string` | n/a | yes |
 | <a name="input_tama_base_url"></a> [tama\_base\_url](#input\_tama\_base\_url) | The base URL of the Tama API | `string` | n/a | yes |
 | <a name="input_tmdb_api_key"></a> [tmdb\_api\_key](#input\_tmdb\_api\_key) | The API key for the TMDB inference service | `string` | n/a | yes |
