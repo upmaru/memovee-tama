@@ -70,6 +70,18 @@ resource "tama_modular_thought" "forward-personalization" {
   }
 }
 
+resource "tama_thought_processor" "personalization-routing-processor" {
+  thought_id = tama_modular_thought.forward-personalization.id
+  model_id   = module.openai.model_ids.gpt-5-mini
+
+  completion {
+    temperature = 1.0
+    parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
+  }
+}
+
 resource "tama_prompt" "media-tools-or-respond" {
   space_id = tama_space.basic-conversation.id
   name     = "Media Tools or Respond"
