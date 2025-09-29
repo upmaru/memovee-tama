@@ -5,7 +5,7 @@ resource "tama_space" "basic-conversation" {
 
 module "off-topic" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -15,7 +15,7 @@ module "off-topic" {
 
 module "greeting" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -26,7 +26,7 @@ module "greeting" {
 
 module "introductory" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -36,7 +36,7 @@ module "introductory" {
 
 module "curse" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -46,7 +46,7 @@ module "curse" {
 
 module "personalization" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -56,7 +56,7 @@ module "personalization" {
 
 module "patch" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -66,7 +66,7 @@ module "patch" {
 
 module "manipulation" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.2"
+  version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -82,4 +82,9 @@ resource "tama_space_bridge" "basic-conversation-memovee-ui" {
 resource "tama_space_bridge" "basic-conversation-memovee" {
   space_id        = tama_space.basic-conversation.id
   target_space_id = module.memovee.space_id
+}
+
+resource "tama_space_bridge" "basic-conversation-media-conversation" {
+  space_id        = tama_space.basic-conversation.id
+  target_space_id = tama_space.media-conversation.id
 }

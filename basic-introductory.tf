@@ -12,7 +12,7 @@ resource "tama_prompt" "upsert-profile-tooling" {
 
 module "upsert-profile-tooling" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.4.2"
+  version = "0.4.3"
 
   chain_id = tama_chain.upsert-profile.id
 

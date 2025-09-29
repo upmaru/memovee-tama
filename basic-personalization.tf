@@ -16,7 +16,7 @@ resource "tama_prompt" "handle-personalization" {
 
 module "update-user-perference" {
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.4.2"
+  version = "0.4.3"
 
   chain_id = tama_chain.handle-personalization.id
 
@@ -49,17 +49,49 @@ resource "tama_modular_thought" "forward-personalization" {
   depends_on = [module.global.schemas]
 
   chain_id        = tama_chain.handle-personalization.id
-  output_class_id = module.global.schemas.forwarding.id
-  relation        = local.forwarding_relation
+  output_class_id = module.global.schemas.message-routing.id
+  relation        = "routing"
   index           = 1
 
   module {
-    reference = "tama/concepts/forward"
+    reference = "tama/agentic/router"
+    parameters = jsonencode({
+      class_name = var.router_classification_class_name
+      properties = var.router_classification_properties
+      thread = {
+        limit   = 2
+        classes = module.memovee.thread_classes
+        relations = {
+          routing = "routing"
+          focus   = ["tooling", "search-tooling", "reply"]
+        }
+      }
+    })
   }
 }
 
+resource "tama_prompt" "media-tools-or-respond" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Media Tools or Respond"
+  role     = "system"
+  content  = file("basic-personalization/media-tools-or-respond.md")
+}
+
+resource "tama_thought_context" "personalization-routing-context" {
+  thought_id = tama_modular_thought.forward-personalization.id
+  layer      = 0
+  prompt_id  = tama_prompt.media-tools-or-respond.id
+}
+
+resource "tama_thought_path" "forward-personalization-media-detail" {
+  depends_on = [tama_space_bridge.basic-conversation-media-conversation]
+
+  thought_id      = tama_modular_thought.forward-personalization.id
+  target_class_id = module.media-detail-forwardable.class.id
+}
+
 resource "tama_thought_path" "forward-personalization-reply" {
-  depends_on = [tama_space_bridge.basic-conversation-memovee-ui]
+  depends_on = [tama_space_bridge.basic-conversation-memovee]
 
   thought_id      = tama_modular_thought.forward-personalization.id
   target_class_id = local.response_class_id
