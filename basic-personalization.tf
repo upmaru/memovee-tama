@@ -7,11 +7,7 @@ resource "tama_prompt" "handle-personalization" {
   space_id = tama_space.basic-conversation.id
   name     = "Handle Personalization"
   role     = "system"
-  content = templatefile("basic-personalization/tooling.md", {
-    get-user-preferences   = data.tama_action.get-user-preferences.identifier,
-    create-user-preference = data.tama_action.create-user-preference.identifier
-    update-user-preference = data.tama_action.update-user-preference.identifier
-  })
+  content  = file("basic-personalization/tooling.md")
 }
 
 module "update-user-perference" {
@@ -28,6 +24,7 @@ module "update-user-perference" {
   tool_call_model_parameters = {
     reasoning_effort = "minimal"
   }
+
   action_ids = [
     data.tama_action.get-user-preferences.id,
     data.tama_action.create-user-preference.id,

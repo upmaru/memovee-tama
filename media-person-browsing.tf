@@ -15,6 +15,13 @@ resource "tama_prompt" "person-browse-reply" {
   content  = file("media-person-browse/reply.md")
 }
 
+resource "tama_prompt" "person-browse-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Person Browse Artifact"
+  role     = "system"
+  content  = file("media-person-browse/artifact.md")
+}
+
 module "person-browsing" {
   source = "./modules/media-conversate"
 
@@ -40,9 +47,12 @@ module "person-browsing" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id           = tama_prompt.person-browse-tooling.id
+  tooling_prompt_id = tama_prompt.person-browse-tooling.id
+
+  reply_artifact_prompt_id  = tama_prompt.person-browse-artifact.id
+  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
+
   reply_prompt_id             = tama_prompt.person-browse-reply.id
-  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id

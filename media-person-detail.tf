@@ -12,6 +12,14 @@ resource "tama_prompt" "person-detail-reply" {
   content  = file("media-person-detail/reply.md")
 }
 
+
+resource "tama_prompt" "person-detail-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Person Detail Artifact"
+  role     = "system"
+  content  = file("media-person-detail/artifact.md")
+}
+
 module "person-detail" {
   source = "./modules/media-conversate"
 
@@ -37,9 +45,12 @@ module "person-detail" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id           = tama_prompt.person-detail-tooling.id
+  tooling_prompt_id = tama_prompt.person-detail-tooling.id
+
+  reply_artifact_prompt_id  = tama_prompt.person-detail-artifact.id
+  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
+
   reply_prompt_id             = tama_prompt.person-detail-reply.id
-  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id

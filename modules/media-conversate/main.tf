@@ -111,6 +111,12 @@ resource "tama_thought_path" "forwarding" {
   target_class_id = var.response_class_id
 }
 
+resource "tama_thought_path_directive" "artifact-directive" {
+  thought_path_id   = tama_thought_path.forwarding.id
+  prompt_id         = var.reply_artifact_prompt_id
+  target_thought_id = var.reply_artifact_thought_id
+}
+
 resource "tama_thought_path_directive" "reply-directive" {
   thought_path_id   = tama_thought_path.forwarding.id
   prompt_id         = var.reply_prompt_id

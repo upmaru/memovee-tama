@@ -54,6 +54,11 @@ variable "tooling_prompt_id" {
   description = "The ID of the prompt for the tooling."
 }
 
+variable "reply_artifact_prompt_id" {
+  type        = string
+  description = "The ID of the prompt for the artifact."
+}
+
 variable "reply_prompt_id" {
   type        = string
   description = "The ID of the prompt for the reply."

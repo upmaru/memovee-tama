@@ -242,6 +242,12 @@ resource "tama_listener_topic" "user-message-topic" {
 //
 // Listener Filters
 //
+
+resource "tama_listener_filter" "routing" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.router.chain_id
+}
+
 resource "tama_listener_filter" "reply-generation" {
   listener_id = tama_listener.memovee-ui-listener.id
   chain_id    = tama_chain.reply-generation.id

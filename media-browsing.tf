@@ -12,6 +12,13 @@ resource "tama_prompt" "media-browsing-reply" {
   content  = file("media-browsing/reply.md")
 }
 
+resource "tama_prompt" "media-browsing-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Media Browsing Artifact"
+  role     = "system"
+  content  = file("media-browsing/artifact.md")
+}
+
 //
 // Media Browsing
 //
@@ -43,6 +50,7 @@ module "media-browsing" {
   tooling_prompt_id = tama_prompt.media-browsing-tooling.id
 
   reply_prompt_id             = tama_prompt.media-browsing-reply.id
+  reply_artifact_prompt_id    = tama_prompt.media-browsing-artifact.id
   reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 

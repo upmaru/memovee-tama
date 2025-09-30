@@ -15,6 +15,13 @@ resource "tama_prompt" "media-detail-reply" {
   content  = file("media-detail/reply.md")
 }
 
+resource "tama_prompt" "media-detail-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Artifact Handling Prompt"
+  role     = "system"
+  content  = file("media-detail/artifact.md")
+}
+
 module "media-detail" {
   source = "./modules/media-conversate"
 
@@ -40,9 +47,12 @@ module "media-detail" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id           = tama_prompt.media-detail-tooling.id
+  tooling_prompt_id = tama_prompt.media-detail-tooling.id
+
+  reply_artifact_prompt_id  = tama_prompt.media-detail-artifact.id
+  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
+
   reply_prompt_id             = tama_prompt.media-detail-reply.id
-  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id
