@@ -79,17 +79,17 @@ resource "tama_thought_processor" "personalization-routing-processor" {
   }
 }
 
-resource "tama_prompt" "media-tools-or-respond" {
+resource "tama_prompt" "personalization-routing" {
   space_id = tama_space.basic-conversation.id
-  name     = "Media Tools or Respond"
+  name     = "Personalization Routing"
   role     = "system"
-  content  = file("basic-personalization/media-tools-or-respond.md")
+  content  = file("basic-personalization/routing.md")
 }
 
 resource "tama_thought_context" "personalization-routing-context" {
   thought_id = tama_modular_thought.forward-personalization.id
   layer      = 0
-  prompt_id  = tama_prompt.media-tools-or-respond.id
+  prompt_id  = tama_prompt.personalization-routing.id
 }
 
 resource "tama_thought_path" "forward-personalization-media-detail" {

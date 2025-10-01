@@ -17,6 +17,14 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   }
   ```
   - If after you have made the call to `list-user-preferences` and discovered that the user has not specified a region, make `no-call` this will exit out of the query loop and ask the user to specify a region.
+  - If after you call the `list-user-preferences` and the region is available make sure you load the movie detail using the `Single Item Query (General Details)` by providing the `_id` or `title` of the movie before making the watch provider query. Make sure you add a `next` parameter to the query so that you will be able to execute the watch provider query AFTER the movie detail is loaded.
+    ```json
+    {
+      "next": "query-media-detail",
+      // merge the query from `Single Item Query (General Details)`
+    }
+    ```
+
 
 ## Instructions
 ### Querying by ID or Title
