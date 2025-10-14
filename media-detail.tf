@@ -34,9 +34,7 @@ module "media-detail" {
   media_conversation_space_id = tama_space.media-conversation.id
   target_class_id             = module.media-detail-forwardable.class.id
 
-  author_class_name  = module.memovee.schemas.actor.name
-  thread_class_name  = module.memovee.schemas.thread.name
-  message_class_name = module.memovee.schemas.user-message.name
+  thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation

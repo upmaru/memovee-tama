@@ -14,7 +14,7 @@ module "movie-db" {
   depends_on = [module.global.schemas]
 
   tmdb_api_key     = var.tmdb_api_key
-  tmdb_openapi_url = "https://developer.themoviedb.org/openapi/64542913e1f86100738e227f"
+  tmdb_openapi_url = "https://developer.themoviedb.org/openapi/tmdb-api.json"
 
   elasticsearch_endpoint         = var.elasticsearch_endpoint
   elasticsearch_api_key          = var.elasticsearch_movie_db_api_key
