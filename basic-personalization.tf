@@ -11,6 +11,8 @@ resource "tama_prompt" "handle-personalization" {
 }
 
 module "update-user-perference" {
+  depends_on = [local.tool_call_class]
+
   source  = "upmaru/base/tama//modules/tooling"
   version = "0.4.3"
 
@@ -96,7 +98,7 @@ resource "tama_thought_path" "forward-personalization-media-detail" {
   depends_on = [tama_space_bridge.basic-conversation-media-conversation]
 
   thought_id      = tama_modular_thought.forward-personalization.id
-  target_class_id = module.media-detail-forwardable.class.id
+  target_class_id = module.movie-detail-forwardable.class.id
 }
 
 resource "tama_thought_path" "forward-personalization-reply" {

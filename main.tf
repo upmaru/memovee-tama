@@ -1,8 +1,3 @@
-module "global" {
-  source  = "upmaru/base/tama"
-  version = "0.4.3"
-}
-
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
   version = "0.4.3"
@@ -66,7 +61,7 @@ resource "tama_modular_thought" "reply-artifact" {
     module.global.schemas
   ]
 
-  output_class_id = data.tama_class.tool-call.id
+  output_class_id = module.global.schemas.tool-call.id
 
   module {
     reference = "tama/agentic/tooling"
@@ -288,14 +283,14 @@ resource "tama_listener_filter" "personalization" {
   chain_id    = tama_chain.handle-personalization.id
 }
 
-resource "tama_listener_filter" "media-browsing" {
+resource "tama_listener_filter" "movie-browsing" {
   listener_id = tama_listener.memovee-ui-listener.id
-  chain_id    = module.media-browsing.chain_id
+  chain_id    = module.movie-browsing.chain_id
 }
 
-resource "tama_listener_filter" "media-detail" {
+resource "tama_listener_filter" "movie-detail" {
   listener_id = tama_listener.memovee-ui-listener.id
-  chain_id    = module.media-detail.chain_id
+  chain_id    = module.movie-detail.chain_id
 }
 
 resource "tama_listener_filter" "person-browsing" {

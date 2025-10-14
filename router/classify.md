@@ -28,10 +28,10 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     When was it released?
   </user-query>
   <routing>
-    media-detail
+    movie-detail
   </routing>
   <reasoning>
-    "it" refers to *Titanic* from context. The query seeks a specific fact about that movie, so the correct class is "media-detail".
+    "it" refers to *Titanic* from context. The query seeks a specific fact about that movie, so the correct class is "movie-detail".
   </reasoning>
 </case>
 
@@ -44,12 +44,12 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Who played [character name] in the movie?
   </user-query>
   <routing>
-    media-detail
+    movie-detail
   </routing>
   <reasoning>
-    - "Who played [character name]" The user is trying to find out who played a given character or role in the movie in context, so the correct class is "media-detail".
+    - "Who played [character name]" The user is trying to find out who played a given character or role in the movie in context, so the correct class is "movie-detail".
 
-    - "the movie" refers to the specific movie from context. The query seeks a specific fact about that movie, so the correct class is "media-detail".
+    - "the movie" refers to the specific movie from context. The query seeks a specific fact about that movie, so the correct class is "movie-detail".
   </reasoning>
 </case>
 
@@ -106,12 +106,12 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Can you show me the release date of the movies?
   </user-query>
   <routing>
-    media-browsing
+    movie-browsing
   </routing>
   <reasoning>
     - The user is asking for additional properties for "these movies".
 
-    - Routing to "media-browsing" will provide access to tooling that will allow adding additional properties to the existing set of data in context.
+    - Routing to "movie-browsing" will provide access to tooling that will allow adding additional properties to the existing set of data in context.
   </reasoning>
 </case>
 
@@ -123,7 +123,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Can you show me the cast list?
   </user-query>
   <routing>
-    media-detail
+    movie-detail
   </routing>
   <reasoning>
     - The user is asking for the cast list of the movie in context.
@@ -155,7 +155,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Where can I watch the movie?
   </user-query>
   <routing>
-    media-detail
+    movie-detail
   </routing>
   <reasoning>
     - The user is asking for the watch location of the movie in context.
@@ -297,7 +297,7 @@ Sometimes the user query may mention a person's name but with the intent of find
       -  Find me movies that take place in space and has Robert Downey Jr in it
     </user-query>
     <routing>
-      media-browsing
+      movie-browsing
     </routing>
     <reasoning>
       - The user is asking to find movies with a specific criteria related to space AND starring Robert Downey Jr.

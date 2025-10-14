@@ -1,26 +1,28 @@
-resource "tama_prompt" "person-detail-tooling" {
+//
+// Person Browsing
+//
+resource "tama_prompt" "person-browse-tooling" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Detail Tooling"
+  name     = "Person Browse Tooling"
   role     = "system"
-  content  = file("media-person-detail/querying.md")
+  content  = file("tmdb-person-browse/querying.md")
 }
 
-resource "tama_prompt" "person-detail-reply" {
+resource "tama_prompt" "person-browse-reply" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Detail Reply"
+  name     = "Person Browse Reply"
   role     = "system"
-  content  = file("media-person-detail/reply.md")
+  content  = file("tmdb-person-browse/reply.md")
 }
 
-
-resource "tama_prompt" "person-detail-artifact" {
+resource "tama_prompt" "person-browse-artifact" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Detail Artifact"
+  name     = "Person Browse Artifact"
   role     = "system"
-  content  = file("media-person-detail/artifact.md")
+  content  = file("tmdb-person-browse/artifact.md")
 }
 
-module "person-detail" {
+module "person-browsing" {
   source = "./modules/media-conversate"
 
   depends_on = [
@@ -28,27 +30,27 @@ module "person-detail" {
     module.index-definition-generation
   ]
 
-  name                        = "Person Detail"
+  name                        = "Person Browsing"
   media_conversation_space_id = tama_space.media-conversation.id
-  target_class_id             = module.person-detail-forwardable.class.id
+  target_class_id             = module.person-browsing-forwardable.class.id
 
   thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id = tama_prompt.person-detail-tooling.id
+  tooling_prompt_id = tama_prompt.person-browse-tooling.id
 
-  reply_artifact_prompt_id  = tama_prompt.person-detail-artifact.id
+  reply_artifact_prompt_id  = tama_prompt.person-browse-artifact.id
   reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
 
-  reply_prompt_id             = tama_prompt.person-detail-reply.id
+  reply_prompt_id             = tama_prompt.person-browse-reply.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id

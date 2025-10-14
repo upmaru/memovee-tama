@@ -3,24 +3,24 @@ resource "tama_space" "media-conversation" {
   type = "component"
 }
 
-module "media-detail-forwardable" {
+module "movie-detail-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
   version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
-  title       = "media-detail"
-  description = file("media/media-detail.md")
+  title       = "movie-detail"
+  description = file("media/movie-detail.md")
 }
 
-module "media-browsing-forwardable" {
+module "movie-browsing-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
   version    = "0.4.3"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.media-conversation.id
-  title       = "media-browsing"
-  description = file("media/media-browsing.md")
+  title       = "movie-browsing"
+  description = file("media/movie-browsing.md")
 }
 
 module "person-detail-forwardable" {
@@ -30,7 +30,7 @@ module "person-detail-forwardable" {
 
   space_id    = tama_space.media-conversation.id
   title       = "person-detail"
-  description = file("media/media-person-detail.md")
+  description = file("media/person-detail.md")
 }
 
 module "person-browsing-forwardable" {
@@ -40,7 +40,7 @@ module "person-browsing-forwardable" {
 
   space_id    = tama_space.media-conversation.id
   title       = "person-browsing"
-  description = file("media/media-person-browsing.md")
+  description = file("media/person-browsing.md")
 }
 
 resource "tama_space_bridge" "media-conversation-to-movie-db" {

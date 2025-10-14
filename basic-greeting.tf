@@ -11,6 +11,8 @@ resource "tama_prompt" "check-profile-tooling" {
 }
 
 module "check-profile-tooling" {
+  depends_on = [local.tool_call_class]
+
   source  = "upmaru/base/tama//modules/tooling"
   version = "0.4.3"
 

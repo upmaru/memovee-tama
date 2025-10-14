@@ -1,38 +1,35 @@
-//
-// Person Browsing
-//
-resource "tama_prompt" "person-browse-tooling" {
+resource "tama_prompt" "movie-browsing-tooling" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Browse Tooling"
+  name     = "Movie Browsing Tooling"
   role     = "system"
-  content  = file("media-person-browse/querying.md")
+  content  = file("tmdb-movie-browsing/querying.md")
 }
 
-resource "tama_prompt" "person-browse-reply" {
+resource "tama_prompt" "movie-browsing-reply" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Browse Reply"
+  name     = "Movie Browsing Reply"
   role     = "system"
-  content  = file("media-person-browse/reply.md")
+  content  = file("tmdb-movie-browsing/reply.md")
 }
 
-resource "tama_prompt" "person-browse-artifact" {
+resource "tama_prompt" "movie-browsing-artifact" {
   space_id = tama_space.media-conversation.id
-  name     = "Person Browse Artifact"
+  name     = "Movie Browsing Artifact"
   role     = "system"
-  content  = file("media-person-browse/artifact.md")
+  content  = file("tmdb-movie-browsing/artifact.md")
 }
 
-module "person-browsing" {
+module "movie-browsing" {
   source = "./modules/media-conversate"
 
   depends_on = [
-    module.global,
+    module.global.schemas,
     module.index-definition-generation
   ]
 
-  name                        = "Person Browsing"
+  name                        = "Movie Browsing"
   media_conversation_space_id = tama_space.media-conversation.id
-  target_class_id             = module.person-browsing-forwardable.class.id
+  target_class_id             = module.movie-browsing-forwardable.class.id
 
   thread_classes = module.memovee.thread_classes
 
@@ -45,12 +42,11 @@ module "person-browsing" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id = tama_prompt.person-browse-tooling.id
+  tooling_prompt_id = tama_prompt.movie-browsing-tooling.id
 
-  reply_artifact_prompt_id  = tama_prompt.person-browse-artifact.id
-  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
-
-  reply_prompt_id             = tama_prompt.person-browse-reply.id
+  reply_prompt_id             = tama_prompt.movie-browsing-reply.id
+  reply_artifact_prompt_id    = tama_prompt.movie-browsing-artifact.id
+  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id
@@ -58,5 +54,5 @@ module "person-browsing" {
   movie_db_space_id                       = module.movie-db.space_id
   movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
 
-  index_definition_relation = module.index-definition-generation.relations.person-index
+  index_definition_relation = module.index-definition-generation.relations.movie-index
 }

@@ -59,14 +59,14 @@ resource "tama_thought_path" "route-to-personalization" {
   target_class_id = module.personalization.class.id
 }
 
-resource "tama_thought_path" "route-to-media-detail" {
+resource "tama_thought_path" "route-to-movie-detail" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = module.media-detail-forwardable.class.id
+  target_class_id = module.movie-detail-forwardable.class.id
 }
 
-resource "tama_thought_path" "route-to-media-browsing" {
+resource "tama_thought_path" "route-to-movie-browsing" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = module.media-browsing-forwardable.class.id
+  target_class_id = module.movie-browsing-forwardable.class.id
 }
 
 resource "tama_thought_path" "route-to-person-detail" {
