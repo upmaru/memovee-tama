@@ -90,14 +90,6 @@ resource "tama_node" "index-movie-details-on-processed" {
   on   = "processed"
 }
 
-resource "tama_node" "index-movie-details-explicit" {
-  space_id = tama_space.movie-db.id
-  class_id = data.tama_class.movie-details.id
-  chain_id = tama_chain.index-movie-details.id
-
-  type = "explicit"
-}
-
 //
 // Person details indexing.
 //
@@ -180,14 +172,6 @@ resource "tama_node" "index-person-details-on-processed" {
 
   type = "reactive"
   on   = "processed"
-}
-
-resource "tama_node" "index-person-details-explicit" {
-  space_id = tama_space.movie-db.id
-  class_id = data.tama_class.person-details.id
-  chain_id = tama_chain.index-person-details.id
-
-  type = "explicit"
 }
 
 //
