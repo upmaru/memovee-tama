@@ -27,4 +27,10 @@ module "elasticsearch" {
   index_mapping_generation_model_parameters = jsonencode({
     reasoning_effort = "low"
   })
+
+  validation = {
+    path   = "/"
+    method = "GET"
+    codes  = [200]
+  }
 }
