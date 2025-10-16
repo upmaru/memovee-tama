@@ -511,15 +511,6 @@ resource "tama_thought_path" "generate-embeddings-for-movie-details" {
   target_class_id = data.tama_class.movie-details.id
 }
 
-resource "tama_thought_path_activation" "crawl-movie-keywords" {
-  depends_on = [
-    tama_node.crawl-movie-keywords-explicit
-  ]
-
-  thought_path_id = tama_thought_path.generate-embeddings-for-movie-details.id
-  chain_id        = module.crawl-movie-keywords.chain_id
-}
-
 resource "tama_thought_path_activation" "generate-description-and-setting-chain" {
   thought_path_id = tama_thought_path.generate-embeddings-for-movie-details.id
   chain_id        = tama_chain.generate-description-and-setting-and-embed.id
