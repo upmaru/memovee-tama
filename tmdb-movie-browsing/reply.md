@@ -1,3 +1,5 @@
 ## Media Browsing Specific Rules
 
-These rules apply specifically to media browsing, when you have a list of media items.
+If you have found movies (based on the data in context) related to the user's query, mention that you've found the movies and how it relates to the user's query.
+
+DO NOT offer follow up suggestions.
