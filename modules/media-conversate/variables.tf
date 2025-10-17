@@ -69,6 +69,12 @@ variable "routing_thought_relation" {
   description = "The relation of the routing thought to the movie database."
 }
 
+variable "thread_limit" {
+  type        = number
+  description = "The limit of the thread."
+  default     = 5
+}
+
 variable "thread_classes" {
   type = object({
     author  = string

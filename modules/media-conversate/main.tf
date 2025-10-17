@@ -17,7 +17,7 @@ resource "tama_modular_thought" "tooling" {
     parameters = jsonencode({
       consecutive_limit = 5
       thread = {
-        limit   = 2
+        limit   = var.thread_limit
         classes = var.thread_classes
         relations = {
           routing = var.routing_thought_relation
