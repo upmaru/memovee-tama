@@ -225,7 +225,7 @@ variable "memovee_listener_secret" {
 
 resource "tama_listener" "memovee-ui-listener" {
   space_id = module.memovee.space_id
-  endpoint = "http://localhost:4001/tama/hook/broadcasts"
+  endpoint = "${var.memovee_ui_endpoint}/tama/hook/broadcasts"
   secret   = var.memovee_listener_secret
 }
 
