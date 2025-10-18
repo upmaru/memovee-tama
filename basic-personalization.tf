@@ -58,7 +58,7 @@ resource "tama_modular_thought" "forward-personalization" {
       class_name = var.router_classification_class_name
       properties = var.router_classification_properties
       thread = {
-        limit   = 5
+        limit   = 7
         classes = module.memovee.thread_classes
         relations = {
           routing = "routing"
