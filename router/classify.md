@@ -121,27 +121,14 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </condition>
   <user-query>
     - Can you show me the cast list?
-  </user-query>
-  <routing>
-    movie-detail
-  </routing>
-  <reasoning>
-    - The user is asking for the cast list of the movie in context.
-  </reasoning>
-</case>
-
-<case>
-  <condition>
-    Previous messages included results about a specific movie.
-  </condition>
-  <user-query>
     - Who is the lead actor in the movie?
+    - Who is the director of the movie?
   </user-query>
   <routing>
     movie-detail
   </routing>
   <reasoning>
-    - The user is asking for the lead actor of the movie in context.
+    - The user is asking for the cast list of the movie in context. Or the lead actor or director of the movie.
   </reasoning>
 </case>
 
