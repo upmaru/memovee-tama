@@ -132,6 +132,21 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    Previous messages included results about a specific movie.
+  </condition>
+  <user-query>
+    - Who is the lead actor in the movie?
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <reasoning>
+    - The user is asking for the lead actor of the movie in context.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous messages include the assistant asked the user for their region.
   </condition>
   <user-query>
