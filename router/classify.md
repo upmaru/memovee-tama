@@ -7,6 +7,21 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 ## Examples
 <case>
   <condition>
+    The user is starting a new conversation.
+  </condition>
+  <user-query>
+    - show me a list of top 10 movie directors
+  </user-query>
+  <routing>
+    person-browsing
+  </routing>
+  <reasoning>
+    The user wants to see a list of top 10 movie directors
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous messages included results about a specific person (Keanu Reeves).
   </condition>
   <user-query>

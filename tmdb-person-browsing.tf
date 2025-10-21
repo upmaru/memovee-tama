@@ -5,21 +5,21 @@ resource "tama_prompt" "person-browse-tooling" {
   space_id = tama_space.media-conversation.id
   name     = "Person Browse Tooling"
   role     = "system"
-  content  = file("tmdb-person-browse/querying.md")
+  content  = file("tmdb-person-browsing/querying.md")
 }
 
 resource "tama_prompt" "person-browse-reply" {
   space_id = tama_space.media-conversation.id
   name     = "Person Browse Reply"
   role     = "system"
-  content  = file("tmdb-person-browse/reply.md")
+  content  = file("tmdb-person-browsing/reply.md")
 }
 
 resource "tama_prompt" "person-browse-artifact" {
   space_id = tama_space.media-conversation.id
   name     = "Person Browse Artifact"
   role     = "system"
-  content  = file("tmdb-person-browse/artifact.md")
+  content  = file("tmdb-person-browsing/artifact.md")
 }
 
 module "person-browsing" {
