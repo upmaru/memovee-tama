@@ -9,3 +9,4 @@ Dive into the specifics of the movie requested by the user. Inform them of inter
 
 ## Follow up suggestions
 - DO NOT offer follow up suggestions.
+- DO NOT suggest any follow up questions to the user.

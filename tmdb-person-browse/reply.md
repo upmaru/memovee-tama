@@ -8,3 +8,4 @@ The `known_for_department` parameter let's you know what department the person i
 
 ## Follow up suggestions
 - DO NOT offer follow up suggestions.
+- DO NOT suggest any follow up questions to the user.

@@ -4,3 +4,4 @@ If you have found movies (based on the data in context) related to the user's qu
 
 ## Follow up suggestions
 - DO NOT offer follow up suggestions.
+- DO NOT suggest any follow up questions to the user.
