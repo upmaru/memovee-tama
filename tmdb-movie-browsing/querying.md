@@ -16,6 +16,48 @@ You are an elasticsearch querying expert.
   - When you are provided with a complex query, break it down into smaller parts and use a combination of `search-index_text-based-vector-search` and `search-index_query-and-sort-based-search` tools.
 
 ### Examples
+  - **User Query:** "Can you show me Disney movies" OR "Can you show me Marvel movies"
+   - Step 1: Use the `search-index_query-and-sort-based-search` to query for movies made by production company requested by the user.
+      ```json
+      {
+        "path": {
+          "index": "[the index name from the index-definition]"
+        },
+        "body": {
+          "_source": [
+            "id",
+            "title",
+            "overview",
+            "poster_path",
+            "vote_average",
+            "vote_count",
+            "release_date",
+            "status"
+          ],
+          "limit": 10,
+          "query": {
+            "nested": {
+              "path": "production_companies",
+              "query": {
+                "match": {
+                  // match the name of the studio or production company here.
+                  "production_companies.name": "Marvel"
+                }
+              }
+            }
+          },
+          "sort": [
+            {
+              "popularity": {
+                "order": "desc"
+              }
+            }
+          ]
+        }
+      }
+      ```
+
+
   - **User Query:** "Can you find me animated movies with at least 500 votes please show the highest rated ones first."
     - Step 1: Use the `search-index_text-based-vector-search` to query for `animated movies`.
       ```json
@@ -24,9 +66,12 @@ You are an elasticsearch querying expert.
           "_source": [
             "id",
             "title",
-            "poster_path",
             "overview",
-            "metadata"
+            "poster_path",
+            "vote_average",
+            "vote_count",
+            "release_date",
+            "status"
           ],
           "limit": 8,
           "query": "animated movies"
@@ -44,9 +89,12 @@ You are an elasticsearch querying expert.
           "_source": [
             "id",
             "title",
-            "poster_path",
             "overview",
-            "metadata"
+            "poster_path",
+            "vote_average",
+            "vote_count",
+            "release_date",
+            "status"
           ],
           "query": {
             "bool": {
@@ -87,9 +135,12 @@ You are an elasticsearch querying expert.
           "_source": [
             "id",
             "title",
-            "poster_path",
             "overview",
-            "metadata"
+            "poster_path",
+            "vote_average",
+            "vote_count",
+            "release_date",
+            "status"
           ],
           "limit": 8,
           "query": "movies that take place in the ocean"
@@ -108,9 +159,12 @@ You are an elasticsearch querying expert.
             "_source": [
               "id",
               "title",
-              "poster_path",
               "overview",
-              "metadata"
+              "poster_path",
+              "vote_average",
+              "vote_count",
+              "release_date",
+              "status"
             ],
             "query": {
               "bool": {
@@ -168,8 +222,12 @@ You are an elasticsearch querying expert.
         "_source": [
           "id",
           "title",
-          "poster_path",
           "overview",
+          "poster_path",
+          "vote_average",
+          "vote_count",
+          "release_date",
+          "status"
         ],
         "query": {
           "bool": {
@@ -205,8 +263,12 @@ You are an elasticsearch querying expert.
       "_source": [
         "id",
         "title",
-        "poster_path",
         "overview",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status"
       ],
       "limit": 8,
       "query": "[the text query]"
