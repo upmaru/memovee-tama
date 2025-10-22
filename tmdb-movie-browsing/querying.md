@@ -41,6 +41,8 @@ You are an elasticsearch querying expert.
               "query": {
                 "match": {
                   // match the name of the studio or production company here.
+                  // DO NOT include words like 'Film', 'Films' or 'Movie' here as they are not relevant to the query.
+                  // Include only the unique non-dictionary part of the name, example: Disney, Universal, Warner Bros., DC, Marvel,
                   "production_companies.name": "Marvel"
                 }
               }
