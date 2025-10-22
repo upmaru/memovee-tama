@@ -91,7 +91,7 @@ resource "tama_prompt" "reply-artifact" {
 
   name    = "Memovee Reply Artifact"
   role    = "system"
-  content = file("interface/artifact.md")
+  content = file("memovee/artifact.md")
 }
 
 module "artifact-context" {
