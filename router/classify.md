@@ -113,11 +113,22 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   <condition>
     The user refers to existing results.
 
-    The user is asking to modify the list of results to a different sort, filter parameters for example modifying vote count and sort order.
+    The user is asking to modify the list of results to a different parameter values for example modifying vote count and sort order.
+
+    Some examples of parameter values that can be modified include:
+    - Vote count
+    - Rating (Vote average)
+    - Popularity
+    - Release date
+    - Production company
+    - Genre
   </condition>
   <user-query>
     - Can you filter out movies with vote count less than 500
     - Can you sort the movies by release date
+    - Can you show me movies with rating of 6.5 and higher
+    - Can update the results and filter out movies with rating of 7.0 and higher
+    - Can you sort the movies by popularity
   </user-query>
   <routing>
     movie-browsing
