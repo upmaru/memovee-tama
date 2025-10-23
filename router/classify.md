@@ -91,7 +91,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
-    The user refer to existing results.
+    The user refers to existing results.
 
     The user is asking to modify the list of results to a different format.
   </condition>
@@ -106,6 +106,26 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - The user is asking to modify the list of results to a different format, so the correct class is "patch".
 
     - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user refers to existing results.
+
+    The user is asking to modify the list of results to a different sort, filter parameters for example modifying vote count and sort order.
+  </condition>
+  <user-query>
+    - Can you filter out movies with vote count less than 500
+    - Can you sort the movies by release date
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    - The user is asking to modify the list of results with different parameter values, so the correct class is "movie-browsing".
+
+    - Routing to "movie-browsing" will provide access to tooling that will allow the modification of the search results.
   </reasoning>
 </case>
 
