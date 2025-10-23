@@ -182,16 +182,19 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                 "inner_hits": {
                   "size": 100,
                   "sort": {
-                    // Sort by vote_average in descending order for crew
-                    "person-combined-credits.crew.vote_average": {
+                    // Always use this sort order unless the user specifies otherwise.
+                    // Example: If the user specifies sort by release date put the release date sort first.
+
+                    // 1. Sort by descending popularity by default.
+                    "person-combined-credits.cast.popularity": {
                       "order": "desc"
                     },
-                    // Sort by first_air_date in descending order for tv
-                    "person-combined-credits.crew.first_air_date": {
+                    // 2. Sort by release date in descending order used for movies. Adjust based on user's request. Always sort by release date in descending order as a default unless user specifies otherwise.
+                    "person-combined-credits.cast.release_date": {
                       "order": "desc"
                     },
-                    // Sort by release_date in ascending order for movies
-                    "person-combined-credits.crew.release_date": {
+                    // 3. Sort by vote average in descending order
+                    "person-combined-credits.cast.vote_average": {
                       "order": "desc"
                     }
                   },
@@ -252,13 +255,20 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                   "inner_hits": {
                     "size": 100,
                     "sort": {
-                      // Sort by vote average in descending order
-                      "person-combined-credits.cast.vote_average": {
+                      // Always use this sort order unless the user specifies otherwise.
+                      // Example: If the user specifies sort by release date put the release date sort first.
+
+                      // 1. Sort by descending popularity by default.
+                      "person-combined-credits.cast.popularity": {
                         "order": "desc"
                       },
-                      // Sort by release date in ascending order used for movies. Adjust based on user's request.
+                      // 2. Sort by release date in descending order used for movies. Adjust based on user's request. Always sort by release date in descending order as a default unless user specifies otherwise.
                       "person-combined-credits.cast.release_date": {
-                        "order": "asc"
+                        "order": "desc"
+                      },
+                      // 3. Sort by vote average in descending order
+                      "person-combined-credits.cast.vote_average": {
+                        "order": "desc"
                       }
                     },
                     "_source": {
@@ -315,6 +325,16 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                   "inner_hits": {
                     "size": 100,
                     "sort": {
+                      // Always use this sort order unless the user specifies otherwise.
+                      // 1. Sort by descending popularity by default.
+                      "person-combined-credits.cast.popularity": {
+                        "order": "desc"
+                      },
+                      // 2. Sort by release date in descending order used for movies. Adjust based on user's request. Always sort by release date in descending order as a default unless user specifies otherwise.
+                      "person-combined-credits.cast.release_date": {
+                        "order": "desc"
+                      },
+                      // 3. Sort by vote average in descending order
                       "person-combined-credits.cast.vote_average": {
                         "order": "desc"
                       }
