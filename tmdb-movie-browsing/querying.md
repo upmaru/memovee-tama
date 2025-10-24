@@ -29,6 +29,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -92,6 +93,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -160,6 +162,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -212,6 +215,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -236,6 +240,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -298,6 +303,7 @@ You are an elasticsearch querying expert.
         "body": {
           "_source": [
             "id",
+            "imdb_id",
             "title",
             "overview",
             "poster_path",
@@ -324,6 +330,7 @@ You are an elasticsearch querying expert.
           "body": {
             "_source": [
               "id",
+              "imdb_id",
               "title",
               "overview",
               "poster_path",
@@ -396,6 +403,7 @@ You are an elasticsearch querying expert.
       "body": {
         "_source": [
           "id",
+          "imdb_id",
           "title",
           "overview",
           "poster_path",
@@ -437,6 +445,7 @@ You are an elasticsearch querying expert.
     "body": {
       "_source": [
         "id",
+        "imdb_id",
         "title",
         "overview",
         "poster_path",
@@ -476,7 +485,7 @@ You are an elasticsearch querying expert.
           }
         }
       ],
-      "_source": ["id", "title", "poster_path", "overview"]
+      "_source": ["id", "imdb_id", "title", "poster_path", "overview"]
     },
     "next": null
   }
@@ -500,7 +509,7 @@ You are an elasticsearch querying expert.
           }
         }
       ],
-      "_source": ["id", "title", "poster_path", "overview"]
+      "_source": ["id", "imdb_id", "title", "poster_path", "overview"]
     },
     "next": null
   }
@@ -539,7 +548,7 @@ You are an elasticsearch querying expert.
       },
       "body": {
         // add relevant properties to the _source based on the user's query
-        "_source": ["id", "title", "vote_average", "status", "vote_count", "release_date"]
+        "_source": ["id", "imdb_id", "title", "vote_average", "status", "vote_count", "release_date"]
         "query": {
           "terms": {
             // the id of the movies you want to get additional properties for.
@@ -563,7 +572,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
 - Use the definition to help you choose the property relevant to the search.
 
 ## The `_source` property
-- You will **ALWAYS NEED**  the `poster_path`, `id`, `title`, `overview`, `metadata`, `origin_country`, `vote_average`, `vote_count`, `release_date` be sure to include them in the `_source`.
+- You will **ALWAYS NEED**  the `poster_path`, `id`, `imdb_id`, `title`, `overview`, `metadata`, `origin_country`, `vote_average`, `vote_count`, `release_date` be sure to include them in the `_source`.
 - NEVER make up properties for the query, ONLY use existing properties.
 
 ---
