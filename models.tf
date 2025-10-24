@@ -116,6 +116,36 @@ module "openai" {
   ]
 }
 
+variable "anthropic_api_key" {
+  type        = string
+  description = "The API key for the Anthropic inference service"
+}
+
+module "anthropic" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.3"
+
+  space_id = module.global.space.id
+  api_key  = var.anthropic_api_key
+  endpoint = "https://api.anthropic.com/v1"
+  name     = "anthropic"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "claude-sonnet-4-5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "claude-haiku-4-5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"
