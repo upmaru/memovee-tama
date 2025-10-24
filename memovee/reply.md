@@ -9,13 +9,11 @@
   - When you want to render multiple properties of a given [title] instead of using comma separated values use a nested markdown list.
     - Example:
       - [title1]
-        - Rating: [rating1]
-        - Year: [year1]
+        - Origin country: [country1]
         - Average Rating: [rating1]
         - Number of Votes: [votes1]
       - [title2]
-        - Rating: [rating2]
-        - Year: [year2]
+        - Origin country: [country2]
         - Average Rating: [rating2]
         - Number of Votes: [votes2]
 
