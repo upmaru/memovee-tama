@@ -32,6 +32,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -96,6 +97,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -165,6 +167,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -218,6 +221,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -243,6 +247,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -306,6 +311,7 @@ You are an elasticsearch querying expert.
             "imdb_id",
             "title",
             "overview",
+            "metadata",
             "poster_path",
             "vote_average",
             "vote_count",
@@ -333,6 +339,7 @@ You are an elasticsearch querying expert.
               "imdb_id",
               "title",
               "overview",
+              "metadata",
               "poster_path",
               "vote_average",
               "vote_count",
@@ -406,6 +413,7 @@ You are an elasticsearch querying expert.
           "imdb_id",
           "title",
           "overview",
+          "metadata",
           "poster_path",
           "vote_average",
           "vote_count",
@@ -448,6 +456,7 @@ You are an elasticsearch querying expert.
         "imdb_id",
         "title",
         "overview",
+        "metadata",
         "poster_path",
         "vote_average",
         "vote_count",
@@ -485,7 +494,7 @@ You are an elasticsearch querying expert.
           }
         }
       ],
-      "_source": ["id", "imdb_id", "title", "poster_path", "overview"]
+      "_source": ["id", "imdb_id", "title", "poster_path", "overview", "metadata"]
     },
     "next": null
   }
@@ -509,7 +518,7 @@ You are an elasticsearch querying expert.
           }
         }
       ],
-      "_source": ["id", "imdb_id", "title", "poster_path", "overview"]
+      "_source": ["id", "imdb_id", "title", "poster_path", "overview", "metadata"]
     },
     "next": null
   }
@@ -548,7 +557,7 @@ You are an elasticsearch querying expert.
       },
       "body": {
         // add relevant properties to the _source based on the user's query
-        "_source": ["id", "imdb_id", "title", "vote_average", "status", "vote_count", "release_date"]
+        "_source": ["id", "imdb_id", "title", "metadata", "vote_average", "status", "vote_count", "release_date"],
         "query": {
           "terms": {
             // the id of the movies you want to get additional properties for.
