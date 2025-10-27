@@ -333,6 +333,76 @@ The user's message may reference a piece of information or data in a search resu
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    The thread has the following conversation structure showing search results being modified by user requests.
+  </condition>
+  <conversation-context>
+    ```
+    User: Can you find me the top 10 movies in terms of revenue in 2017?
+
+    Assistant:
+    {
+      "id": "call_mRY4WmdnKWzTsElaeWesI39B",
+      "type": "function",
+      "function": {
+        "name": "search-index_query-and-sort-based-search",
+        "arguments": "{\"body\":{\"_source\":[\"id\",\"imdb_id\",\"title\",\"overview\",\"metadata\",\"poster_path\",\"vote_average\",\"vote_count\",\"release_date\",\"status\",\"revenue\"],\"limit\":10,\"query\":{\"bool\":{\"must\":[{\"range\":{\"release_date\":{\"gte\":\"2017-01-01\",\"lte\":\"2017-12-31\"}}}]}},\"sort\":[{\"revenue\":{\"order\":\"desc\"}}]},\"next\":null,\"path\":{\"index\":\"tama-movie-db-movie-details\"}}"
+      }
+    }
+
+    Tool:
+    {
+      "_shards": {
+        "failed": 0,
+        "skipped": 0,
+        "successful": 5,
+        "total": 5
+      },
+      "hits": {
+        "hits": [
+          // redacted for brevity
+        ],
+        "max_score": null,
+        "total": {
+          "relation": "eq",
+          "value": 100
+        }
+      },
+      "timed_out": false,
+      "took": 20,
+      "tool_call_id": "call_mRY4WmdnKWzTsElaeWesI39B"
+    }
+
+    Assistant: I've found the top-grossing movies of 2017 and displayed them on the screen...
+
+    User: Can you move the revenue column to the second place?
+
+    Assistant: Done — I've rearranged the display and moved the revenue column to the second position. I updated the results shown on your screen.
+
+    User: Can you make the title column come first then the revenue?
+    ```
+  </conversation-context>
+  <user-query>
+    Can you make the title column come first then the revenue?
+  </user-query>
+  <routing>
+    patch
+  </routing>
+  <referenced-tool-call-ids>
+    - call_mRY4WmdnKWzTsElaeWesI39B
+  </referenced-tool-call-ids>
+  <reasoning>
+    - The user is asking to modify the column ordering of existing displayed results from a previous tool call.
+
+    - They want to rearrange the display format by putting title first, then revenue.
+
+    - This references the specific tool call results (call_mRY4WmdnKWzTsElaeWesI39B) that need to be modified.
+
+    - The LLM needs to reference the tool_call_id to know which data set to modify the display for.
+  </reasoning>
+</case>
+
 ## Disambiguation between media or person
 Sometimes the user query may mention a person's name but with the intent of finding a movie with a certain criteria.
 
