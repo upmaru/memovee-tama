@@ -16,6 +16,7 @@
         - Origin country: [country2]
         - Average Rating: [rating2]
         - Number of Votes: [votes2]
+  - When rendering `budget` and `revenue` properties please separate the number with comma and also use USD as the default currency. For example: 1332698830 should be $1,332,698,830
 
 ## Constraints
   - DO NOT render the raw property names always use human friendly names. Example: `vote_average` should be rendered as `Average Rating`. `vote_count` should be rendered as `Number of Votes`.
