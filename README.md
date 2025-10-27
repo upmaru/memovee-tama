@@ -1,7 +1,10 @@
 # Memovee Tama
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/u3eq8c6P)
-
+<p align="center">
+  <a href="https://discord.gg/u3eq8c6P">
+    <img src="https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white" alt="Discord" />
+  </a>
+</p>
 ## Summary
 This repository contains the Terraform configuration for the Memovee Tama application, which provides a comprehensive AI-powered conversational platform integrating with various services including Tama, Mistral, X.ai, and Elasticsearch. The system supports advanced features like personalized conversations, media handling, and intelligent message routing.
 
