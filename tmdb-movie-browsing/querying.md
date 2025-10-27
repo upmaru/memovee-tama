@@ -212,6 +212,119 @@ Before querying for movies using a given genre make sure you have loaded the lis
     }
     ```
 
+## User query with keyword mixed with genre name
+
+Before processing a mixed keyword and genre query, you need to separate the genre terms from the general keywords and handle them through a multi-step process.
+
+- **User Query:** "Spy adventure movie with rating of more than 7" OR "Dramatic bridezilla romantic comedy" OR "Explosive action thriller films"
+  - Step 1: Use the `search-index_text-based-vector-search` to do a text-based vector search for movies using the non-genre keywords (e.g., "Spy movie" from "Spy adventure movie").
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id",
+          "imdb_id",
+          "title",
+          "overview",
+          "metadata",
+          "poster_path",
+          "vote_average",
+          "vote_count",
+          "release_date",
+          "status"
+        ],
+        "limit": 20,
+        // Extract and use only the non-genre keywords for text-based search
+        "query": "Spy and covert ops movie"
+      },
+      "next": "get-genre-aggregation",
+      "path": {
+        "index": "[the index name from the index-definition]"
+      }
+    }
+    ```
+
+  - Step 2: Use the `search-index_query-and-sort-based-search` to query for all available genre names to find the closest match to the genre terms from the user's query (e.g., "adventure" from "Spy adventure movie").
+    ```json
+    {
+      "body": {
+        "limit": 0,
+        "aggs": {
+          "genres": {
+            "nested": {
+              "path": "genres"
+            },
+            "aggs": {
+              "genre_names": {
+                "terms": {
+                  "field": "genres.name",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        }
+      },
+      "next": "filter-by-genre",
+      "path": {
+        "index": "[the index name from the index-definition]"
+      }
+    }
+    ```
+
+  - Step 3: Use the `search-index_query-and-sort-based-search` to filter the movie IDs from Step 1 by the genre name that most closely matches the user's query from Step 2.
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id",
+          "imdb_id",
+          "title",
+          "overview",
+          "metadata",
+          "poster_path",
+          "vote_average",
+          "vote_count",
+          "release_date",
+          "status"
+        ],
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "terms": {
+                  // Use the movie IDs from Step 1
+                  "id": ["movie_id_1", "movie_id_2", "movie_id_3"]
+                }
+              }
+            ],
+            "must": [
+              {
+                "nested": {
+                  "path": "genres",
+                  "query": {
+                    "terms": {
+                      // Use the genre name from Step 2 that best matches the user's query (e.g., "Adventure" for "adventure")
+                      "genres.name": ["Adventure"]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          // add any sort based on the user's query
+          {
+            "vote_average": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }
+    ```
+
 ## User query by where the movie takes place and specify the person who should be in the movie
 - **User Query:** "Can you find movies that take place in the ocean and has Dwayne Johnson in it?" OR "Can you find movies that take place in the ocean and has Tom Hanks in it?"
   - Step 1: Use the `search-index_text-based-vector-search` to query for `movies that take place in the ocean`.
