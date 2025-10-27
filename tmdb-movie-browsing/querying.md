@@ -130,6 +130,9 @@ You are an elasticsearch querying expert.
       ```
 
   #### User query contains one or many potential genres
+
+  Before querying for movies using a given genre make sure you have loaded the list of genres using Step 1.
+
   - **User Query:** "Can you find me animated movies with at least 500 votes please show the highest rated ones first." OR "Can you find me top horror movies"
     - Step 1: Use the `search-index_query-and-sort-based-search` to query for all the genre names. Make sure you include a `next` parameter to indicate the next step.
       ```json
@@ -158,9 +161,11 @@ You are an elasticsearch querying expert.
         }
       }
       ```
-    - Step 2: Use the `search-index_query-and-sort-based-search` to search the movie by choosing the genre that closest matches the user's query and sort the results by `vote_average` in descending order and run the range query on the `vote_count`.
+
+    - Step 2: Use the `search-index_query-and-sort-based-search` to search the movie by choosing the genre that closest matches the user's query and sort the results by `vote_average` in descending order and run the range query on the `vote_count`. In case the genre search returns no results you can fallback to text based search by using the `next` parameter. This will allow you to choose to do another search if this search returns no results.
       ```json
       {
+        "next": "maybe-fallback-to-text-based-search",
         "body": {
           "_source": [
             "id",
