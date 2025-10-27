@@ -4,9 +4,9 @@
   </a>
 </p>
 
-# Memovee Tama
 
-## Summary
+
+# Memovee Tama
 
 This repository contains the Terraform configuration for the Memovee Tama application, which provides a comprehensive AI-powered conversational platform integrating with various services including Tama, Mistral, X.ai, and Elasticsearch. The system supports advanced features like personalized conversations, media handling, and intelligent message routing.
 
