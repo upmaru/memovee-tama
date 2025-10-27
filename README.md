@@ -1,10 +1,10 @@
-# Memovee Tama
-
 <p align="center">
   <a href="https://discord.gg/u3eq8c6P">
     <img src="https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white" alt="Discord" />
   </a>
 </p>
+
+# Memovee Tama
 
 ## Summary
 
