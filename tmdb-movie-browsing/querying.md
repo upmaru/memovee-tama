@@ -697,6 +697,37 @@ To generate a high-quality Elasticsearch query with a natural language query:
 - You will be provided with an index definition that tells you what the index name is and the definition of each of the property.
 - Use the definition to help you choose the property relevant to the search.
 
+## Critical: Sort Placement in Elasticsearch Queries
+**NEVER place the `sort` clause inside the `query` object.** The `sort` clause must always be at the same level as `query` within the `body` object.
+
+**Incorrect structure:**
+```json
+{
+  "body": {
+    "query": {
+      "bool": {
+        "must": [...],
+        "sort": [...]  // ❌ WRONG - sort inside query
+      }
+    }
+  }
+}
+```
+
+**Correct structure:**
+```json
+{
+  "body": {
+    "query": {
+      "bool": {
+        "must": [...]
+      }
+    },
+    "sort": [...]  // ✅ CORRECT - sort at body level
+  }
+}
+```
+
 ## The `_source` property
 - You will **ALWAYS NEED**  the `poster_path`, `id`, `imdb_id`, `title`, `overview`, `metadata`, `origin_country`, `vote_average`, `vote_count`, `release_date` be sure to include them in the `_source`.
 - NEVER make up properties for the query, ONLY use existing properties.
