@@ -60,7 +60,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "terms": {
@@ -86,7 +88,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "match_phrase": {
@@ -115,7 +119,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "vote_average",
       "vote_count",
       "release_date",
-      "status"
+      "status",
+      "budget",
+      "revenue"
     ],
     "query": {
       "terms": {
@@ -141,7 +147,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "limit": 1,
         "query": {
@@ -190,7 +198,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "limit": 1,
         "query": {
@@ -243,7 +253,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -288,7 +300,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -337,7 +351,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -386,7 +402,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -433,7 +451,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -490,7 +510,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "vote_average",
             "vote_count",
             "release_date",
-            "status"
+            "status",
+            "budget",
+            "revenue"
           ],
           "query": {
             "bool": {
@@ -562,7 +584,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "vote_average",
             "vote_count",
             "release_date",
-            "status"
+            "status",
+            "budget",
+            "revenue"
           ],
           "query": {
             "bool": {
@@ -625,7 +649,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         "index": "[the index name from the index-definition]"
       },
       "body": {
-        "_source": ["id", "imdb_id", "title", "overview", "poster_path", "vote_average", "vote_count"]
+        "_source": ["id", "imdb_id", "title", "overview", "poster_path", "vote_average", "vote_count", "budget", "revenue"],
         "query": {
           "terms": {
             "id": [1, 2, 3]
@@ -658,7 +682,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "vote_average",
           "vote_count",
           "release_date",
-          "status"
+          "status",
+          "budget",
+          "revenue"
         ],
         "query": {
           "bool": {
@@ -705,7 +731,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         "index": "[the index name from the definition]"
       },
       "body": {
-        "_source": ["id", "imdb_id", "title", "poster_path", "overview"]
+        "_source": ["id", "imdb_id", "title", "poster_path", "overview", "budget", "revenue"],
         "query": {
           "terms": {
             "id": [348, 313]
@@ -759,7 +785,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ## Important
 - If the user does not specify sorting, omit the `sort` object.
 - Handle both single and multiple ID queries appropriately.
-- You will always need the `poster_path`, `imdb_id`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status`, `metadata`, `genres`, `production_companies`, `runtime`, `budget`, `popularity`, `origin_country` be sure to include them in the `_source`.
+- You will always need the `poster_path`, `imdb_id`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status`, `metadata`, `genres`, `production_companies`, `runtime`, `budget`, `revenue`, `popularity`, `origin_country` be sure to include them in the `_source`.
 - For crew or cast queries, use `match` searches in `nested` queries (e.g., "Director" for crew roles).
 - Ensure all query components (`query`, `_source`, and optional `sort`, `limit`) are always wrapped inside a `body` object, and include a `path` object with the index name from the provided index definition in every response.
 - **NEVER** put the `_source` inside the `query` object. The `_source` is always inside the `body` object.
