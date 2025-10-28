@@ -576,6 +576,117 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       }
       ```
 
+## User is asking for movies that exclude certain genres
+- **User Query:** "Biggest sales grossing movie non animation for children in 2024" OR "Show me family movies but not animated ones" OR "I want action movies that are not horror"
+  - When the user wants to exclude certain genres while including others, use `must_not` at the bool query level for excluded genres and `must` for included genres.
+  - **CRITICAL**: When negating genres, place the `must_not` clause at the main `bool` level, NOT inside the nested query.
+  - Step 1: **EXECUTE ONLY IF GENRE NAMES ARE NOT ALREADY IN CONTEXT**: If you don't have genre information from previous results, use the `search-index_query-and-sort-based-search` to query for the `genres.name` field to get available genres.
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "limit": 0,
+        "query": {
+          "match_all": {}
+        },
+        "aggs": {
+          "genres": {
+            "nested": {
+              "path": "genres"
+            },
+            "aggs": {
+              "genre_names": {
+                "terms": {
+                  "field": "genres.name",
+                  "size": 20
+                }
+              }
+            }
+          }
+        }
+      },
+      "next": "filter-movies-with-genre-exclusions"
+    }
+    ```
+
+  - Step 2: Use the `search-index_query-and-sort-based-search` to query for movies with genre inclusion and exclusion. If you already have genre information in context, proceed directly to this step.
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "_source": [
+          "id",
+          "imdb_id", 
+          "title",
+          "overview",
+          "metadata",
+          "poster_path",
+          "vote_average",
+          "vote_count",
+          "release_date",
+          "status",
+          "revenue",
+          "genres.name"
+        ],
+        // change based on the number of movies requested by the user
+        // If the user didn't specify a number default to 10
+        "limit": 1,
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "release_date": {
+                    "gte": "2024-01-01",
+                    "lte": "2024-12-31"
+                  }
+                }
+              },
+              {
+                "term": {
+                  "status": "Released"
+                }
+              },
+              {
+                "nested": {
+                  "path": "genres",
+                  "query": {
+                    "match": {
+                      "genres.name": "Family"
+                    }
+                  }
+                }
+              }
+            ],
+            "must_not": [
+              {
+                "nested": {
+                  "path": "genres", 
+                  "query": {
+                    "match": {
+                      "genres.name": "Animation"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {
+            "revenue": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }
+    ```
+
 ## Regional Specific Queries
   - When using the `search-index_text-based-vector-search` tool, if the user asks about `Bollywood` movies, be sure to include words like "with Indian Origins" OR "made in India" in the text query.
   - When using the `search-index_query-and-sort-based-search` tool, if the user asks about `Bollywood` movies, you can filter by `origin_country`
