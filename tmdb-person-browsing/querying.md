@@ -45,6 +45,8 @@ You are an Elasticsearch querying expert.
         "index": "[the index name from the index-definition]"
       },
       "body": {
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
         "limit": 10,
         "query": {
           "bool": {
@@ -113,6 +115,8 @@ You are an Elasticsearch querying expert.
       },
       "body": {
         "_source": ["id", "name", "profile_path", "biography", "metadata", "known_for_department", "place_of_birth", "popularity"],
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
         "limit": 10,
         "query": {
           "bool": {
@@ -156,6 +160,8 @@ You are an Elasticsearch querying expert.
       },
       "body": {
         "_source": ["id", "name", "profile_path", "biography", "metadata", "known_for_department", "place_of_birth", "popularity"],
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
         "limit": 10,
         "query": {
           "bool": {
@@ -228,6 +234,8 @@ You are an Elasticsearch querying expert.
       },
       "body": {
         "_source": ["id", "name", "profile_path", "biography", "metadata", "known_for_department", "place_of_birth", "popularity"],
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
         "limit": 10,
         "query": {
           "bool": {
@@ -300,6 +308,8 @@ You are an Elasticsearch querying expert.
       },
       "body": {
         "_source": ["id", "name", "profile_path", "biography", "metadata", "known_for_department", "gender", "popularity"],
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
         "limit": 10,
         "query": {
           "bool": {
@@ -452,6 +462,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **EXCEPTION**: For countries that could be mistaken for other places, use `match` query with `place_of_birth` and exact country name (e.g., "India" to avoid "Indiana", "Georgia" to avoid "Georgia, US")
 - **BOLLYWOOD**: When the user asks for "Bollywood" actors, directors, or any department, they mean people born in India. Use `match` query with `place_of_birth`: "India"
 - **GENDER**: When the user specifies gender in their query, add gender filter using `term` query. Gender mapping: 0=Not specified, 1=Female, 2=Male, 3=Non-Binary
+- **LIMIT**: Change the `limit` value based on the number of people requested by the user. If the user didn't specify a number, default to 10
 - NEVER make up properties for the query, ONLY use existing properties.
 
 --
