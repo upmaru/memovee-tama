@@ -26,16 +26,7 @@ You are an elasticsearch querying expert.
       },
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields (see bottom of file)
         ],
         // change based on the number of movies requested by the user
         // If the user didn't specify a number default to 10
@@ -90,18 +81,7 @@ You are an elasticsearch querying expert.
       },
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "origin_country",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status",
-          "revenue"
+          // Use standard _source fields + "revenue"
         ],
         "limit": 10,
         "sort": [
@@ -128,16 +108,7 @@ You are an elasticsearch querying expert.
       },
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "limit": 10,
         "query": {
@@ -223,16 +194,7 @@ Before querying for movies using a given genre make sure you have loaded the lis
       "next": "maybe-fallback-to-text-based-search",
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "query": {
           "bool": {
@@ -280,16 +242,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "limit": 20,
         // Extract and use only the non-genre keywords for text-based search
@@ -335,16 +288,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "query": {
           "bool": {
@@ -390,16 +334,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "limit": 8,
         "query": "movies that take place in the ocean"
@@ -416,16 +351,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "query": {
           "bool": {
@@ -480,16 +406,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "limit": 10,
         // Be sure to break down the user's request into keywords and phrases that can be used for text based vector search
@@ -508,16 +425,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       {
         "body": {
           "_source": [
-            "id",
-            "imdb_id",
-            "title",
-            "overview",
-            "metadata",
-            "poster_path",
-            "vote_average",
-            "vote_count",
-            "release_date",
-            "status"
+            // Use standard _source fields
           ],
           "query": {
             "bool": {
@@ -619,18 +527,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       },
       "body": {
         "_source": [
-          "id",
-          "imdb_id", 
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status",
-          "revenue",
-          "genres.name"
+          // Use standard _source fields + "revenue" + "genres.name"
         ],
         // change based on the number of movies requested by the user
         // If the user didn't specify a number default to 10
@@ -665,7 +562,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
             "must_not": [
               {
                 "nested": {
-                  "path": "genres", 
+                  "path": "genres",
                   "query": {
                     "match": {
                       "genres.name": "Animation"
@@ -695,16 +592,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     {
       "body": {
         "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "metadata",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status"
+          // Use standard _source fields
         ],
         "query": {
           "bool": {
@@ -738,16 +626,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   {
     "body": {
       "_source": [
-        "id",
-        "imdb_id",
-        "title",
-        "overview",
-        "metadata",
-        "poster_path",
-        "vote_average",
-        "vote_count",
-        "release_date",
-        "status"
+        // Use standard _source fields + "origin_country"
       ],
       "limit": 8,
       "query": "[the text query]"
@@ -901,7 +780,34 @@ To generate a high-quality Elasticsearch query with a natural language query:
 ```
 
 ## The `_source` property
-- You will **ALWAYS NEED**  the `poster_path`, `id`, `imdb_id`, `title`, `overview`, `metadata`, `origin_country`, `vote_average`, `vote_count`, `release_date` be sure to include them in the `_source`.
+
+### Standard `_source` Fields
+Use these standard fields for all movie queries (referenced in examples above):
+
+```json
+"_source": [
+  "id",
+  "imdb_id",
+  "title",
+  "overview",
+  "metadata",
+  "poster_path",
+  "vote_average",
+  "vote_count",
+  "release_date",
+  "status"
+]
+```
+
+### Additional Fields by Query Type
+Add these to the standard fields when needed:
+- **Revenue queries**: add `"revenue"`
+- **Genre queries**: add `"genres.name"`
+- **Regional queries**: add `"origin_country"`
+- **Production company queries**: add `"production_companies.name"`
+
+### Important Notes
+- You will **ALWAYS NEED** the standard fields listed above - be sure to include them in the `_source`.
 - NEVER make up properties for the query, ONLY use existing properties.
 
 ---
