@@ -47,7 +47,7 @@ You are an elasticsearch querying expert.
             }
           }
         ]
-        // You can adjust bool query based on the user's request. If the user only requested a specific year only include the range query, if the user requested specific year and production company name include both queries. 
+        // You can adjust bool query based on the user's request. If the user only requested a specific year only include the range query, if the user requested specific year and production company name include both queries.
         // If the user wants ALL movies with no filters (e.g., "top 10 movies by revenue"), use "match_all": {}
         // NEVER omit the query field - it is REQUIRED for valid Elasticsearch queries.
         "query": {
@@ -91,7 +91,7 @@ You are an elasticsearch querying expert.
       "body": {
         "_source": [
           "id",
-          "imdb_id", 
+          "imdb_id",
           "title",
           "overview",
           "metadata",
@@ -146,8 +146,28 @@ You are an elasticsearch querying expert.
             "query": {
               "match": {
                 // match the name of the studio or production company here.
-                // DO NOT include words like 'Film', 'Films' or 'Movie' here as they are not relevant to the query.
-                // Include only the unique non-dictionary part of the name, example: Disney, Universal, Warner Bros., DC, Marvel,
+                // CRITICAL: Extract and use ONLY the unique, non-dictionary identifier from the production company name.
+                // EXCLUDE common dictionary words such as: 'Studio', 'Studios', 'Film', 'Films', 'Movie', 'Movies', 'Pictures', 'Entertainment', 'Productions', 'Company', 'Corporation', 'Inc', 'LLC', etc.
+                // Examples:
+                // - "Studio Ghibli" -> use "Ghibli"
+                // - "Warner Bros. Pictures" -> use "Warner Bros"
+                // - "Marvel Studios" -> use "Marvel"
+                // - "Universal Pictures" -> use "Universal"
+                // - "Sony Pictures Entertainment" -> use "Sony"
+                // - "Paramount Pictures Corporation" -> use "Paramount"
+                // - "20th Century Studios" -> use "20th Century"
+                // - "Walt Disney Pictures" -> use "Disney"
+                // - "Columbia Pictures Industries" -> use "Columbia"
+                // - "New Line Cinema" -> use "New Line"
+                // - "Metro-Goldwyn-Mayer Studios" -> use "MGM"
+                // - "DreamWorks Pictures" -> use "DreamWorks"
+                // - "Lionsgate Films" -> use "Lionsgate"
+                // - "Focus Features" -> use "Focus"
+                // - "A24 Films" -> use "A24"
+                // - "Miramax Films" -> use "Miramax"
+                // - "Blumhouse Productions" -> use "Blumhouse"
+                // - "Legendary Entertainment" -> use "Legendary"
+                // Focus on the distinctive brand name that uniquely identifies the production company.
                 "production_companies.name": "Marvel"
               }
             }
