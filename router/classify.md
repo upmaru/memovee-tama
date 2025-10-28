@@ -439,6 +439,29 @@ Sometimes the user query may mention a person's name but with the intent of find
     </reasoning>
   </case>
 
+  <case>
+    <condition>
+      The user is starting a new query not relevant to the previous search results.
+    </condition>
+    <user-query>
+      - Which actors is known for their role as superheroes?
+      - Find me people who are voice actors
+      - I want actors known for comedy roles
+      - Show me actors who have won awards
+      - Can you find me actors who have played villains?
+    </user-query>
+    <routing>
+      person-browsing
+    </routing>
+    <reasoning>
+      - The user is asking to find actors based on specific role types, specializations, or career achievements.
+
+      - These queries require searching for people who match certain characteristics or career patterns rather than looking for a specific named person.
+
+      - The query is about browsing and discovering actors who fit certain criteria.
+    </reasoning>
+  </case>
+
 ---
 
 <classes>
