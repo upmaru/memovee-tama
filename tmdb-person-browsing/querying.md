@@ -439,6 +439,77 @@ You are an Elasticsearch querying expert.
     }
     ```
 
+## User query requires text based vector search OR doesn't match any of the above examples. This is a 'catch all' strategy
+- **User Query:** "Can you find me actors who have played superheroes" OR "I want actors known for comedy roles" OR "Find me people who are voice actors" OR "actors who have won an award for best actor"
+  - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for people that closest match the user's query.
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id",
+          "name",
+          "profile_path",
+          "biography",
+          "metadata",
+          "known_for_department",
+          "popularity"
+        ],
+        // change based on the number of people requested by the user
+        // If the user didn't specify a number default to 10
+        "limit": 10,
+        // Be sure to break down the user's request into keywords and phrases that can be used for text based vector search
+        "query": "[the text query]"
+      },
+      // use the `next` property to be able to sort or filter the results from the text based search
+      "next": "sort-or-filter-results",
+      "path": {
+        "index": "[the index name from the definition]"
+      }
+    }
+    ```
+
+  - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
+    ```json
+      {
+        "body": {
+          "_source": [
+            "id",
+            "name", 
+            "profile_path",
+            "biography",
+            "metadata",
+            "known_for_department",
+            "popularity"
+          ],
+          "query": {
+            "bool": {
+              "filter": [
+                {
+                  "terms": {
+                    // the ids from the people in Step 1
+                    "id": [12345, 67890]
+                  }
+                },
+                {
+                  "term": {
+                    "adult": false
+                  }
+                }
+              ]
+            }
+          },
+          "sort": [
+            // Even if the user doesn't specify a sort order, you can always sort by descending popularity by default.
+            {
+              "popularity": {
+                "order": "desc"
+              }
+            }
+          ]
+        }
+      }
+      ```
+
 ## Query Generation Guidance
 The `search-index_text-based-vector-search` supports natural language querying.
 
