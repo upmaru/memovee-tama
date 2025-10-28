@@ -93,19 +93,24 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   <condition>
     The user refers to existing results.
 
-    The user is asking to modify the list of results to a different format.
+    The user is asking to modify the list of results to a different display format or visual presentation ONLY.
   </condition>
   <user-query>
     - Can you display these results with larger images
     - Can you render the results in a table
+    - Can you show this in a grid view
+    - Make the images smaller
+    - Change the layout to cards
   </user-query>
   <routing>
     patch
   </routing>
   <reasoning>
-    - The user is asking to modify the list of results to a different format, so the correct class is "patch".
+    - The user is asking to modify ONLY the visual presentation/formatting of existing results, so the correct class is "patch".
 
-    - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering.
+    - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering/display format.
+
+    - CRITICAL: "patch" is ONLY for visual/display changes, NOT for changing search parameters like sorting, filtering, or data content.
   </reasoning>
 </case>
 
@@ -113,15 +118,16 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   <condition>
     The user refers to existing results.
 
-    The user is asking to modify the list of results to a different parameter values for example modifying vote count and sort order.
+    The user is asking to modify the list of results with different SEARCH PARAMETERS such as filtering, sorting, or changing data criteria.
 
-    Some examples of parameter values that can be modified include:
+    Some examples of search parameters that can be modified include:
     - Vote count
-    - Rating (Vote average)
+    - Rating (Vote average)  
     - Popularity
     - Release date
     - Production company
     - Genre
+    - Sort order
   </condition>
   <user-query>
     - Can you filter out movies with vote count less than 500
@@ -132,14 +138,18 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Can you sort the result by highest ratings first?
     - Sort these movies by popularity
     - Order the results by release date
+    - Sort by highest rated first
+    - Arrange by newest release date
   </user-query>
   <routing>
     movie-browsing
   </routing>
   <reasoning>
-    - The user is asking to modify the list of results with different parameter values, so the correct class is "movie-browsing".
+    - The user is asking to modify the SEARCH PARAMETERS or DATA CRITERIA of the results, so the correct class is "movie-browsing".
 
-    - Routing to "movie-browsing" will provide access to tooling that will allow the modification of the search results.
+    - Routing to "movie-browsing" will provide access to tooling that will allow re-executing the search with modified parameters.
+
+    - CRITICAL: Any request to change sorting, filtering, or data parameters requires "movie-browsing", NOT "patch".
 
     - Sort order changes require re-executing the search with new sort parameters, not just modifying the display format.
   </reasoning>
