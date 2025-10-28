@@ -129,6 +129,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Can you show me movies with rating of 6.5 and higher
     - Can update the results and filter out movies with rating of 7.0 and higher
     - Can you sort the movies by popularity
+    - Can you sort the result by highest ratings first?
+    - Sort these movies by popularity
+    - Order the results by release date
   </user-query>
   <routing>
     movie-browsing
@@ -137,6 +140,8 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - The user is asking to modify the list of results with different parameter values, so the correct class is "movie-browsing".
 
     - Routing to "movie-browsing" will provide access to tooling that will allow the modification of the search results.
+
+    - Sort order changes require re-executing the search with new sort parameters, not just modifying the display format.
   </reasoning>
 </case>
 
