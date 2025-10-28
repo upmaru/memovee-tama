@@ -108,7 +108,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   <reasoning>
     - The user is asking to modify ONLY the visual presentation/formatting of existing results, so the correct class is "patch".
 
-    - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering/display format.
+    - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering/display format or column order of a table.
 
     - CRITICAL: "patch" is ONLY for visual/display changes, NOT for changing search parameters like sorting, filtering, or data content.
   </reasoning>
@@ -122,7 +122,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
     Some examples of search parameters that can be modified include:
     - Vote count
-    - Rating (Vote average)  
+    - Rating (Vote average)
     - Popularity
     - Release date
     - Production company
