@@ -754,6 +754,49 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   }
   ```
 
+## User wants to find the best film from existing search results
+- **User Query:** "out of all of these films tell me the best film" OR "which one is the best?" OR "show me the highest rated from these" OR "what's the best movie from the previous results?"
+  - When the user refers to existing films and wants to find the "best", you need to extract the movie IDs from the previous search results and re-query them with appropriate sorting.
+  - Use the `search-index_query-and-sort-based-search` to query specific movies by their IDs and sort by the most relevant metric (usually `vote_average` for "best").
+    ```json
+    {
+      "path": {
+        "index": "tama-movie-db-movie-details"
+      },
+      "body": {
+        "_source": [
+          // Use standard _source fields (see section below)
+        ],
+        "limit": 10,
+        "query": {
+          "terms": {
+            // Extract these IDs from the previous search results context
+            "id": ["12345", "67890", "11111", "22222"]
+          }
+        },
+        "sort": [
+          {
+            "vote_average": {
+              "order": "desc"
+            }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }
+    ```
+    
+    **Important considerations:**
+    - Extract movie IDs from the previous conversation context or search results
+    - Use `vote_average` as primary sort for "best" movies
+    - Add `vote_count` as secondary sort to prioritize well-reviewed movies
+    - Limit results to a reasonable number (e.g., top 5-10)
+    - If user asks for "worst" instead, use `"order": "asc"`
+
 ## Acquire additional properties for existing movies in context
 **User Query**: "Can you show me the release date of the movies?" OR "Can you show me the ratings of these movies?" OR "Can you show me whether these movies have been released?" OR "Can you show me their ratings?"
   - When the `_source.id` or `_id` of the movie is available in context use the `search-index_query-and-sort-based-search` tool:
