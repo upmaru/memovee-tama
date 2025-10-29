@@ -482,7 +482,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
                     "path": "genres",
                     "query": {
                       "terms": {
-                        // Add appropriate genres based on the user's request (e.g., ["Family", "Animation"] for kids, ["Family", "Science Fiction"] for sci-fi for children)
+                        // Add appropriate genres based on the user's request (e.g., ["Family", "Animation"] for kids, ["Family", "Science Fiction"] for sci-fi for children), "Family" is mandatory when being asked about movie for kids.
                         "genres.name": ["Family", "Animation", "Science Fiction"]
                       }
                     }
@@ -508,10 +508,10 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         }
       }
       ```
-      
+
       **For specific age groups or genre combinations:**
       - Use multiple genre names in the `terms` query (e.g., ["Family", "Science Fiction"] for sci-fi suitable for children)
-      - Include `Animation` genre for younger children
+      - Include `Animation` genre for younger children unless they are specifically asking for non-animation content
       - Add vote_count filter to ensure quality movies
       - Sort by vote_average for best-rated results
 
@@ -816,7 +816,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
 ### Troubleshooting Common Parsing Errors
 
 **Error: "Unknown key for a VALUE_NULL in [query]"**
-This error occurs when the `query` field is missing from the body. 
+This error occurs when the `query` field is missing from the body.
 
 **Incorrect query structure:**
 ```json
