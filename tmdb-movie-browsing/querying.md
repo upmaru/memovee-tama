@@ -460,7 +460,11 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       ```
 
 ## User is asking specifically for a child or family appropriate movies
-  - **User Query:** "Can you show me the child friendly movies?" OR "I want to watch something with my family" OR "Show me movies for kids" OR "What are the movies for kids?" OR "films suitable for a 7 year old girl, something sci fi related"
+  - **Age Group Recognition:** The following age ranges and terms should be treated as child/family movie requests:
+    - **Ages 0-12:** "toddler", "preschooler", "5 year old", "7 year old girl", "8 year old boy", "10 year old", etc.
+    - **General child terms:** "child", "children", "kid", "kids", "family friendly", "suitable for children"
+    - **Family context:** "family movie", "watch with my family", "appropriate for kids"
+  - **User Query Examples:** "Can you show me the child friendly movies?" OR "I want to watch something with my family" OR "Show me movies for kids" OR "What are the movies for kids?" OR "films suitable for a 7 year old girl, something sci fi related" OR "movies for my 5 year old" OR "what can a 10 year old boy watch?"
     - You will need to use the `search-index_query-and-sort-based-search` and use the boolean query to look for movies that have the appropriate `genres.name` property. **MANDATORY: Always include the complete query structure with all required fields.**
       ```json
       {
@@ -525,6 +529,18 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       - This ensures movies MUST have Family genre AND any additional requested genres
       - Add vote_count filter to ensure quality movies
       - Sort by vote_average for best-rated results
+      
+      **Age-Appropriate Genre Selection Guidelines:**
+      - **Ages 3-6 (Toddler/Preschool):** Always include "Animation" genre for this age group
+      - **Ages 7-9 (Early Elementary):** "Animation" preferred, but live-action "Family" movies acceptable
+      - **Ages 10-12 (Late Elementary):** Mix of "Animation" and "Family", can include mild "Adventure"
+      - **Teenagers (13+):** Use general family guidelines, not this child-specific section
+      
+      **Content Considerations by Age:**
+      - **Under 8 years old:** Prioritize "Animation" + "Family" combination
+      - **8-12 years old:** "Family" + additional requested genres (like "Science Fiction", "Adventure")
+      - Always avoid genres like "Horror", "Thriller" for child queries regardless of age
+      - For sci-fi requests with children: Use "Family" + "Science Fiction" (not just "Science Fiction")
 
 ## User is asking for movies that exclude certain genres
 - **User Query:** "Biggest sales grossing movie non animation for children in 2024" OR "Show me family movies but not animated ones" OR "I want action movies that are not horror"
