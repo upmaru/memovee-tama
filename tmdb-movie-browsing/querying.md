@@ -481,9 +481,19 @@ Before processing a mixed keyword and genre query, you need to separate the genr
                   "nested": {
                     "path": "genres",
                     "query": {
+                      "match": {
+                        "genres.name": "Family"
+                      }
+                    }
+                  }
+                },
+                {
+                  "nested": {
+                    "path": "genres",
+                    "query": {
                       "terms": {
-                        // Add appropriate genres based on the user's request (e.g., ["Family", "Animation"] for kids, ["Family", "Science Fiction"] for sci-fi for children), "Family" is mandatory when being asked about movie for kids.
-                        "genres.name": ["Family", "Animation", "Science Fiction"]
+                        // Add additional genres based on the user's request (e.g., ["Animation"] for animated kids movies, ["Science Fiction"] for sci-fi suitable for children)
+                        "genres.name": ["Science Fiction"]
                       }
                     }
                   }
@@ -510,8 +520,9 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       ```
 
       **For specific age groups or genre combinations:**
-      - Use multiple genre names in the `terms` query (e.g., ["Family", "Science Fiction"] for sci-fi suitable for children)
-      - Include `Animation` genre for younger children unless they are specifically asking for non-animation content
+      - "Family" genre is always mandatory (first nested query with match)
+      - Add additional genres in a separate nested query with terms (e.g., ["Science Fiction"] for sci-fi, ["Animation"] for animated movies)
+      - This ensures movies MUST have Family genre AND any additional requested genres
       - Add vote_count filter to ensure quality movies
       - Sort by vote_average for best-rated results
 
