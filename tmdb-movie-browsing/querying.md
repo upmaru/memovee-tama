@@ -427,7 +427,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 - **Examples of correct query formation:**
   - User asks: "Can you show me movies that take place in someone's mind?"
-  - **CORRECT initial query**: `"mind subconscious dream world mental landscape"`
+  - **CORRECT initial query**: `"in the mind subconscious dream world mental landscape"`
   - **CORRECT fallback query (if no results)**: `"mind subconscious"`
   - **WRONG query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"`
   - User asks: "Movies like Blade Runner"
@@ -944,9 +944,12 @@ The `search-index_text-based-vector-search` supports natural language querying.
 To generate a high-quality Elasticsearch query with a natural language query:
 1. **Create Short, Keyword-Focused Queries**:
   - Keep queries SHORT and SUCCINCT - focus on the strongest 3-5 keywords that capture the user's intent
+  - **Preserve the user's exact phrasing and key concepts** - maintain the integrity of how they describe what they want
   - Use the most relevant keywords and phrases that will match well with movie descriptions
-  - Avoid unnecessary words like "movies that" or "films about" - focus on the core concepts
-  - For example, if the user inputs "movies that take place in the sea or the ocean," the query should be "sea ocean underwater maritime"
+  - Include the user's specific phrases when they're descriptive and searchable
+  - **Example**: For "movies that take place in someone's mind" → `"in the mind subconscious mental landscape"`
+  - **Example**: For "movies that take place in the sea or the ocean" → `"in the sea ocean underwater maritime"`
+  - Avoid unnecessary connector words like "movies that" or "films about" but keep meaningful phrases
 
 2. **Movie Titles in Queries - Conditional Usage**:
   - **INCLUDE** specific movie titles ONLY if the user explicitly mentions them in their query
@@ -954,7 +957,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **For fallback queries**: Remove movie titles and focus on concepts/themes only
   - Focus on the strongest keywords that describe the concept, theme, setting, or characteristics
   - **Example of WRONG approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"
-  - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "mind subconscious dream world mental landscape"
+  - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "in the mind subconscious dream world mental landscape"
   - **Example of CORRECT approach**: For "movies like Blade Runner" → Initial: "Blade Runner cyberpunk dystopian future noir", Fallback: "cyberpunk dystopian" (title removed)
 
 3. **Multi-Level Fallback Strategy for No Results**:
@@ -970,7 +973,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
     - Use nested genre query with 2-4 relevant genres
     - Use `"next": "sort-or-filter-results"`
   - **Examples of fallback progression**:
-    - **Example**: Original "mind subconscious dream world mental landscape" → Text Fallback "mind dreams" → Genre Fallback ["Drama", "Thriller", "Sci-Fi"]
+    - **Example**: Original "in the mind subconscious dream world mental landscape" → Text Fallback "mind dreams" → Genre Fallback ["Drama", "Thriller", "Sci-Fi"]
     - **Example**: Original "Blade Runner cyberpunk dystopian future noir" → Text Fallback "cyberpunk sci-fi" → Genre Fallback ["Sci-Fi", "Thriller", "Action"]
     - **Example**: Original "family saga brother rivalry western epic frontier cattle ranch family feud" → Text Fallback "western family" → Genre Fallback ["Western", "Drama", "War"]
     - **Example**: Original "Legends of the Fall epic family saga period drama Montana ranch love triangle brotherhood war 20th century" → Text Fallback "family drama" → Genre Fallback ["Drama", "Romance", "War"]
