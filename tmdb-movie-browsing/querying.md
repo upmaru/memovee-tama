@@ -403,7 +403,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     ```
 
 ## User query requires text based vector search OR doesn't match any of the above examples. This is a 'catch all' strategy
-- **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics".
+- **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?".
   - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query.
     ```json
     {
@@ -412,8 +412,9 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           // Use standard _source fields
         ],
         "limit": 10,
-        // Be sure to break down the user's request into keywords and phrases that can be used for text based vector search
-        "query": "[the text query]"
+        // CRITICAL: Break down the user's request into keywords and phrases for text search
+        // ONLY include movie titles if the user explicitly mentioned them - DO NOT add your own examples
+        "query": "[the text query - descriptive concepts, include user-mentioned titles only]"
       },
       // use the `next` property to be able to sort or filter the results from the text based search
       "next": "sort-or-filter-results",
@@ -423,7 +424,14 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     }
     ```
 
-  - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
+- **Examples of correct query formation:**
+  - User asks: "Can you show me movies that take place in someone's mind?"
+  - **CORRECT query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape"`
+  - **WRONG query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"`
+  - User asks: "Movies like Blade Runner"
+  - **CORRECT query**: `"movies like Blade Runner with cyberpunk themes, dystopian future settings, noir atmosphere"`
+
+- Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
     ```json
       {
         "body": {
@@ -868,6 +876,14 @@ To generate a high-quality Elasticsearch query with a natural language query:
 1. **Preserve User Intent in Natural Language**:
   - Create a natural language query that closely matches the user's input, rephrasing only for clarity or to improve search relevance.
   - For example, if the user inputs "movies that take place in the sea or the ocean," the natural language query could be "movies set in the sea or ocean."
+
+2. **CRITICAL: Do Not Add Movie Title Examples to Queries**:
+  - **INCLUDE** specific movie titles ONLY if the user explicitly mentions them in their query (e.g., "movies like Blade Runner")
+  - **DO NOT** add your own movie title examples or references when the user hasn't mentioned specific movies
+  - Focus on describing the concept, theme, setting, or characteristics the user is looking for
+  - **Example of WRONG approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"
+  - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape"
+  - **Example of ACCEPTABLE approach**: For "movies like Blade Runner" → "movies like Blade Runner with cyberpunk themes, dystopian future settings"
 
 ## Important
 - You will be provided with an index definition that tells you that tells you what the index name is and the definition of each of the property.
