@@ -445,15 +445,60 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           // Use standard _source fields
         ],
         "limit": 10,
-        // Condense the original query to the 2 most important keywords
-        "query": "[condensed query with only 2 main keywords]"
+        // CRITICAL: Drastically condense to ONLY 2-3 core keywords, remove ALL specific details
+        "query": "[ONLY 2-3 core keywords - NO quotes, NO detailed terms, NO repetition]"
       },
-      "next": "maybe-try-text-search-again",
+      "next": "maybe-fallback-to-genre-search-or-sort-filter-found-results",
       "path": {
         "index": "[the index name from the definition]"
       }
     }
     ```
+
+- **CRITICAL Condensing Rules for Fallback**:
+  - **Maximum 2-3 keywords total** - not 2-3 concepts with multiple words each
+  - **Remove ALL specific details** (character names, place names, time periods, etc.)
+  - **Never use quotation marks** around individual words
+  - **Never repeat similar concepts** (e.g., don't use both "saga" and "epic")
+  - **Focus on the broadest genre/theme terms**
+  - **Example**: "Legends of the Fall epic family saga period drama Montana ranch love triangle brotherhood war 20th century" → **Fallback**: `"family drama epic"`
+  - **Example**: "cyberpunk dystopian future noir sci-fi detective android" → **Fallback**: `"cyberpunk sci-fi"`
+
+- **Final Fallback - Genre-Based Search**: After 3 failed text search attempts, use genre-based boolean query search:
+    ```json
+    {
+      "body": {
+        "_source": [
+          // Use standard _source fields
+        ],
+        "limit": 10,
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "nested": {
+                  "path": "genres",
+                  "query": {
+                    "terms": {
+                      "genres.name": ["Drama", "Romance", "War"]
+                    }
+                  },
+                  "score_mode": "avg"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "next": "sort-or-filter-results",
+      "path": {
+        "index": "[the index name from the definition]"
+      }
+    }
+    ```
+  - Extract likely genres from the original user query (Drama, Romance, War, Western, Sci-Fi, etc.)
+  - Use standard nested genre query structure
+  - Maximum 2-4 genres to avoid being too restrictive
 
 - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
     ```json
@@ -912,14 +957,23 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "mind subconscious dream world mental landscape"
   - **Example of CORRECT approach**: For "movies like Blade Runner" → Initial: "Blade Runner cyberpunk dystopian future noir", Fallback: "cyberpunk dystopian" (title removed)
 
-3. **Fallback Strategy for No Results**:
-  - Always use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial text-based searches
-  - If no results are found, the system will retry with a condensed version of your query
-  - For the fallback, reduce your original keywords to the 2-3 most important concepts that capture the core theme
-  - **Remove movie titles from fallback queries** even if they were included in the initial search
-  - **Example**: Original query "mind subconscious dream world mental landscape" → Fallback "mind subconscious"
-  - **Example**: Original query "Blade Runner cyberpunk dystopian future noir" → Fallback "cyberpunk dystopian" (title removed)
-  - **Example**: Original query "family saga brother rivalry western epic frontier cattle ranch family feud" → Fallback "western epic family drama"
+3. **Multi-Level Fallback Strategy for No Results**:
+  - **Attempt 1**: Use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial comprehensive text search
+  - **Attempt 2**: Use `"next": "maybe-fallback-to-genre-search-or-sort-filter-found-results"` for condensed text search
+    - **CRITICAL**: Fallback must use MAXIMUM 2-3 keywords total (not concepts - actual word count)
+    - **Remove movie titles from fallback queries** even if they were included in the initial search
+    - **Remove ALL specific details**: names, places, time periods, character details
+    - **Never use quotation marks** in fallback queries
+    - **Never repeat similar terms** in fallback
+  - **Final Attempt**: After 3 failed text searches, use genre-based boolean query search
+    - Extract likely genres from the original user query
+    - Use nested genre query with 2-4 relevant genres
+    - Use `"next": "sort-or-filter-results"`
+  - **Examples of fallback progression**:
+    - **Example**: Original "mind subconscious dream world mental landscape" → Text Fallback "mind dreams" → Genre Fallback ["Drama", "Thriller", "Sci-Fi"]
+    - **Example**: Original "Blade Runner cyberpunk dystopian future noir" → Text Fallback "cyberpunk sci-fi" → Genre Fallback ["Sci-Fi", "Thriller", "Action"]
+    - **Example**: Original "family saga brother rivalry western epic frontier cattle ranch family feud" → Text Fallback "western family" → Genre Fallback ["Western", "Drama", "War"]
+    - **Example**: Original "Legends of the Fall epic family saga period drama Montana ranch love triangle brotherhood war 20th century" → Text Fallback "family drama" → Genre Fallback ["Drama", "Romance", "War"]
 
 ## Important
 - You will be provided with an index definition that tells you that tells you what the index name is and the definition of each of the property.
