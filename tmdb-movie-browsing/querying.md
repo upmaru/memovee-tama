@@ -417,8 +417,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         // Focus on the most important 3-5 keywords/phrases that capture what the user wants
         "query": "[short, keyword-focused text query - descriptive concepts only, NO movie titles]"
       },
-      // use the `next` property to be able to sort or filter the results from the text based search
-      "next": "sort-or-filter-results",
+      // use the `next` property to handle potential fallback if no results found
+      "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
       "path": {
         "index": "[the index name from the definition]"
       }
@@ -427,10 +427,33 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 - **Examples of correct query formation:**
   - User asks: "Can you show me movies that take place in someone's mind?"
-  - **CORRECT query**: `"mind subconscious dream world mental landscape"`
+  - **CORRECT initial query**: `"mind subconscious dream world mental landscape"`
+  - **CORRECT fallback query (if no results)**: `"mind subconscious"`
   - **WRONG query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"`
   - User asks: "Movies like Blade Runner"
-  - **CORRECT query**: `"cyberpunk dystopian future noir sci-fi"`
+  - **CORRECT initial query**: `"cyberpunk dystopian future noir sci-fi"`
+  - **CORRECT fallback query (if no results)**: `"cyberpunk dystopian"`
+  - User asks about western family saga movies:
+  - **CORRECT initial query**: `"family saga brother rivalry western epic frontier cattle ranch family feud"`
+  - **CORRECT fallback query (if no results)**: `"western epic family drama"`
+
+- **Fallback Strategy**: If the initial text-based search returns no results, use `maybe-try-text-search-again` to retry with condensed keywords:
+    ```json
+    {
+      "body": {
+        "_source": [
+          // Use standard _source fields
+        ],
+        "limit": 10,
+        // Condense the original query to the 2 most important keywords
+        "query": "[condensed query with only 2 main keywords]"
+      },
+      "next": "maybe-try-text-search-again",
+      "path": {
+        "index": "[the index name from the definition]"
+      }
+    }
+    ```
 
 - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
     ```json
@@ -887,6 +910,14 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Example of WRONG approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"
   - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "mind subconscious dream world mental landscape"
   - **Example of CORRECT approach**: For "movies like Blade Runner" → "cyberpunk dystopian future noir sci-fi"
+
+3. **Fallback Strategy for No Results**:
+  - Always use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial text-based searches
+  - If no results are found, the system will retry with a condensed version of your query
+  - For the fallback, reduce your original keywords to the 2-3 most important concepts that capture the core theme
+  - **Example**: Original query "mind subconscious dream world mental landscape" → Fallback "mind subconscious"
+  - **Example**: Original query "cyberpunk dystopian future noir sci-fi" → Fallback "cyberpunk dystopian"
+  - **Example**: Original query "family saga brother rivalry western epic frontier cattle ranch family feud" → Fallback "western epic family drama"
 
 ## Important
 - You will be provided with an index definition that tells you that tells you what the index name is and the definition of each of the property.
