@@ -403,7 +403,13 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     ```
 
 ## User query requires text based vector search OR doesn't match any of the above examples. This is a 'catch all' strategy
-- **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?".
+
+**IMPORTANT: Use text-based search for circumstantial/contextual queries**
+- Queries describing situations, circumstances, or emotional contexts should always use text-based search first
+- Examples: "What are some good movies for dealing with child's emotions?", "Movies to help with grief", "Films about overcoming challenges"
+- The text search will better match the descriptive/emotional context, then use query-and-sort to refine by specific elements
+
+- **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?" OR "What are some good movies for dealing with child's emotions?".
   - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query.
     ```json
     {
@@ -501,11 +507,14 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   - Maximum 2-4 genres to avoid being too restrictive
 
 - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
+
+**For circumstantial queries**: Use Step 2 to filter by specific mentioned elements (e.g., if user mentions "child", filter results to include family-appropriate content)
+
     ```json
       {
         "body": {
           "_source": [
-            // Use standard _source fields
+            "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
           ],
           "query": {
             "bool": {
@@ -516,6 +525,11 @@ Before processing a mixed keyword and genre query, you need to separate the genr
                     "id": ["762509"]
                   }
                 }
+              ],
+              // Add additional filters for circumstantial queries
+              // Example: for "child's emotions" query, add family-friendly filters
+              "must": [
+                // Add specific filters based on mentioned elements like "child", "family", etc.
               ]
             }
           },
@@ -947,8 +961,10 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Preserve the user's exact phrasing and key concepts** - maintain the integrity of how they describe what they want
   - Use the most relevant keywords and phrases that will match well with movie descriptions
   - Include the user's specific phrases when they're descriptive and searchable
+  - **For circumstantial/contextual queries**: Focus on the emotional or situational context rather than literal elements
   - **Example**: For "movies that take place in someone's mind" → `"movies set primarily inside someone's mind or dreams, films about subconscious, psychological mental landscapes"`
   - **Example**: For "movies that take place in the sea or the ocean" → `"movies set in the sea or ocean, underwater films, maritime stories"`
+  - **Example**: For "What are some good movies for dealing with child's emotions?" → `"movies about children dealing with emotions, films helping kids understand feelings, emotional growth stories for children"`
   - Avoid unnecessary connector words like "movies that" or "films about" but keep meaningful phrases
 
 2. **Movie Titles in Queries - Conditional Usage**:
