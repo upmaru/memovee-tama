@@ -412,9 +412,10 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           // Use standard _source fields
         ],
         "limit": 10,
-        // CRITICAL: Break down the user's request into keywords and phrases for text search
-        // ONLY include movie titles if the user explicitly mentioned them - DO NOT add your own examples
-        "query": "[the text query - descriptive concepts, include user-mentioned titles only]"
+        // CRITICAL: Keep queries SHORT and SUCCINCT with strong keywords that match the user's intent
+        // NEVER include movie titles - extract concepts and themes instead, even if user mentions specific movies
+        // Focus on the most important 3-5 keywords/phrases that capture what the user wants
+        "query": "[short, keyword-focused text query - descriptive concepts only, NO movie titles]"
       },
       // use the `next` property to be able to sort or filter the results from the text based search
       "next": "sort-or-filter-results",
@@ -426,10 +427,10 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 - **Examples of correct query formation:**
   - User asks: "Can you show me movies that take place in someone's mind?"
-  - **CORRECT query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape"`
+  - **CORRECT query**: `"mind subconscious dream world mental landscape"`
   - **WRONG query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"`
   - User asks: "Movies like Blade Runner"
-  - **CORRECT query**: `"movies like Blade Runner with cyberpunk themes, dystopian future settings, noir atmosphere"`
+  - **CORRECT query**: `"cyberpunk dystopian future noir sci-fi"`
 
 - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
     ```json
@@ -873,17 +874,19 @@ Before generating any Elasticsearch query, ensure ALL of these fields are presen
 The `search-index_text-based-vector-search` supports natural language querying.
 
 To generate a high-quality Elasticsearch query with a natural language query:
-1. **Preserve User Intent in Natural Language**:
-  - Create a natural language query that closely matches the user's input, rephrasing only for clarity or to improve search relevance.
-  - For example, if the user inputs "movies that take place in the sea or the ocean," the natural language query could be "movies set in the sea or ocean."
+1. **Create Short, Keyword-Focused Queries**:
+  - Keep queries SHORT and SUCCINCT - focus on the strongest 3-5 keywords that capture the user's intent
+  - Use the most relevant keywords and phrases that will match well with movie descriptions
+  - Avoid unnecessary words like "movies that" or "films about" - focus on the core concepts
+  - For example, if the user inputs "movies that take place in the sea or the ocean," the query should be "sea ocean underwater maritime"
 
-2. **CRITICAL: Do Not Add Movie Title Examples to Queries**:
-  - **INCLUDE** specific movie titles ONLY if the user explicitly mentions them in their query (e.g., "movies like Blade Runner")
-  - **DO NOT** add your own movie title examples or references when the user hasn't mentioned specific movies
-  - Focus on describing the concept, theme, setting, or characteristics the user is looking for
+2. **CRITICAL: Never Include Movie Titles in Queries**:
+  - **NEVER** include specific movie titles in your queries, even if the user mentions them explicitly
+  - When users mention specific movies (e.g., "movies like Blade Runner"), extract the underlying concepts, themes, and characteristics instead
+  - Focus on the strongest keywords that describe the concept, theme, setting, or characteristics
   - **Example of WRONG approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"
-  - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape"
-  - **Example of ACCEPTABLE approach**: For "movies like Blade Runner" → "movies like Blade Runner with cyberpunk themes, dystopian future settings"
+  - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "mind subconscious dream world mental landscape"
+  - **Example of CORRECT approach**: For "movies like Blade Runner" → "cyberpunk dystopian future noir sci-fi"
 
 ## Important
 - You will be provided with an index definition that tells you that tells you what the index name is and the definition of each of the property.
