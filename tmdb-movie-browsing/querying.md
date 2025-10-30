@@ -538,13 +538,13 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       - This ensures movies MUST have Family genre AND any additional requested genres
       - Add vote_count filter to ensure quality movies
       - Sort by vote_average for best-rated results
-      
+
       **Age-Appropriate Genre Selection Guidelines:**
       - **Ages 3-6 (Toddler/Preschool):** Always include "Animation" genre for this age group
       - **Ages 7-9 (Early Elementary):** "Animation" preferred, but live-action "Family" movies acceptable
       - **Ages 10-12 (Late Elementary):** Mix of "Animation" and "Family", can include mild "Adventure"
       - **Teenagers (13+):** Use general family guidelines, not this child-specific section
-      
+
       **Content Considerations by Age:**
       - **Under 8 years old:** Prioritize "Animation" + "Family" combination
       - **8-12 years old:** "Family" + additional requested genres (like "Science Fiction", "Adventure")
@@ -814,7 +814,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       }
     }
     ```
-    
+
     **Important considerations:**
     - Extract movie IDs from the previous conversation context or search results
     - Use `vote_average` as primary sort for "best" movies
@@ -900,7 +900,7 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - For queries with specific filters, use appropriate query types (bool, match, range, terms, etc.)
   - For simple sorting requests without filters, use `"query": { "match_all": {} }`
   - For genre-based searches, use nested queries with the "genres" path
-  - **CRITICAL for nested queries:** 
+  - **CRITICAL for nested queries:**
     - Use `"score_mode": "avg"` as a direct property INSIDE the nested object
     - NEVER use `"score": {"mode": "avg"}` (wrong property name)
     - NEVER place score properties as sibling objects outside the nested query
