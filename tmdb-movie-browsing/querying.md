@@ -900,12 +900,73 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - For queries with specific filters, use appropriate query types (bool, match, range, terms, etc.)
   - For simple sorting requests without filters, use `"query": { "match_all": {} }`
   - For genre-based searches, use nested queries with the "genres" path
+  - **CRITICAL for nested queries:** 
+    - Use `"score_mode": "avg"` as a direct property INSIDE the nested object
+    - NEVER use `"score": {"mode": "avg"}` (wrong property name)
+    - NEVER place score properties as sibling objects outside the nested query
 **Always validate your JSON structure includes all mandatory fields before generating the query.**
 
 ### Troubleshooting Common Parsing Errors
 
 **Error: "Unknown key for a VALUE_NULL in [query]"**
 This error occurs when the `query` field is missing from the body.
+
+**Error: "[nested] malformed query, expected [END_OBJECT] but found [FIELD_NAME]"**
+This error occurs when nested query syntax is incorrect, commonly when `score_mode` is placed incorrectly.
+
+**WRONG nested query syntax (causes parsing error):**
+**WRONG nested query syntax (Case 1 - incorrect property name):**
+```json
+{
+  "nested": {
+    "path": "genres",
+    "query": {
+      "terms": {
+        "genres.name": ["Drama", "Romance"]
+      }
+    },
+    "score": {"mode": "avg"}  // WRONG - incorrect property name causes parsing error
+  }
+}
+```
+
+**WRONG nested query syntax (Case 2 - score as sibling object):**
+```json
+{
+  "nested": {
+    "path": "genres",
+    "query": {
+      "terms": {
+        "genres.name": ["Drama", "Romance"]
+      }
+    }
+  },
+  "score": {
+    "mode": "avg"  // WRONG - score object placed OUTSIDE nested query as sibling
+  }
+}
+```
+
+**CORRECT nested query syntax:**
+```json
+{
+  "nested": {
+    "path": "genres",
+    "query": {
+      "terms": {
+        "genres.name": ["Drama", "Romance"]
+      }
+    },
+    "score_mode": "avg"  // CORRECT - score_mode is a direct property INSIDE the nested object
+  }
+}
+```
+
+**CRITICAL: The `score_mode` property must be:**
+- A direct property of the `nested` object
+- INSIDE the nested object, not outside as a sibling
+- Named `score_mode`, not `score`
+- At the same level as `path` and `query` within the nested object
 
 **Incorrect query structure:**
 ```json
@@ -941,7 +1002,8 @@ This error occurs when the `query` field is missing from the body.
                 "terms": {
                   "genres.name": ["Family", "Science Fiction"]
                 }
-              }
+              },
+              "score_mode": "avg"
             }
           }
         ]
