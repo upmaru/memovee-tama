@@ -413,9 +413,9 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         ],
         "limit": 10,
         // CRITICAL: Keep queries SHORT and SUCCINCT with strong keywords that match the user's intent
-        // NEVER include movie titles - extract concepts and themes instead, even if user mentions specific movies
+        // Include movie titles ONLY if user explicitly mentions them - remove titles in fallback queries
         // Focus on the most important 3-5 keywords/phrases that capture what the user wants
-        "query": "[short, keyword-focused text query - descriptive concepts only, NO movie titles]"
+        "query": "[short, keyword-focused text query - descriptive concepts, include user-mentioned titles]"
       },
       // use the `next` property to handle potential fallback if no results found
       "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
@@ -431,8 +431,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   - **CORRECT fallback query (if no results)**: `"mind subconscious"`
   - **WRONG query**: `"movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"`
   - User asks: "Movies like Blade Runner"
-  - **CORRECT initial query**: `"cyberpunk dystopian future noir sci-fi"`
-  - **CORRECT fallback query (if no results)**: `"cyberpunk dystopian"`
+  - **CORRECT initial query**: `"Blade Runner cyberpunk dystopian future noir"`
+  - **CORRECT fallback query (if no results)**: `"cyberpunk dystopian"` (title removed)
   - User asks about western family saga movies:
   - **CORRECT initial query**: `"family saga brother rivalry western epic frontier cattle ranch family feud"`
   - **CORRECT fallback query (if no results)**: `"western epic family drama"`
@@ -903,20 +903,22 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - Avoid unnecessary words like "movies that" or "films about" - focus on the core concepts
   - For example, if the user inputs "movies that take place in the sea or the ocean," the query should be "sea ocean underwater maritime"
 
-2. **CRITICAL: Never Include Movie Titles in Queries**:
-  - **NEVER** include specific movie titles in your queries, even if the user mentions them explicitly
-  - When users mention specific movies (e.g., "movies like Blade Runner"), extract the underlying concepts, themes, and characteristics instead
+2. **Movie Titles in Queries - Conditional Usage**:
+  - **INCLUDE** specific movie titles ONLY if the user explicitly mentions them in their query
+  - **DO NOT** add your own movie title examples or references when the user hasn't mentioned specific movies
+  - **For fallback queries**: Remove movie titles and focus on concepts/themes only
   - Focus on the strongest keywords that describe the concept, theme, setting, or characteristics
   - **Example of WRONG approach**: For "movies that take place in someone's mind" → "movies set inside a character's mind, dream world, subconscious, or mental landscape (e.g., Inside Out, Inception, Eternal Sunshine of the Spotless Mind)"
   - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "mind subconscious dream world mental landscape"
-  - **Example of CORRECT approach**: For "movies like Blade Runner" → "cyberpunk dystopian future noir sci-fi"
+  - **Example of CORRECT approach**: For "movies like Blade Runner" → Initial: "Blade Runner cyberpunk dystopian future noir", Fallback: "cyberpunk dystopian" (title removed)
 
 3. **Fallback Strategy for No Results**:
   - Always use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial text-based searches
   - If no results are found, the system will retry with a condensed version of your query
   - For the fallback, reduce your original keywords to the 2-3 most important concepts that capture the core theme
+  - **Remove movie titles from fallback queries** even if they were included in the initial search
   - **Example**: Original query "mind subconscious dream world mental landscape" → Fallback "mind subconscious"
-  - **Example**: Original query "cyberpunk dystopian future noir sci-fi" → Fallback "cyberpunk dystopian"
+  - **Example**: Original query "Blade Runner cyberpunk dystopian future noir" → Fallback "cyberpunk dystopian" (title removed)
   - **Example**: Original query "family saga brother rivalry western epic frontier cattle ranch family feud" → Fallback "western epic family drama"
 
 ## Important
