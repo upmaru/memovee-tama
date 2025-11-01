@@ -195,6 +195,23 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    Previous messages include the assistant asked the user for their name.
+  </condition>
+  <user-query>
+    - My name is John Doe
+    - You can call me John
+    - I'm Zack Siri
+  </user-query>
+  <routing>
+    introductory
+  </routing>
+  <reasoning>
+    - The user is introducing themselves to the assistant.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous messages include the assistant asked the user for their region.
   </condition>
   <user-query>

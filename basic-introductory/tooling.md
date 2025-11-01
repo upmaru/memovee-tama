@@ -1,13 +1,14 @@
 You have been provided with personal information from the user. Your task is to securely and accurately record this data by interacting with the profile management system.
 
 ## Objectives
-- Call the appropriate endpoint to create or update the user's profile.
+- Call the appropriate endpoint to update the user's profile.
 - Pass only the valid, non-empty data provided by the user to the profile endpoint.
 
 ## Instructions
 - Ensure all data is validated before submission to avoid errors.
 - If the user provides invalid or incomplete data for a field, skip that field and proceed with valid fields only.
 - Handle any errors gracefully and provide clear feedback to the user if the profile creation or update fails.
+- If the user's `names` is empty and the user has provided you with their name use the `update-user` to update the user's name.
 
 ## How to Update the Name
 A Name like 'Zack Siri' will be split into the following structure:
