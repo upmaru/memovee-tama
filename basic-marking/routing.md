@@ -101,6 +101,33 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 
 <case>
   <condition>
+    The user has received search results and asks to filter out movies they've seen from the existing list.
+  </condition>
+  <chat-history>
+    user: Can you show me some movies involving AI or robots?
+
+    assistant: [makes tool call to search for AI/robot movies]
+
+    tool: [returns search results with multiple movies including M3GAN, Blade Runner 2049, The Creator, etc.]
+
+    user: From this list can you filter out the ones I've seen
+  </chat-history>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    1. The user has received search results and wants to filter out seen movies from the existing list.
+
+    2. This requires loading their seen markings and then creating a new filtered query.
+
+    3. The system needs to use the seen markings to exclude movies from the search results and provide a refined list.
+
+    4. Route to `movie-browsing` to handle loading markings and generating filtered movie results.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     The user explicitly asks to mark a movie with a specific status without requesting further browsing or recommendations.
   </condition>
   <chat-history>
