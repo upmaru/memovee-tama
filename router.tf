@@ -1,6 +1,6 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.4.3"
+  version = "0.4.6"
 
   root_messaging_space_id = module.memovee.space_id
   author_class_name       = module.memovee.schemas.actor.name
@@ -57,6 +57,11 @@ resource "tama_thought_path" "route-to-patch" {
 resource "tama_thought_path" "route-to-personalization" {
   thought_id      = module.router.routing_thought_id
   target_class_id = module.personalization.class.id
+}
+
+resource "tama_thought_path" "route-to-marking" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = module.marking.class.id
 }
 
 resource "tama_thought_path" "route-to-movie-detail" {

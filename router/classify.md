@@ -242,6 +242,70 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    Previous message include search results for movies.
+  </condition>
+  <user-query>
+    - I've seen both
+    - I've watched [title name]
+    - I've seen [title name]
+    - I've seen both can you find me something I haven't seen?
+  </user-query>
+  <routing>
+    marking
+  </routing>
+  <reasoning>
+    - The user is informing that they've seen a certain title already.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user is requesting movies they haven't seen AND there is NO list of seen movies or markings already in context.
+  </condition>
+  <user-query>
+    - Can you show me the top 2024 movies I haven't seen?
+    - Show me movies I haven't watched
+    - Only show me movies I haven't seen
+    - Please filter out the ones I've seen
+    - What are some good movies I haven't seen yet?
+  </user-query>
+  <routing>
+    marking
+  </routing>
+  <reasoning>
+    - The user is requesting movies they haven't seen, which requires loading their seen markings first before browsing movies.
+    
+    - Routing to "marking" will provide access to tooling that will load the user's seen movie markings, which can then be used to filter out seen movies during browsing.
+    
+    - CRITICAL: Only route to "marking" if there is no existing list of seen movies in context. If seen movies are already available, route to "movie-browsing" instead.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user is requesting movies they haven't seen AND there IS already a list of seen movies or markings in context.
+  </condition>
+  <user-query>
+    - Can you show me the top 2024 movies I haven't seen?
+    - Show me movies I haven't watched
+    - Only show me movies I haven't seen
+    - Please filter out the ones I've seen
+    - What are some good movies I haven't seen yet?
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    - The user is requesting movies they haven't seen, and there is already a list of seen movies available in context.
+    
+    - Routing to "movie-browsing" will provide access to tooling that can use the existing seen movie markings to filter out seen movies during the search.
+    
+    - Since the seen markings are already loaded, there's no need to route to "marking" first.
+  </reasoning>
+</case>
+
 ## Referenced Tool Call IDS
 The user's message may reference a piece of information or data in a search result that is relevant to the context of the conversation. You are to also fill the `referenced_tool_call_ids` array with the IDs of the tool calls that were referenced in the user's message.
 
