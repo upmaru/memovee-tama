@@ -14,7 +14,7 @@ module "check-profile-tooling" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.4.6"
+  version = "0.4.7"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id

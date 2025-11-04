@@ -340,7 +340,19 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           // Use standard _source fields
         ],
         "limit": 8,
-        "query": "movies that take place in the ocean"
+        "query": "movies that take place in the ocean",
+        // OPTIONAL: Use filter to exclude specific movie IDs when user wants to filter out certain titles
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "id": ["124223", "567890", "789012"]
+                }
+              }
+            ]
+          }
+        }
       },
       "next": "search-index_query-and-sort-based-search",
       "path": {
@@ -409,6 +421,14 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 - Examples: "What are some good movies for dealing with child's emotions?", "Movies to help with grief", "Films about overcoming challenges"
 - The text search will better match the descriptive/emotional context, then use query-and-sort to refine by specific elements
 
+**CRITICAL: Preferred Filtering Strategy for Text-Based Vector Search**
+- **PREFERRED: Apply filtering in the first step - it's more efficient to do filtering in Step 1**
+- **RECOMMENDED: Use the "filter" parameter in text-based vector search for exclusions (seen movies, etc.)**
+- **PREFERRED: Avoid using must_not or filtering in search-index_query-and-sort-based-search when text-based search was used first**
+- **PREFERRED: Use the second step primarily for sorting and additional properties**
+- **RECOMMENDED: If user wants to exclude seen movies, use "filter" in text-based search rather than in query-and-sort**
+- This approach prevents complex nested boolean queries and improves performance
+
 - **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?" OR "What are some good movies for dealing with child's emotions?".
   - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query.
     ```json
@@ -421,9 +441,58 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         // CRITICAL: Keep queries SHORT and SUCCINCT with strong keywords that match the user's intent
         // Include movie titles ONLY if user explicitly mentions them - remove titles in fallback queries
         // Focus on the most important 3-5 keywords/phrases that capture what the user wants
-        "query": "[short, keyword-focused text query - descriptive concepts, include user-mentioned titles]"
+        "query": "[short, keyword-focused text query - descriptive concepts, include user-mentioned titles]",
+        // OPTIONAL: Use filter to exclude specific movie IDs when user wants to filter out certain titles
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "id": ["124223", "567890", "789012"]
+                }
+              }
+            ]
+          }
+        }
       },
       // use the `next` property to handle potential fallback if no results found
+      "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
+      "path": {
+        "index": "[the index name from the definition]"
+      }
+    }
+    ```
+
+  - **Using the filter for exclusions:**
+    - When user wants to filter out specific movies they've seen or don't want, include the `filter` object
+    - Extract movie IDs from seen markings or other exclusion requirements
+    - Use `must_not` with `terms` to exclude the specified movie IDs
+    - Example: If user has seen movies with IDs "124223" and "567890", use `"id": ["124223", "567890"]`
+    - If no filtering is needed, omit the entire `filter` object
+
+  - **Example query with seen movie filtering:**
+    - User query: "Can you find me movies that are post apocalyptic, zombie that I haven't seen"
+    - If `list-record-markings` results show seen movies with identifiers "124223", "567890", "789012":
+    ```json
+    {
+      "body": {
+        "_source": [
+          "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
+        ],
+        "limit": 10,
+        "query": "post apocalyptic zombie movies, undead survival films, zombie outbreak stories",
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "id": ["124223", "567890", "789012"]
+                }
+              }
+            ]
+          }
+        }
+      },
       "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
       "path": {
         "index": "[the index name from the definition]"
@@ -452,7 +521,19 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         ],
         "limit": 10,
         // CRITICAL: Drastically condense to ONLY 2-3 core keywords, remove ALL specific details
-        "query": "[ONLY 2-3 core keywords - NO quotes, NO detailed terms, NO repetition]"
+        "query": "[ONLY 2-3 core keywords - NO quotes, NO detailed terms, NO repetition]",
+        // IMPORTANT: If the original query had a filter, PRESERVE it in fallback queries
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "id": ["124223", "567890", "789012"]
+                }
+              }
+            ]
+          }
+        }
       },
       "next": "maybe-fallback-to-genre-search-or-sort-filter-found-results",
       "path": {
@@ -1000,6 +1081,36 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     ```
 
 ## Query Generation Guidance
+
+### Handling Empty Search Results
+When a search query returns no results (empty hits array), you should use `no-call()` for subsequent steps:
+
+**Example of empty result:**
+```json
+{
+  "_shards": {
+    "failed": 0,
+    "skipped": 0,
+    "successful": 1,
+    "total": 1
+  },
+  "hits": {
+    "hits": [],
+    "max_score": null,
+    "total": {
+      "relation": "eq",
+      "value": 0
+    }
+  },
+  "timed_out": false,
+  "took": 513,
+  "tool_call_id": "call_cbf0eJhla8oq6df0xIkFAOgq"
+}
+```
+
+**Instructions for handling empty results:**
+- **CRITICAL**: When `hits.hits` is empty (length = 0), use `no-call()` for any subsequent sorting or filtering steps
+- **Reason**: There are no movie IDs to sort or filter, so additional tool calls are unnecessary
 
 ### MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE:
 Before generating any Elasticsearch query, ensure ALL of these fields are present:

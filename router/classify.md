@@ -270,6 +270,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Only show me movies I haven't seen
     - Please filter out the ones I've seen
     - What are some good movies I haven't seen yet?
+    - Can you find me movies that take place in someone's mind or dreams please make sure i haven't seen them
+    - Find me action movies that I haven't watched
+    - Show me horror films but exclude the ones I've already seen
   </user-query>
   <routing>
     marking
@@ -293,6 +296,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - Only show me movies I haven't seen
     - Please filter out the ones I've seen
     - What are some good movies I haven't seen yet?
+    - Can you find me movies that take place in someone's mind or dreams please make sure i haven't seen them
+    - Find me action movies that I haven't watched
+    - Show me horror films but exclude the ones I've already seen
   </user-query>
   <routing>
     movie-browsing
