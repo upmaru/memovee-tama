@@ -589,6 +589,11 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 - Step 2: Use the `search-index_query-and-sort-based-search` to apply sorting or filtering based on the results from Step 1 in combination with the next part of the user's query.
 
+**CRITICAL: ALWAYS include sorting when results are found**
+- **MANDATORY**: When Step 1 returns results (non-empty hits), Step 2 MUST include a `sort` array
+- **DEFAULT SORT**: Use `popularity` (desc) and `vote_average` (desc) when no specific sorting is requested
+- **NEVER omit sorting**: Even for simple ID-based queries, always include sort parameters
+
 **For circumstantial queries**: Use Step 2 to filter by specific mentioned elements (e.g., if user mentions "child", filter results to include family-appropriate content)
 
     ```json
@@ -615,7 +620,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
             }
           },
           "sort": [
-            // Even if the user doesn't specify a sort order, you can always sort by decending populartity and vote_average by default.
+            // MANDATORY: Always include sorting when results are found
+            // DEFAULT: Use popularity and vote_average when no specific sorting is requested
             {
               "popularity": {
                 "order": "desc"
@@ -944,6 +950,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 ## Sorting & Cross Index Data Querying
 - You can pass the IDs from `search-index_text-based-vector-search` or from `person-combined-credits.cast.id` or `person-combined-credits.crew.id` into `search-index_query-and-sort-based-search` to sort.
+- **CRITICAL**: When processing results from Step 1, ALWAYS include sorting in Step 2
+- **DEFAULT SORTING**: Use `popularity` (desc) and `vote_average` (desc) when no specific sort order is requested
   Example:
   ```json
   {
@@ -958,7 +966,12 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       },
       "sort": [
         {
-          "rating": {
+          "popularity": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_average": {
             "order": "desc"
           }
         }
