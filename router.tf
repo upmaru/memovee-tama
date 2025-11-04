@@ -59,6 +59,11 @@ resource "tama_thought_path" "route-to-personalization" {
   target_class_id = module.personalization.class.id
 }
 
+resource "tama_thought_path" "route-to-marking" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = module.marking.class.id
+}
+
 resource "tama_thought_path" "route-to-movie-detail" {
   thought_id      = module.router.routing_thought_id
   target_class_id = module.movie-detail-forwardable.class.id

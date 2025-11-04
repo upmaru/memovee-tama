@@ -283,6 +283,11 @@ resource "tama_listener_filter" "personalization" {
   chain_id    = tama_chain.handle-personalization.id
 }
 
+resource "tama_listener_filter" "marking" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = tama_chain.handle-marking.id
+}
+
 resource "tama_listener_filter" "movie-browsing" {
   listener_id = tama_listener.memovee-ui-listener.id
   chain_id    = module.movie-browsing.chain_id

@@ -74,6 +74,16 @@ module "manipulation" {
   description = file("basic/manipulation.md")
 }
 
+module "marking" {
+  source     = "upmaru/base/tama//modules/forwardable-class"
+  version    = "0.4.3"
+  depends_on = [module.global.schemas]
+
+  space_id    = tama_space.basic-conversation.id
+  title       = "marking"
+  description = file("basic/marking.md")
+}
+
 resource "tama_space_bridge" "basic-conversation-memovee-ui" {
   space_id        = tama_space.basic-conversation.id
   target_space_id = tama_space.ui.id
