@@ -14,7 +14,7 @@ module "manage-record-markings" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.4.3"
+  version = "0.4.6"
 
   chain_id = tama_chain.handle-marking.id
 
@@ -25,6 +25,18 @@ module "manage-record-markings" {
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = {
     reasoning_effort = "minimal"
+  }
+
+  tooling_parameters = {
+    consecutive_limit = 5
+    thread = {
+      limit   = 5
+      classes = module.memovee.thread_classes
+      relations = {
+        routing = "routing"
+        focus   = ["tooling", "search-tooling", "reply"]
+      }
+    }
   }
 
   action_ids = [

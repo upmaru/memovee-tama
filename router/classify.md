@@ -244,7 +244,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
-    Previous message include search results for movies
+    Previous message include search results for movies.
   </condition>
   <user-query>
     - I've seen both
