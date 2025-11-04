@@ -733,6 +733,80 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     }
     ```
 
+## User wants to filter out movies they've already seen
+- **User Query:** "Only show me movies I haven't seen" OR "Please filter out the ones I've seen" OR "Show me movies I haven't watched"
+  - When the user requests to exclude movies they've already seen, check for `list-record-markings` tool call results in the context.
+  - **CRITICAL**: Look for tool call response data with this structure:
+    ```json
+    {
+      "data": [
+        {
+          "type": "seen",
+          "record": {
+            "identifier": "124223",
+            "class": {
+              "space": "movie-db",
+              "name": "movie-details"
+            }
+          }
+        }
+      ]
+    }
+    ```
+  - **Instructions for filtering seen movies:**
+    1. Extract the `identifier` values from all records with `"type": "seen"`
+    2. Use `must_not` with `terms` query to exclude movies with matching `id` fields
+    3. Apply this filter in addition to any other query requirements
+
+  - **Example query with seen movie filtering:**
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "_source": [
+          // Use standard _source fields
+        ],
+        "limit": 10,
+        "query": {
+          "bool": {
+            "must": [
+              // Add your regular search criteria here
+              {
+                "range": {
+                  "vote_count": {
+                    "gte": 100
+                  }
+                }
+              }
+            ],
+            "must_not": [
+              {
+                "terms": {
+                  // Use the "identifier" values from seen markings as "id" values to exclude
+                  "id": ["124223", "567890", "789012"]
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {
+            "vote_average": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }
+    ```
+
+  - **Mapping seen markings to query:**
+    - Tool result `"identifier": "124223"` → Query exclusion `"id": ["124223"]`
+    - Multiple seen movies: Extract all identifier values and include in the terms array
+    - If no seen markings exist in context, proceed with normal query without `must_not` clause
+
 ## Regional Specific Queries
   - When using the `search-index_text-based-vector-search` tool, if the user asks about `Bollywood` movies, be sure to include words like "with Indian Origins" OR "made in India" in the text query.
   - When using the `search-index_query-and-sort-based-search` tool, if the user asks about `Bollywood` movies, you can filter by `origin_country`
@@ -1167,7 +1241,7 @@ This error occurs when nested query syntax is incorrect, commonly when `score_mo
 ```json
 "_source": [
   "id",
-  "imdb_id", 
+  "imdb_id",
   "title",
   "overview",
   "metadata",  // REQUIRED - NEVER omit this field
