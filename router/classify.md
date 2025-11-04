@@ -242,6 +242,24 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    Previous message include search results for movies
+  </condition>
+  <user-query>
+    - I've seen both
+    - I've watched [title name]
+    - I've seen [title name]
+    - I've seen both can you find me something I haven't seen?
+  </user-query>
+  <routing>
+    marking
+  </routing>
+  <reasoning>
+    - The user is informing that they've seen a certain title already.
+  </reasoning>
+</case>
+
 ## Referenced Tool Call IDS
 The user's message may reference a piece of information or data in a search result that is relevant to the context of the conversation. You are to also fill the `referenced_tool_call_ids` array with the IDs of the tool calls that were referenced in the user's message.
 
