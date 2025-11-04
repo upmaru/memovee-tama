@@ -80,6 +80,27 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 
 <case>
   <condition>
+    The user indicates they've seen a movie and wants to filter it out or exclude it from future recommendations.
+  </condition>
+  <chat-history>
+    user: I've seen Inside Out 2 can you filter it out
+  </chat-history>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    1. The user has indicated they've seen a specific movie.
+
+    2. They want it filtered out, which implies they want to continue browsing for other options.
+
+    3. The system should mark the movie as seen and then load markings to filter future results.
+
+    4. Route to `movie-browsing` to handle the marking and continue the browsing experience.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     The user explicitly asks to mark a movie with a specific status without requesting further browsing or recommendations.
   </condition>
   <chat-history>

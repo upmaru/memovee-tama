@@ -28,29 +28,56 @@ When a user indicates they have viewed one or more movie titles that appear in s
 - Construct the record class using metadata information.
 
 ### Example Usage
-- To mark a single movie as seen using `create-record-markings`:
-  ```json
-  {
-    "next": null,
-    "path": {
-      "user_id": "<ACTOR IDENTIFIER>"
-    },
-    "body": {
-      "markings": [
-        {
-          "type": "seen",
-          "record": {
-            "identifier": "1184918",
-            "class": {
-              "space": "movie-db",
-              "name": "movie-details"
-            }
+
+#### Case 1: Simple marking (e.g., "I've seen Inside Out 2")
+When the user simply states they've seen a movie without requesting filtering or further browsing:
+```json
+{
+  "next": null,
+  "path": {
+    "user_id": "<ACTOR IDENTIFIER>"
+  },
+  "body": {
+    "markings": [
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "1184918",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
           }
         }
-      ]
-    }
+      }
+    ]
   }
-  ```
+}
+```
+
+#### Case 2: Marking with filtering request (e.g., "I've seen Inside Out 2 can you filter it out")
+When the user wants to mark a movie as seen AND continue browsing with filtering:
+```json
+{
+  "next": "load-record-markings",
+  "path": {
+    "user_id": "<ACTOR IDENTIFIER>"
+  },
+  "body": {
+    "markings": [
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "1184918",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
+          }
+        }
+      }
+    ]
+  }
+}
+```
 
 ### Extracting Information from Search Results
 **CRITICAL**: When constructing the marking from search results, you MUST extract:
@@ -59,7 +86,7 @@ When a user indicates they have viewed one or more movie titles that appear in s
 - `class.name`: Use `metadata.class` from `_source` (e.g., "movie-details")
 
 **Example: For "The Wild Robot"**
-- ❌ WRONG: `"identifier": "The Wild Robot"` 
+- ❌ WRONG: `"identifier": "The Wild Robot"`
 - ✅ CORRECT: `"identifier": "1184918"`
 
 Example search result structure:
@@ -82,39 +109,75 @@ Example search result structure:
 - Search result `"title": "The Wild Robot"` → Used only for user reference, NOT as identifier
 
 ### Multiple Movies
-- If the user mentions seeing multiple movies, include multiple objects in the `markings` array:
-  ```json
-  {
-    "next": null,
-    "path": {
-      "user_id": "<ACTOR IDENTIFIER>"
-    },
-    "body": {
-      "markings": [
-        {
-          "type": "seen",
-          "record": {
-            "identifier": "1184918",
-            "class": {
-              "space": "movie-db",
-              "name": "movie-details"
-            }
-          }
-        },
-        {
-          "type": "seen",
-          "record": {
-            "identifier": "693134",
-            "class": {
-              "space": "movie-db",
-              "name": "movie-details"
-            }
+If the user mentions seeing multiple movies, include multiple objects in the `markings` array. Use the appropriate `next` value based on whether they want filtering:
+
+#### Simple marking of multiple movies:
+```json
+{
+  "next": null,
+  "path": {
+    "user_id": "<ACTOR IDENTIFIER>"
+  },
+  "body": {
+    "markings": [
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "1184918",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
           }
         }
-      ]
-    }
+      },
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "693134",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
+          }
+        }
+      }
+    ]
   }
-  ```
+}
+```
+
+#### Marking multiple movies with filtering:
+```json
+{
+  "next": "load-record-markings",
+  "path": {
+    "user_id": "<ACTOR IDENTIFIER>"
+  },
+  "body": {
+    "markings": [
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "1184918",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
+          }
+        }
+      },
+      {
+        "type": "seen",
+        "record": {
+          "identifier": "693134",
+          "class": {
+            "space": "movie-db",
+            "name": "movie-details"
+          }
+        }
+      }
+    ]
+  }
+}
+```
 
 ## User only wants to see movies they've not seen
 
