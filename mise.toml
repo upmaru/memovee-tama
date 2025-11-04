@@ -1,3 +1,4 @@
 [tools]
 opentofu = "latest"
 terraform = "latest"
+terraform-docs = "latest"
