@@ -1208,23 +1208,20 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Standard next values**: Use `"maybe-fallback-to-text-search-or-sort-filter-found-results"` for most queries
   - **NEVER omit**: Omitting "next" parameter will cause system failure when no results found
 
-2. **MANDATORY: Keyword Escalation Strategy (3→5→7)**:
-  - **Start with 3 keywords**: Initial attempt should use 3 keywords for focused search
-  - **Expand to 5 keywords**: If 0 results, system expands to 5 keywords for broader search
-  - **Final 7 keywords**: If still 0 results, system expands to 7 keywords for maximum coverage
-  - **Example escalation**: "sci-fi" → "science fiction movies" → "science fiction futuristic space movies"
-  - **Example escalation**: "visual effects" → "visual effects cinematography" → "visual effects spectacular cinematography stunning imagery"
+2. **MANDATORY: Keyword Escalation Strategy (5-7→8-10)**:
+  - **Start with 5-7 keywords**: Initial attempt should use 5-7 keywords for comprehensive search
+  - **Expand to 8-10 keywords**: If 0 results, system expands to 8-10 keywords for maximum coverage
+  - **Example escalation**: "science fiction space movies" (4 keywords) → "science fiction futuristic space adventure movies" (6 keywords) → "science fiction futuristic space adventure movies aliens technology" (8 keywords)
+  - **Extract relevant content**: Ignore user opinions like "basically", "I think", "in my opinion" - focus only on descriptive content
 
-3. **Create Short, Keyword-Focused Queries**:
-  - Keep queries SHORT and SUCCINCT - focus on the strongest 3-5 keywords that capture the user's intent
-  - **Preserve the user's exact phrasing and key concepts** - maintain the integrity of how they describe what they want
+3. **Extract Relevant Content, Ignore User Opinions**:
+  - **Filter out user commentary**: Ignore phrases like "basically", "I think", "in my opinion", "you know", "kind of"
+  - **Focus on descriptive content**: Extract only the actual movie characteristics and themes
+  - **Example**: "visually stunning and not very popular - hidden gems basically" → Extract: "visually stunning", "not very popular", "hidden gems" (ignore "basically")
+  - **Example**: "I want movies that are, you know, really emotional and deep basically" → Extract: "emotional", "deep" (ignore "I want", "you know", "basically")
+  - **Preserve user's exact descriptive phrasing** - maintain the integrity of how they describe movie characteristics
   - Use the most relevant keywords and phrases that will match well with movie descriptions
-  - Include the user's specific phrases when they're descriptive and searchable
   - **For circumstantial/contextual queries**: Focus on the emotional or situational context rather than literal elements
-  - **Example**: For "movies that take place in someone's mind" → `"movies set primarily inside someone's mind or dreams, films about subconscious, psychological mental landscapes"`
-  - **Example**: For "movies that take place in the sea or the ocean" → `"movies set in the sea or ocean, underwater films, maritime stories"`
-  - **Example**: For "What are some good movies for dealing with child's emotions?" → `"movies about children dealing with emotions, films helping kids understand feelings, emotional growth stories for children"`
-  - Avoid unnecessary connector words like "movies that" or "films about" but keep meaningful phrases
 
 4. **Movie Titles in Queries - Conditional Usage**:
   - **INCLUDE** specific movie titles ONLY if the user explicitly mentions them in their query
@@ -1235,24 +1232,23 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Example of CORRECT approach**: For "movies that take place in someone's mind" → "movies set primarily inside someone's mind or dreams, films about subconscious, psychological dream world, mental landscape stories"
   - **Example of CORRECT approach**: For "movies like Blade Runner" → Initial: "Blade Runner cyberpunk dystopian future films, noir science fiction movies", Fallback: "cyberpunk, dystopian" (title removed)
 
-5. **Multi-Level Fallback Strategy for No Results**:
-  - **Attempt 1**: Use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial 3 keyword search
-  - **Attempt 2**: System automatically expands to 5 keywords when first attempt returns 0 results
-    - **AUTOMATIC EXPANSION**: System will use 5 keywords for broader matching
-    - **Example**: "sci-fi" (1 keyword) → "science fiction movies" (3 keywords) → "science fiction futuristic space movies" (5 keywords)
-    - **Example**: "visual effects" (2 keywords) → "visual effects cinematography" (3 keywords) → "visual effects spectacular cinematography stunning" (5 keywords)
-  - **Attempt 3**: System expands to 7 keywords for maximum coverage when 5-keyword search returns 0 results
-    - **FINAL EXPANSION**: System will use up to 7 keywords for broadest matching
-    - **Example**: "visual effects spectacular cinematography stunning imagery movies" (7 keywords)
-  - **Final Attempt**: After 3 failed text searches, use genre-based boolean query search
+4. **Multi-Level Fallback Strategy for No Results**:
+  - **Attempt 1**: Use `"next": "maybe-fallback-to-text-search-or-sort-filter-found-results"` for initial 5-7 keyword search
+  - **Attempt 2**: System automatically expands to 8-10 keywords when first attempt returns 0 results
+    - **AUTOMATIC EXPANSION**: System will use 8-10 keywords for broader matching
+    - **Example**: "science fiction space movies" (4 keywords) → "science fiction futuristic space adventure movies aliens" (7 keywords) → "science fiction futuristic space adventure movies aliens technology exploration" (9 keywords)
+    - **Example**: "visual effects cinematography" (3 keywords) → "visual effects spectacular cinematography stunning imagery" (6 keywords) → "visual effects spectacular cinematography stunning imagery beautiful movies films" (9 keywords)
+  - **Attempt 3**: Final fallback maintains 8-10 keywords but removes specific details
+    - **FINAL EXPANSION**: Remove names, dates, specific titles but keep broad descriptive terms
+  - **Final Attempt**: After failed text searches, use genre-based boolean query search
     - Extract likely genres from the original user query
     - Use nested genre query with 2-4 relevant genres
     - Use `"next": "sort-or-filter-results"`
-  - **Examples of fallback progression**:
-    - **Example**: Original "movies set primarily inside someone's mind or dreams, films about subconscious, psychological dream world stories" → Text Fallback "mind, dreams" → Genre Fallback ["Drama", "Thriller", "Sci-Fi"]
-    - **Example**: Original "Blade Runner cyberpunk dystopian future films, noir science fiction movies" → Text Fallback "cyberpunk, sci-fi" → Genre Fallback ["Sci-Fi", "Thriller", "Action"]
-    - **Example**: Original "western family saga films about brothers and rivalry, frontier epic movies about cattle ranches" → Text Fallback "western, family" → Genre Fallback ["Western", "Drama", "War"]
-    - **Example**: Original "epic family saga films about brotherhood and war, period drama movies set on Montana ranches" → Text Fallback "family drama" → Genre Fallback ["Drama", "Romance", "War"]
+  - **Examples of opinion filtering and escalation**:
+    - **User**: "visually stunning and not very popular - hidden gems basically"
+    - **Extract**: "visually stunning not very popular hidden gems" (ignore "basically")
+    - **Attempt 1**: "visually stunning cinematography hidden gems underrated" (6 keywords)
+    - **Attempt 2**: "visually stunning cinematography hidden gems underrated overlooked independent films" (9 keywords)
 
 ### Keyword Identification & Query Strategy Patterns
 
@@ -1338,69 +1334,65 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **CRITICAL ENFORCEMENT RULES**:
 - **ALWAYS INCLUDE "next" PARAMETER**: Every text-based search MUST have "next" for fallback handling
-- **START WITH 3 KEYWORDS**: Initial attempt should use 3 keywords for focused search
-- **ESCALATION ALLOWED**: 5 keywords (fallback) and 7 keywords (final fallback) are allowed when 0 results
+- **START WITH 5-7 KEYWORDS**: Initial attempt should use 5-7 keywords for comprehensive search
+- **ESCALATION ALLOWED**: 8-10 keywords (fallback) when 0 results
+- **FILTER USER OPINIONS**: Ignore "basically", "I think", "you know", "kind of" - extract only descriptive content
 - **MANDATORY KEYWORD COUNTING**: Before submitting any query, count every single word
-- **AUTOMATIC BREAKING REQUIRED**: If initial query exceeds 3 keywords, you MUST split into multiple searches
-- **ZERO RESULTS HANDLING**: System automatically escalates: 3 → 5 → 7 keywords
+- **ZERO RESULTS HANDLING**: System automatically escalates: 5-7 keywords → 8-10 keywords
 - **INITIAL ATTEMPT EXAMPLES**: 
-  - ✅ `"visually stunning cinematography"` (3 keywords - PREFERRED INITIAL)
-  - ✅ `"compelling story"` (2 keywords - ACCEPTABLE INITIAL)
+  - ✅ `"visually stunning cinematography hidden gems underrated"` (6 keywords - PREFERRED INITIAL)
+  - ✅ `"compelling emotional story character development drama"` (6 keywords - GOOD INITIAL)
 - **FALLBACK EXAMPLES** (only when 0 results):
-  - ✅ `"visually stunning cinematography beautiful effects"` (5 keywords - FALLBACK)
-  - ✅ `"visually stunning cinematography beautiful visual effects movies"` (7 keywords - FINAL FALLBACK)
+  - ✅ `"visually stunning cinematography hidden gems underrated overlooked independent films"` (9 keywords - FALLBACK)
 
 #### Multi-Step Query Pattern Examples
 
 **Pattern 1: Quality + Popularity Filter**
 ```
-User: "beautiful cinematography but not mainstream"
-Step 1: text-based-vector-search → "beautiful cinematography" (2 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "striking visual design" (3 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"  
-Step 3: text-based-vector-search → "independent films" (2 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
+User: "beautiful cinematography but not mainstream, you know, basically hidden gems"
+Extract: "beautiful cinematography", "not mainstream", "hidden gems" (ignore "you know", "basically")
+Step 1: text-based-vector-search → "beautiful cinematography not mainstream hidden gems" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "striking visual design independent overlooked films" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 3: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "beautiful cinematography" = 2 keywords ✅
-- Step 2: "striking visual design" = 3 keywords ✅  
-- Step 3: "independent films" = 2 keywords ✅
+- Step 1: "beautiful cinematography not mainstream hidden gems" = 6 keywords ✅
+- Step 2: "striking visual design independent overlooked films" = 6 keywords ✅
 
 **Pattern 2: Genre + Quality + Discovery**
 ```
-User: "underrated sci-fi with great visuals"
-Step 1: text-based-vector-search → "underrated science fiction" (3 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "great visual effects" (3 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 3: text-based-vector-search → "sci-fi cinematography" (2 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 4: query-and-sort-based-search → use all collected IDs, sort by vote_count: asc, vote_average: desc
+User: "underrated sci-fi with great visuals, basically movies that are overlooked"
+Extract: "underrated sci-fi", "great visuals", "overlooked" (ignore "basically", "movies that are")
+Step 1: text-based-vector-search → "underrated science fiction great visuals overlooked" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "sci-fi visual effects cinematography underappreciated films" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 3: query-and-sort-based-search → use all collected IDs, sort by vote_count: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "underrated science fiction" = 3 keywords ✅
-- Step 2: "great visual effects" = 3 keywords ✅
-- Step 3: "sci-fi cinematography" = 2 keywords ✅
+- Step 1: "underrated science fiction great visuals overlooked" = 6 keywords ✅
+- Step 2: "sci-fi visual effects cinematography underappreciated films" = 6 keywords ✅
 
 **Pattern 3: Thematic + Popularity**
 ```
-User: "hidden gem dramas about family"
-Step 1: text-based-vector-search → "hidden gem drama" (3 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "family relationships" (2 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 3: text-based-vector-search → "underrated family films" (3 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
+User: "hidden gem dramas about family, you know, basically overlooked emotional stories"
+Extract: "hidden gem dramas", "family", "overlooked emotional stories" (ignore "you know", "basically")
+Step 1: text-based-vector-search → "hidden gem dramas family overlooked emotional" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "underrated family relationships drama character stories" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 3: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "hidden gem drama" = 3 keywords ✅
-- Step 2: "family relationships" = 2 keywords ✅
-- Step 3: "underrated family films" = 3 keywords ✅
+- Step 1: "hidden gem dramas family overlooked emotional" = 6 keywords ✅
+- Step 2: "underrated family relationships drama character stories" = 6 keywords ✅
 
 #### Critical Guidelines
 
 1. **MANDATORY "next" PARAMETER** - Every text-based search MUST include "next" parameter for zero results handling
-2. **START WITH 3 KEYWORDS** - Initial search should use 3 keywords for focused results
-3. **AUTOMATIC QUERY BREAKING** - If initial query exceeds 3 keywords, you MUST split into multiple searches
-4. **Zero results escalation** - System automatically escalates: 3 keywords → 5 keywords → 7 keywords
-5. **Use multiple text-based searches** - Each search should have 4-5 keywords maximum
+2. **START WITH 5-7 KEYWORDS** - Initial search should use 5-7 keywords for comprehensive results
+3. **FILTER USER OPINIONS** - Extract only descriptive content, ignore commentary like "basically", "I think"
+4. **Zero results escalation** - System automatically escalates: 5-7 keywords → 8-10 keywords
+5. **Use multiple text-based searches** - Each search should have 5-7 keywords for initial attempts
 6. **Break complex queries into keyword groups** - Separate different concepts into different searches
 7. **Collect all movie IDs** from multiple text searches before final sorting
 8. **Always use text-based search first** for qualitative descriptors like "visually stunning", "compelling", "beautiful"
@@ -1413,18 +1405,18 @@ Step 4: query-and-sort-based-search → use all collected IDs, sort by popularit
 12. **Prefer multiple focused searches over single comprehensive queries**
 
 **INITIAL QUERY PATTERNS** - Start with these patterns:
-- ✅ 3 keywords focused: `"visually stunning cinematography"` 
-- ✅ 2-3 keywords per concept: `"compelling story"`, `"emotional depth"`, `"great characters"`
+- ✅ 5-7 keywords comprehensive: `"visually stunning cinematography hidden gems underrated"` 
+- ✅ 5-6 keywords per concept: `"compelling emotional story character development"`, `"great visual effects cinematography"`
 - ✅ Single concept per search: Focus on one theme per text-based search
 
 **FALLBACK QUERY PATTERNS** - Only used when 0 results from initial search:
-- ✅ 5 keywords (2nd attempt): `"visually stunning cinematography beautiful effects"`
-- ✅ 7 keywords (final attempt): `"visually stunning cinematography beautiful visual effects movies"`
-- ✅ Expanded concepts: `"sci-fi action adventure futuristic space stories"`
+- ✅ 8-10 keywords (2nd attempt): `"visually stunning cinematography beautiful effects hidden gems underrated overlooked films"`
+- ✅ Expanded concepts: `"sci-fi action adventure futuristic space exploration technology alien stories"`
 
 **MANDATORY QUERY PATTERN** - Always follow this escalation:
-- ✅ Start narrow: 3 keywords → expand if needed: 5 keywords → final expansion: 7 keywords
+- ✅ Start comprehensive: 5-7 keywords → expand if needed: 8-10 keywords
 - ✅ Multiple focused searches better than single broad search
+- ✅ Always filter out user opinions and commentary
 
 #### Multiple Search Strategies - "Do All of the Above" Pattern
 
