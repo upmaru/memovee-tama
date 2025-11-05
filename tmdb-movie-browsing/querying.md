@@ -596,7 +596,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 **For circumstantial queries**: Use Step 2 to filter by specific mentioned elements (e.g., if user mentions "child", filter results to include family-appropriate content)
 
-    ```json
+      ```json
       {
         "body": {
           "_source": [
@@ -643,20 +643,60 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     - **General child terms:** "child", "children", "kid", "kids", "family friendly", "suitable for children"
     - **Family context:** "family movie", "watch with my family", "appropriate for kids"
   - **User Query Examples:** "Can you show me the child friendly movies?" OR "I want to watch something with my family" OR "Show me movies for kids" OR "What are the movies for kids?" OR "films suitable for a 7 year old girl, something sci fi related" OR "movies for my 5 year old" OR "what can a 10 year old boy watch?"
-    - You will need to use the `search-index_query-and-sort-based-search` and use the boolean query to look for movies that have the appropriate `genres.name` property. **MANDATORY: Always include the complete query structure with all required fields.**
+    - Use the `search-index_text-based-vector-search` with Family genre filter for better content matching. **MANDATORY: Always include the complete query structure with all required fields.**
       ```json
       {
-        "next": "maybe-fallback-to-text-based-search",
-        "path": {
-          "index": "tama-movie-db-movie-details"
-        },
         "body": {
           "_source": [
             // Use standard _source fields (see section below) plus:
             "genres.name"
           ],
           "limit": 10,
-          "query": {
+          // Use user's specific request keywords (4-5 keywords max) - e.g., "sci fi for girls", "animated adventure kids"
+          "query": "[user's specific request - e.g., 'sci fi for girls', 'superhero movies kids', 'princess adventure']",
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "nested": {
+                    "path": "genres",
+                    "query": {
+                      "match": {
+                        "genres.name": "Family"
+                      }
+                    }
+                  }
+                },
+                {
+                  "range": {
+                    "vote_count": {
+                      "gte": 100
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "next": "search-index_query-and-sort-based-search",
+        "path": {
+          "index": "tama-movie-db-movie-details"
+        }
+      }
+      ```
+
+      **For specific themes or additional genres:**
+      Add a second text-based search for specific themes, then use query-and-sort to combine results:
+      ```json
+      {
+        "body": {
+          "_source": [
+            "id", "title", "overview", "genres.name", "vote_average", "vote_count", "release_date"
+          ],
+          "limit": 10,
+          // Use user's specific theme keywords (4-5 keywords max)
+          "query": "[user's theme request - e.g., 'science fiction girls', 'superhero kids adventure']",
+          "filter": {
             "bool": {
               "must": [
                 {
@@ -674,7 +714,6 @@ Before processing a mixed keyword and genre query, you need to separate the genr
                     "path": "genres",
                     "query": {
                       "terms": {
-                        // Add additional genres based on the user's request (e.g., ["Animation"] for animated kids movies, ["Science Fiction"] for sci-fi suitable for children)
                         "genres.name": ["Science Fiction"]
                       }
                     }
@@ -683,94 +722,79 @@ Before processing a mixed keyword and genre query, you need to separate the genr
                 {
                   "range": {
                     "vote_count": {
-                      "gte": 100
+                      "gte": 50
                     }
                   }
                 }
               ]
             }
-          },
-          "sort": [
-            {
-              "vote_average": {
-                "order": "desc"
-              }
-            }
-          ]
+          }
+        },
+        "next": "search-index_query-and-sort-based-search",
+        "path": {
+          "index": "tama-movie-db-movie-details"
         }
       }
       ```
 
-      **For specific age groups or genre combinations:**
-      - "Family" genre is always mandatory (first nested query with match)
-      - Add additional genres in a separate nested query with terms (e.g., ["Science Fiction"] for sci-fi, ["Animation"] for animated movies)
-      - This ensures movies MUST have Family genre AND any additional requested genres
-      - Add vote_count filter to ensure quality movies
-      - Sort by vote_average for best-rated results
+      **Text Query Strategy for Children's Movies:**
+      - Extract and use user's specific descriptive keywords (4-5 keywords max)
+      - Examples based on user queries:
+        - "sci fi for girls" → `"science fiction girls space"`
+        - "superhero movies for kids" → `"superhero kids adventure"`
+        - "princess movies for 5 year old" → `"princess adventure kids"`
+        - "animated funny movies" → `"animated comedy kids"`
+      - Always filter by "Family" genre to ensure appropriate content
+      - Use multiple text searches for different aspects of user's request, then combine results
 
-      **Age-Appropriate Genre Selection Guidelines:**
-      - **Ages 3-6 (Toddler/Preschool):** Always include "Animation" genre for this age group
-      - **Ages 7-9 (Early Elementary):** "Animation" preferred, but live-action "Family" movies acceptable
-      - **Ages 10-12 (Late Elementary):** Mix of "Animation" and "Family", can include mild "Adventure"
-      - **Teenagers (13+):** Use general family guidelines, not this child-specific section
+      **Age-Appropriate Query Examples:**
+      - **Ages 3-6:** Extract user themes + "kids" → `"[user theme] kids animated"` + filter: Family AND Animation (separate nested queries)
+      - **Ages 7-9:** Extract user themes + "adventure" → `"[user theme] adventure kids"` + filter: Family AND Adventure (separate nested queries)
+      - **Ages 10-12:** Use user's specific request → `"[user theme] kids"` + filter: Family AND [User's Genre] (separate nested queries)
+      - **General family:** Use user's request → `"[user request] family"` + filter: Family only
+
+      **Multi-Step Approach:**
+      1. **Step 1:** Use text-based search with Family genre filter for content matching
+      2. **Step 2:** Use query-and-sort-based-search with collected IDs to sort by vote_average desc
+      3. **Optional Step 3:** Add additional genre filters if user specifies themes (sci-fi, animation, etc.)
 
       **Content Considerations by Age:**
-      - **Under 8 years old:** Prioritize "Animation" + "Family" combination
+      - **Under 8 years old:** Prioritize "Animation" + "Family" combination in filter
       - **8-12 years old:** "Family" + additional requested genres (like "Science Fiction", "Adventure")
       - Always avoid genres like "Horror", "Thriller" for child queries regardless of age
-      - For sci-fi requests with children: Use "Family" + "Science Fiction" (not just "Science Fiction")
+      - Use vote_count >= 50-100 to ensure quality and popular family movies
+      - **CRITICAL:** For genre combinations with children: Always use separate nested queries for Family AND other genres
+      - Family must always be in its own nested query with "match" to ensure it's mandatory
+      - Additional genres can use "terms" in their own nested query for multiple options
+      - Example: Family AND Science Fiction = Family (match) + Science Fiction (terms) in separate nested queries
 
 ## User is asking for movies that exclude certain genres
 - **User Query:** "Biggest sales grossing movie non animation for children in 2024" OR "Show me family movies but not animated ones" OR "I want action movies that are not horror"
-  - When the user wants to exclude certain genres while including others, use `must_not` at the bool query level for excluded genres and `must` for included genres.
-  - **CRITICAL**: When negating genres, place the `must_not` clause at the main `bool` level, NOT inside the nested query.
-  - Step 1: **EXECUTE ONLY IF GENRE NAMES ARE NOT ALREADY IN CONTEXT**: If you don't have genre information from previous results, use the `search-index_query-and-sort-based-search` to query for the `genres.name` field to get available genres.
+  - Use `search-index_text-based-vector-search` with genre inclusion and exclusion filters for better content matching.
+  - **CRITICAL**: When negating genres, place the `must_not` clause at the main `bool` level in the filter, NOT inside the nested query.
+  - Step 1: Use `search-index_text-based-vector-search` with user's specific request and genre filters:
     ```json
     {
-      "path": {
-        "index": "[the index name from the index-definition]"
-      },
-      "body": {
-        "limit": 0,
-        "query": {
-          "match_all": {}
-        },
-        "aggs": {
-          "genres": {
-            "nested": {
-              "path": "genres"
-            },
-            "aggs": {
-              "genre_names": {
-                "terms": {
-                  "field": "genres.name",
-                  "size": 20
-                }
-              }
-            }
-          }
-        }
-      },
-      "next": "filter-movies-with-genre-exclusions"
-    }
-    ```
-
-  - Step 2: Use the `search-index_query-and-sort-based-search` to query for movies with genre inclusion and exclusion. If you already have genre information in context, proceed directly to this step.
-    ```json
-    {
-      "path": {
-        "index": "[the index name from the index-definition]"
-      },
       "body": {
         "_source": [
           // Use standard _source fields + "revenue" + "genres.name"
         ],
-        // change based on the number of movies requested by the user
-        // If the user didn't specify a number default to 10
-        "limit": 1,
-        "query": {
+        "limit": 10,
+        // Use user's specific request keywords (4-5 keywords max)
+        "query": "[user's request - e.g., 'family movies children', 'action movies adventure']",
+        "filter": {
           "bool": {
             "must": [
+              {
+                "nested": {
+                  "path": "genres",
+                  "query": {
+                    "match": {
+                      "genres.name": "Family"
+                    }
+                  }
+                }
+              },
               {
                 "range": {
                   "release_date": {
@@ -782,16 +806,6 @@ Before processing a mixed keyword and genre query, you need to separate the genr
               {
                 "term": {
                   "status": "Released"
-                }
-              },
-              {
-                "nested": {
-                  "path": "genres",
-                  "query": {
-                    "match": {
-                      "genres.name": "Family"
-                    }
-                  }
                 }
               }
             ],
@@ -808,6 +822,30 @@ Before processing a mixed keyword and genre query, you need to separate the genr
               }
             ]
           }
+        }
+      },
+      "next": "search-index_query-and-sort-based-search",
+      "path": {
+        "index": "[the index name from the index-definition]"
+      }
+    }
+    ```
+
+  - Step 2: Use `search-index_query-and-sort-based-search` with collected IDs to sort by requested criteria (e.g., revenue for "biggest sales grossing"):
+    ```json
+    {
+      "path": {
+        "index": "[the index name from the index-definition]"
+      },
+      "body": {
+        "_source": [
+          // Use standard _source fields + "revenue" + "genres.name"
+        ],
+        "limit": 10,
+        "query": {
+          "terms": {
+            "id": ["[collected IDs from step 1]"]
+          }
         },
         "sort": [
           {
@@ -819,6 +857,16 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       }
     }
     ```
+
+    **Text Query Examples for Genre Exclusions:**
+    - **"family movies but not animated"** → `"family movies children"` + must: Family, must_not: Animation
+    - **"action movies that are not horror"** → `"action adventure movies"` + must: Action, must_not: Horror  
+    - **"comedy movies but not romantic"** → `"funny comedy movies"` + must: Comedy, must_not: Romance
+    
+    **Multi-Genre Exclusions:**
+    - Use multiple nested queries in `must_not` array for excluding multiple genres
+    - Each excluded genre gets its own nested query structure
+    - Keep included genres in separate `must` nested queries
 
 ## User wants to filter out movies they've already seen
 - **User Query:** "Only show me movies I haven't seen" OR "Please filter out the ones I've seen" OR "Show me movies I haven't watched"
@@ -1191,6 +1239,158 @@ To generate a high-quality Elasticsearch query with a natural language query:
     - **Example**: Original "Blade Runner cyberpunk dystopian future films, noir science fiction movies" → Text Fallback "cyberpunk, sci-fi" → Genre Fallback ["Sci-Fi", "Thriller", "Action"]
     - **Example**: Original "western family saga films about brothers and rivalry, frontier epic movies about cattle ranches" → Text Fallback "western, family" → Genre Fallback ["Western", "Drama", "War"]
     - **Example**: Original "epic family saga films about brotherhood and war, period drama movies set on Montana ranches" → Text Fallback "family drama" → Genre Fallback ["Drama", "Romance", "War"]
+
+### Keyword Identification & Query Strategy Patterns
+
+When processing complex user queries, identify key patterns and apply the appropriate search strategy:
+
+#### Visual Quality & Popularity Patterns
+
+**"Visually Stunning" + "Not Very Popular" / "Hidden Gems"**
+- Example: *"give me a list of movies that are both visually stunning and not very popular - hidden gems basically"*
+- **Strategy**: Multi-step approach with keyword separation
+  1. **First**: Use `search-index_text-based-vector-search` with visual quality keywords (4-5 keywords max): `"visually stunning cinematography"`
+  2. **Second**: Use `search-index_text-based-vector-search` with different visual keywords: `"beautiful visual effects"`
+  3. **Third**: Use `search-index_text-based-vector-search` with hidden gems keywords: `"overlooked hidden gems"`
+  4. **Final**: Use `search-index_query-and-sort-based-search` with collected IDs from all searches to sort by:
+     - `popularity: asc` (less popular films first)
+     - `vote_count: asc` (fewer votes = less mainstream)
+     - `vote_average: desc` (but still well-rated)
+
+#### Popularity & Rating Keywords Mapping
+
+**"Not Very Popular" Keywords**:
+- **"not very popular"**, **"hidden gems"**, **"under-the-radar"**, **"overlooked"**
+- **Sort Strategy**: `popularity: asc` (ascending = less popular first)
+
+**"Underrated" Keywords**:
+- **"underrated"**, **"underappreciated"**, **"critically acclaimed but unknown"**
+- **Sort Strategy**: 
+  - `vote_average: desc` (high quality)
+  - `vote_count: asc` (but not widely seen)
+
+**"Under-the-radar" Keywords**:
+- **"under-the-radar"**, **"off the beaten path"**, **"lesser known"**
+- **Sort Strategy**:
+  - `popularity: asc` (low popularity)
+  - `vote_average: desc` (but still good quality)
+
+#### Quality Descriptors for Text Search (4-5 Keywords Maximum)
+
+**Visual Quality Keywords** - Break into separate searches:
+- **"visually stunning"** → `"visually stunning cinematography"` (3 keywords)
+- **"beautiful cinematography"** → `"beautiful cinematography visual"` (3 keywords)  
+- **"breathtaking visuals"** → `"breathtaking visual effects"` (3 keywords)
+- **Additional search**: `"spectacular imagery design"` (3 keywords)
+
+**Story Quality Keywords** - Break into separate searches:
+- **"compelling story"** → `"compelling engaging narrative"` (3 keywords)
+- **"thought-provoking"** → `"thought provoking intellectual"` (3 keywords)
+- **"emotional depth"** → `"emotional depth powerful"` (3 keywords)
+- **Additional search**: `"moving character drama"` (3 keywords)
+
+**CRITICAL**: Use multiple text-based searches with 4-5 keywords max each, then aggregate all returned IDs for the final sort query.
+
+#### Multi-Step Query Pattern Examples
+
+**Pattern 1: Quality + Popularity Filter**
+```
+User: "beautiful cinematography but not mainstream"
+Step 1: text-based-vector-search → "beautiful cinematography visual" (3 keywords)
+Step 2: text-based-vector-search → "striking visual design" (3 keywords)
+Step 3: text-based-vector-search → "not mainstream independent" (3 keywords)
+Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
+```
+
+**Pattern 2: Genre + Quality + Discovery**
+```
+User: "underrated sci-fi with great visuals"
+Step 1: text-based-vector-search → "underrated science fiction" (3 keywords)
+Step 2: text-based-vector-search → "great visual effects" (3 keywords)
+Step 3: text-based-vector-search → "impressive sci-fi cinematography" (3 keywords)
+Step 4: query-and-sort-based-search → use all collected IDs, sort by vote_count: asc, vote_average: desc
+```
+
+**Pattern 3: Thematic + Popularity**
+```
+User: "hidden gem dramas about family"
+Step 1: text-based-vector-search → "hidden gem drama" (3 keywords)
+Step 2: text-based-vector-search → "family relationships overlooked" (3 keywords)
+Step 3: text-based-vector-search → "underrated family films" (3 keywords)
+Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
+```
+
+#### Critical Guidelines
+
+1. **Use multiple text-based searches** - Each search should have 4-5 keywords maximum
+2. **Break complex queries into keyword groups** - Separate different concepts into different searches
+3. **Collect all movie IDs** from multiple text searches before final sorting
+4. **Always use text-based search first** for qualitative descriptors like "visually stunning", "compelling", "beautiful"
+5. **Follow up with ID-based sorting** using `search-index_query-and-sort-based-search` with all collected IDs
+6. **Preserve user's exact descriptive language** but distribute across multiple shorter searches
+7. **Map popularity keywords consistently**:
+   - Less popular = `popularity: asc`
+   - Underrated = `vote_average: desc, vote_count: asc`
+   - Hidden gems = `popularity: asc, vote_average: desc`
+8. **Prefer multiple focused searches over single comprehensive queries**
+
+#### Multiple Search Strategies - "Do All of the Above" Pattern
+
+When you offer multiple search strategies to the user and they respond with "do all of the above", "try all", or similar requests, execute ALL suggested searches and combine results:
+
+**Example Scenario:**
+- User wants "visually stunning hidden gems"
+- Initial search returns no results
+- You suggest: "gorgeous cinematography hidden gem", "arthouse visually striking under the radar", "neo-noir cinematography lesser-known", "foreign films stunning visuals underrated"
+- User says: "do all of the above"
+
+**Execution Strategy:**
+1. **Step 1a:** `search-index_text-based-vector-search` → `"gorgeous cinematography hidden"`
+2. **Step 1b:** `search-index_text-based-vector-search` → `"arthouse visually striking"`  
+3. **Step 1c:** `search-index_text-based-vector-search` → `"neo-noir cinematography lesser"`
+4. **Step 1d:** `search-index_text-based-vector-search` → `"foreign films stunning"`
+5. **Step 2:** `search-index_query-and-sort-based-search` → Combine ALL collected IDs from steps 1a-1d
+
+**Implementation Pattern:**
+```json
+// Execute each search separately, collect all IDs
+// Then final sort with all combined IDs:
+{
+  "path": {
+    "index": "tama-movie-db-movie-details"
+  },
+  "body": {
+    "_source": [
+      // Use standard _source fields
+    ],
+    "limit": 20,
+    "query": {
+      "terms": {
+        "id": ["ID1", "ID2", "ID3", "...ALL_COLLECTED_IDS"]
+      }
+    },
+    "sort": [
+      {
+        "popularity": {
+          "order": "asc"
+        }
+      },
+      {
+        "vote_average": {
+          "order": "desc"
+        }
+      }
+    ]
+  }
+}
+```
+
+**Key Guidelines:**
+- **Never skip searches** when user requests "all of the above"
+- **Collect and deduplicate IDs** from all searches
+- **Use final sort step** to apply user's original sorting criteria
+- **Maintain keyword limits** (4-5 keywords) for each individual search
+- **Preserve search diversity** - each search should target different aspects
 
 ## Important
 - You will be provided with an index definition that tells you that tells you what the index name is and the definition of each of the property.
