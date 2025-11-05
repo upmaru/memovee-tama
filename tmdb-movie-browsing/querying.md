@@ -1263,12 +1263,44 @@ When processing complex user queries, identify key patterns and apply the approp
      - `popularity: asc` (less popular films first)
      - `vote_count: asc` (fewer votes = less mainstream)
      - `vote_average: desc` (but still well-rated)
+  5. **Filter**: Add `vote_count: { "lt": 5000 }` in text-based search filter to ensure genuinely not very popular movies
+
+**Example with vote_count filter for "not very popular":**
+```json
+{
+  "body": {
+    "_source": [
+      "id", "title", "overview", "vote_average", "vote_count", "popularity"
+    ],
+    "limit": 10,
+    "query": "visually stunning cinematography",
+    "filter": {
+      "bool": {
+        "must": [
+          {
+            "range": {
+              "vote_count": {
+                "lt": 5000
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "next": "search-index_query-and-sort-based-search",
+  "path": {
+    "index": "tama-movie-db-movie-details"
+  }
+}
+```
 
 #### Popularity & Rating Keywords Mapping
 
 **"Not Very Popular" Keywords**:
 - **"not very popular"**, **"hidden gems"**, **"under-the-radar"**, **"overlooked"**
 - **Sort Strategy**: `popularity: asc` (ascending = less popular first)
+- **Filter Strategy**: Add `vote_count: { "lt": 5000 }` to limit to genuinely less popular movies
 
 **"Underrated" Keywords**:
 - **"underrated"**, **"underappreciated"**, **"critically acclaimed but unknown"**
@@ -1281,6 +1313,7 @@ When processing complex user queries, identify key patterns and apply the approp
 - **Sort Strategy**:
   - `popularity: asc` (low popularity)
   - `vote_average: desc` (but still good quality)
+- **Filter Strategy**: Add `vote_count: { "lt": 5000 }` to limit to genuinely lesser known movies
 
 #### Quality Descriptors for Text Search (4-5 Keywords Maximum)
 
@@ -1362,9 +1395,9 @@ Step 4: query-and-sort-based-search → use all collected IDs, sort by popularit
 7. **Follow up with ID-based sorting** using `search-index_query-and-sort-based-search` with all collected IDs
 8. **Preserve user's exact descriptive language** but distribute across multiple shorter searches
 9. **Map popularity keywords consistently**:
-   - Less popular = `popularity: asc`
+   - Less popular = `popularity: asc` + `vote_count: { "lt": 5000 }`
    - Underrated = `vote_average: desc, vote_count: asc`
-   - Hidden gems = `popularity: asc, vote_average: desc`
+   - Hidden gems = `popularity: asc, vote_average: desc` + `vote_count: { "lt": 5000 }`
 10. **Prefer multiple focused searches over single comprehensive queries**
 
 **FORBIDDEN QUERY PATTERNS** - These are NEVER allowed:
@@ -1407,8 +1440,21 @@ When you offer multiple search strategies to the user and they respond with "do 
     ],
     "limit": 20,
     "query": {
-      "terms": {
-        "id": ["ID1", "ID2", "ID3", "...ALL_COLLECTED_IDS"]
+      "bool": {
+        "filter": [
+          {
+            "terms": {
+              "id": ["ID1", "ID2", "ID3", "...ALL_COLLECTED_IDS"]
+            }
+          },
+          {
+            "range": {
+              "vote_count": {
+                "lt": 5000
+              }
+            }
+          }
+        ]
       }
     },
     "sort": [
