@@ -1318,7 +1318,7 @@ When processing complex user queries, identify key patterns and apply the approp
 **"Underrated" Keywords**:
 - **"underrated"**, **"underappreciated"**, **"critically acclaimed but unknown"**
 - **Extract Strategy**: Ignore these opinion words - focus on actual movie descriptors
-- **Sort Strategy**: 
+- **Sort Strategy**:
   - `vote_average: desc` (high quality)
   - `vote_count: asc` (but not widely seen)
 
@@ -1334,7 +1334,7 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **Visual Quality Keywords** - Break into separate searches:
 - **"visually stunning"** → `"visually stunning cinematography"` (3 keywords)
-- **"beautiful cinematography"** → `"beautiful cinematography"` (2 keywords)  
+- **"beautiful cinematography"** → `"beautiful cinematography"` (2 keywords)
 - **"breathtaking visuals"** → `"breathtaking visual effects"` (3 keywords)
 - **Additional search**: `"spectacular imagery"` (2 keywords)
 
@@ -1364,7 +1364,7 @@ When processing complex user queries, identify key patterns and apply the approp
 - ✅ WRONG: `"science fiction space adventure futuristic technology alien exploration"` (7 keywords - acceptable but could be better split)
 - ✅ BETTER: Search 1: `"science fiction space adventure futuristic"` (5 keywords) + Search 2: `"technology alien exploration films"` (4 keywords)
 
-**INITIAL ATTEMPT EXAMPLES** - Multiple variations of same concept: 
+**INITIAL ATTEMPT EXAMPLES** - Multiple variations of same concept:
 - ✅ `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, visually striking"` (7 keywords - PREFERRED with variations)
 - ✅ `"compelling, emotional, touching story, heartwarming, character development"` (6 keywords - GOOD with variations)
 - ✅ `"science fiction, sci-fi, space adventure, futuristic"` (5 keywords - ACCEPTABLE with variations)
@@ -1438,7 +1438,7 @@ Step 3: query-and-sort-based-search → use all collected IDs, sort by popularit
 - ✅ COUNT BEFORE SUBMITTING: Always count words to ensure 5-7 limit including variations
 
 **MANDATORY BREAKING PATTERNS** - When you have 8+ keywords:
-- ❌ DON'T DO: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, spectacular effects, visually striking"` (9 keywords)  
+- ❌ DON'T DO: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, spectacular effects, visually striking"` (9 keywords)
 - ✅ DO THIS: Search 1: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, visually striking"` (7 keywords - visual quality variations) + Search 2: `"spectacular visual effects, cinematic imagery"` (5 keywords - effects variations)
 
 **FALLBACK QUERY PATTERNS** - Only used when 0 results from initial search:

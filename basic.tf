@@ -5,7 +5,7 @@ resource "tama_space" "basic-conversation" {
 
 module "off-topic" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -15,7 +15,7 @@ module "off-topic" {
 
 module "greeting" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -26,7 +26,7 @@ module "greeting" {
 
 module "introductory" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -36,7 +36,7 @@ module "introductory" {
 
 module "curse" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -46,7 +46,7 @@ module "curse" {
 
 module "personalization" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -56,7 +56,7 @@ module "personalization" {
 
 module "patch" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -66,7 +66,7 @@ module "patch" {
 
 module "manipulation" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id
@@ -76,7 +76,7 @@ module "manipulation" {
 
 module "marking" {
   source     = "upmaru/base/tama//modules/forwardable-class"
-  version    = "0.4.7"
+  version    = "0.4.8"
   depends_on = [module.global.schemas]
 
   space_id    = tama_space.basic-conversation.id

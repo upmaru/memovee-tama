@@ -12,19 +12,42 @@ Create sophisticated Elasticsearch aggregation queries for movie analytics, stat
 - Advanced percentile calculations for performance insights
 
 ## Constraints
-- Always use `size: 0` for analytics queries to focus on aggregations only
+- Always use `limit: 0` for analytics queries to focus on aggregations only
+- **MANDATORY**: Always include `_source: ["id"]` as minimum requirement for all analytics queries
+- **MANDATORY**: Always include a `query` field - never omit it (use `match_all: {}` if no specific filtering needed)
 - Include appropriate date ranges and filters to scope analysis
 - Use runtime mappings for calculated fields like profit
 - Ensure aggregation buckets have meaningful keys and proper sorting
 - Include min_doc_count: 1 to avoid empty buckets in date histograms
 
+## Tool Usage
+**CRITICAL: Use the `query-and-sort-based-search` tool for ALL analytics queries.**
+
+All analytics operations must be performed using the `query-and-sort-based-search` tool, which provides the Elasticsearch aggregation capabilities required for statistical analysis, trend analysis, and data insights.
+
 ## Query Structure Guidelines
 All analytics queries should follow this pattern:
-- Set `size: 0` to return only aggregations
+- Set `limit: 0` to return only aggregations
+- **MANDATORY**: Include `_source: ["id"]` field (minimum requirement for analytics)
+- **MANDATORY**: Always include a `query` field - never omit it
 - Use appropriate time-based filters when analyzing trends
 - Include runtime mappings for calculated fields (profit, ROI, etc.)
 - Structure aggregations hierarchically for multi-dimensional analysis
 - Use meaningful bucket keys and proper formatting for dates
+
+### MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE:
+```json
+{
+  "path": {
+    "index": "[the index name from the index-definition]"
+  },
+  "body": {
+    "_source": ["id"],    // REQUIRED: Minimum for analytics queries
+    "limit": 0,          // REQUIRED: Focus on aggregations only
+    "query": { ... }     // REQUIRED: Never omit this field
+  }
+}
+```
 
 ## Analytics Query Examples
 
@@ -38,7 +61,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "range": {
         "release_date": {
@@ -80,7 +104,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "match_all": {}
     },
@@ -127,7 +152,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "match_all": {}
     },
@@ -189,7 +215,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "runtime_mappings": {
       "profit": {
         "type": "double",
@@ -257,7 +284,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "bool": {
         "must": [
@@ -325,7 +353,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "runtime_mappings": {
       "profit": {
         "type": "double",
@@ -391,7 +420,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "runtime_mappings": {
       "profit": {
         "type": "double",
@@ -465,7 +495,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "runtime_mappings": {
       "roi": {
         "type": "double",
@@ -539,7 +570,7 @@ All analytics queries should follow this pattern:
 
 ### Movie Count by Genre Analysis
 
-**User Query**: "How many science fiction movies do you have?" or "Show me the movie count breakdown by genre"
+**User Query**: "Show me the movie count breakdown by genre" or "What genres do you have and how many movies in each?" or "How many Science Fiction movies do you have?" or "How many [specific genre] movies are there?"
 
 ```json
 {
@@ -547,7 +578,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "match_all": {}
     },
@@ -560,7 +592,6 @@ All analytics queries should follow this pattern:
           "grouped_by_names": {
             "terms": {
               "field": "genres.name",
-              "size": 10000
             }
           }
         }
@@ -580,7 +611,8 @@ All analytics queries should follow this pattern:
     "index": "[the index name from the index-definition]"
   },
   "body": {
-    "size": 0,
+    "_source": ["id"],
+    "limit": 0,
     "query": {
       "nested": {
         "path": "genres",
@@ -621,6 +653,29 @@ All analytics queries should follow this pattern:
   }
 }
 ```
+
+### MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE:
+Before generating any Elasticsearch analytics query, ensure ALL of these fields are present:
+
+```json
+{
+  "path": {
+    "index": "[the index name from the index-definition]"  // REQUIRED: Index name
+  },
+  "body": {
+    "_source": ["id"],                     // REQUIRED: Minimum field for analytics
+    "limit": 0,                            // REQUIRED: 0 for aggregation-only queries
+    "query": { "match_all": {} }           // REQUIRED: Never omit this field
+  }
+}
+```
+
+**Common causes of parsing errors:**
+- Missing `query` field in body (causes "Unknown key for a VALUE_NULL" error)
+- Missing `path` object with `index` field
+- Missing `_source` array
+- Using `size` instead of `limit`
+- Incorrect JSON structure
 
 ## Query Generation Guidelines
 
@@ -675,10 +730,14 @@ Always structure analytics responses to include:
 - Use `range` aggregations with appropriate buckets
 - Include percentage calculations when helpful
 
-**Genre Questions**: "How many [genre] movies do you have?"
-- Use nested aggregation on genres path
-- Use `terms` aggregation on `genres.name` field
-- Set appropriate size limit (10000) to capture all genres
+**Genre Questions**:
+- For specific genre counts: "How many Science Fiction movies do you have?"
+  - Use nested query to filter by specific genre
+  - Use `value_count` aggregation to count matching documents
+- For all genre breakdown: "Show me movie counts by genre"
+  - Use nested aggregation on genres path
+  - Use `terms` aggregation on `genres.name` field
+  - Set appropriate size limit (10000) to capture all genres
 
 **Genre + Time Questions**: "Show me [genre] movies by year"
 - Use nested query to filter by specific genre
@@ -691,11 +750,20 @@ Always structure analytics responses to include:
 
 ## Critical Guidelines
 
-1. **Always use `size: 0`** for analytics queries to focus on aggregations
-2. **Include appropriate filters** to scope the analysis meaningfully
-3. **Use runtime mappings** for calculated fields like profit and ROI
-4. **Structure hierarchical aggregations** for multi-dimensional analysis
-5. **Include statistical context** with percentiles and distribution analysis
-6. **Format dates consistently** using appropriate format patterns
-7. **Handle missing data gracefully** with proper field existence checks
-8. **Provide comparative context** by including multiple metrics when relevant
+1. **MANDATORY: Use `query-and-sort-based-search` tool** for ALL analytics queries - this is the only tool that supports the required aggregation functionality
+2. **Always use `limit: 0`** for analytics queries to focus on aggregations
+3. **MANDATORY: Include `_source: ["id"]`** - minimum required field for analytics queries
+4. **MANDATORY: Include `query` field** - never omit this field, use `match_all: {}` if no filtering needed
+5. **Include appropriate filters** to scope the analysis meaningfully
+6. **Use runtime mappings** for calculated fields like profit and ROI
+7. **Structure hierarchical aggregations** for multi-dimensional analysis
+8. **Include statistical context** with percentiles and distribution analysis
+9. **Format dates consistently** using appropriate format patterns
+10. **Handle missing data gracefully** with proper field existence checks
+11. **Provide comparative context** by including multiple metrics when relevant
+12. **Use appropriate query types** - nested queries for filtering specific genres, match_all for comprehensive analysis
+13. **Choose correct aggregation type** - value_count for counting specific filtered results, terms for category breakdowns
+
+---
+
+{{ corpus }}

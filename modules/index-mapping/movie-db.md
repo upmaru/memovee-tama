@@ -1,5 +1,10 @@
 ## Movie DB Specific Constraints
 - The ID should be of the type `long`.
+- Make sure the following fields are of type `nested`:
+  - `genres`
+  - `production_companies`
+  - `movie-credits.cast`
+  - `movie-credits.crew`
 - Make sure that the following fields are of type `text`:
   - `title`
   - `original_title`

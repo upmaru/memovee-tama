@@ -144,41 +144,41 @@ To get started with the Memovee Tama project, you'll need to:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_anthropic"></a> [anthropic](#module\_anthropic) | upmaru/base/tama//modules/inference-service | 0.4.7 |
-| <a name="module_artifact-context"></a> [artifact-context](#module\_artifact-context) | upmaru/base/tama//modules/thought-context | 0.4.7 |
-| <a name="module_check-profile-tooling"></a> [check-profile-tooling](#module\_check-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.7 |
-| <a name="module_curse"></a> [curse](#module\_curse) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_elasticsearch"></a> [elasticsearch](#module\_elasticsearch) | upmaru/base/tama//modules/elasticsearch | 0.4.7 |
-| <a name="module_global"></a> [global](#module\_global) | upmaru/base/tama | 0.4.7 |
-| <a name="module_greeting"></a> [greeting](#module\_greeting) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
+| <a name="module_anthropic"></a> [anthropic](#module\_anthropic) | upmaru/base/tama//modules/inference-service | 0.4.8 |
+| <a name="module_artifact-context"></a> [artifact-context](#module\_artifact-context) | upmaru/base/tama//modules/thought-context | 0.4.8 |
+| <a name="module_check-profile-tooling"></a> [check-profile-tooling](#module\_check-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.8 |
+| <a name="module_curse"></a> [curse](#module\_curse) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_elasticsearch"></a> [elasticsearch](#module\_elasticsearch) | upmaru/base/tama//modules/elasticsearch | 0.4.8 |
+| <a name="module_global"></a> [global](#module\_global) | upmaru/base/tama | 0.4.8 |
+| <a name="module_greeting"></a> [greeting](#module\_greeting) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
 | <a name="module_index-definition-generation"></a> [index-definition-generation](#module\_index-definition-generation) | ./modules/index-definition | n/a |
 | <a name="module_index-mapping-generation"></a> [index-mapping-generation](#module\_index-mapping-generation) | ./modules/index-mapping | n/a |
-| <a name="module_introductory"></a> [introductory](#module\_introductory) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_manage-record-markings"></a> [manage-record-markings](#module\_manage-record-markings) | upmaru/base/tama//modules/tooling | 0.4.7 |
-| <a name="module_manipulation"></a> [manipulation](#module\_manipulation) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_marking"></a> [marking](#module\_marking) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_memovee"></a> [memovee](#module\_memovee) | upmaru/base/tama//modules/messaging | 0.4.7 |
-| <a name="module_mistral"></a> [mistral](#module\_mistral) | upmaru/base/tama//modules/inference-service | 0.4.7 |
+| <a name="module_introductory"></a> [introductory](#module\_introductory) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_manage-record-markings"></a> [manage-record-markings](#module\_manage-record-markings) | upmaru/base/tama//modules/tooling | 0.4.8 |
+| <a name="module_manipulation"></a> [manipulation](#module\_manipulation) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_marking"></a> [marking](#module\_marking) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_memovee"></a> [memovee](#module\_memovee) | upmaru/base/tama//modules/messaging | 0.4.8 |
+| <a name="module_mistral"></a> [mistral](#module\_mistral) | upmaru/base/tama//modules/inference-service | 0.4.8 |
 | <a name="module_movie-browsing"></a> [movie-browsing](#module\_movie-browsing) | ./modules/media-conversate | n/a |
-| <a name="module_movie-browsing-forwardable"></a> [movie-browsing-forwardable](#module\_movie-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
+| <a name="module_movie-browsing-forwardable"></a> [movie-browsing-forwardable](#module\_movie-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
 | <a name="module_movie-db"></a> [movie-db](#module\_movie-db) | ./modules/movie-db | n/a |
 | <a name="module_movie-detail"></a> [movie-detail](#module\_movie-detail) | ./modules/media-conversate | n/a |
-| <a name="module_movie-detail-forwardable"></a> [movie-detail-forwardable](#module\_movie-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_off-topic"></a> [off-topic](#module\_off-topic) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_openai"></a> [openai](#module\_openai) | upmaru/base/tama//modules/inference-service | 0.4.7 |
-| <a name="module_patch"></a> [patch](#module\_patch) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
+| <a name="module_movie-detail-forwardable"></a> [movie-detail-forwardable](#module\_movie-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_off-topic"></a> [off-topic](#module\_off-topic) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_openai"></a> [openai](#module\_openai) | upmaru/base/tama//modules/inference-service | 0.4.8 |
+| <a name="module_patch"></a> [patch](#module\_patch) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
 | <a name="module_person-browsing"></a> [person-browsing](#module\_person-browsing) | ./modules/media-conversate | n/a |
-| <a name="module_person-browsing-forwardable"></a> [person-browsing-forwardable](#module\_person-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
+| <a name="module_person-browsing-forwardable"></a> [person-browsing-forwardable](#module\_person-browsing-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
 | <a name="module_person-detail"></a> [person-detail](#module\_person-detail) | ./modules/media-conversate | n/a |
-| <a name="module_person-detail-forwardable"></a> [person-detail-forwardable](#module\_person-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_personalization"></a> [personalization](#module\_personalization) | upmaru/base/tama//modules/forwardable-class | 0.4.7 |
-| <a name="module_reply-context"></a> [reply-context](#module\_reply-context) | upmaru/base/tama//modules/thought-context | 0.4.7 |
-| <a name="module_router"></a> [router](#module\_router) | upmaru/base/tama//modules/router | 0.4.7 |
-| <a name="module_update-user-perference"></a> [update-user-perference](#module\_update-user-perference) | upmaru/base/tama//modules/tooling | 0.4.7 |
-| <a name="module_upsert-profile-tooling"></a> [upsert-profile-tooling](#module\_upsert-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.7 |
-| <a name="module_voyageai"></a> [voyageai](#module\_voyageai) | upmaru/base/tama//modules/inference-service | 0.4.7 |
+| <a name="module_person-detail-forwardable"></a> [person-detail-forwardable](#module\_person-detail-forwardable) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_personalization"></a> [personalization](#module\_personalization) | upmaru/base/tama//modules/forwardable-class | 0.4.8 |
+| <a name="module_reply-context"></a> [reply-context](#module\_reply-context) | upmaru/base/tama//modules/thought-context | 0.4.8 |
+| <a name="module_router"></a> [router](#module\_router) | upmaru/base/tama//modules/router | 0.4.8 |
+| <a name="module_update-user-perference"></a> [update-user-perference](#module\_update-user-perference) | upmaru/base/tama//modules/tooling | 0.4.8 |
+| <a name="module_upsert-profile-tooling"></a> [upsert-profile-tooling](#module\_upsert-profile-tooling) | upmaru/base/tama//modules/tooling | 0.4.8 |
+| <a name="module_voyageai"></a> [voyageai](#module\_voyageai) | upmaru/base/tama//modules/inference-service | 0.4.8 |
 | <a name="module_watch-providers"></a> [watch-providers](#module\_watch-providers) | ./modules/watch-providers | n/a |
-| <a name="module_xai"></a> [xai](#module\_xai) | upmaru/base/tama//modules/inference-service | 0.4.7 |
+| <a name="module_xai"></a> [xai](#module\_xai) | upmaru/base/tama//modules/inference-service | 0.4.8 |
 
 
 ## Resources
