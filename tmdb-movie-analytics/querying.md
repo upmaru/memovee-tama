@@ -570,7 +570,9 @@ All analytics queries should follow this pattern:
 
 ### Movie Count by Genre Analysis
 
-**User Query**: "Show me the movie count breakdown by genre" or "What genres do you have and how many movies in each?" or "How many Science Fiction movies do you have?" or "How many [specific genre] movies are there?"
+**User Query**: "Show me the movie count breakdown by genre" or "What genres do you have and how many movies in each?" or "How many Science Fiction movies do you have?" or "How many [specific genre] movies are there?" or "How many Horror movies do you have?"
+
+**CRITICAL: For ANY genre-related count question, always use this comprehensive query that returns ALL genres with their counts. This provides the requested genre count plus context of all other genres.**
 
 ```json
 {
@@ -592,6 +594,7 @@ All analytics queries should follow this pattern:
           "grouped_by_names": {
             "terms": {
               "field": "genres.name",
+              "size": 10000
             }
           }
         }
@@ -730,14 +733,11 @@ Always structure analytics responses to include:
 - Use `range` aggregations with appropriate buckets
 - Include percentage calculations when helpful
 
-**Genre Questions**:
-- For specific genre counts: "How many Science Fiction movies do you have?"
-  - Use nested query to filter by specific genre
-  - Use `value_count` aggregation to count matching documents
-- For all genre breakdown: "Show me movie counts by genre"
-  - Use nested aggregation on genres path
-  - Use `terms` aggregation on `genres.name` field
-  - Set appropriate size limit (10000) to capture all genres
+**Genre Questions**: "How many [genre] movies do you have?" or "Show me movie counts by genre"
+- **CRITICAL: Always use the comprehensive genre aggregation query** that returns ALL genres with counts
+- Use nested aggregation on genres path with `terms` aggregation on `genres.name` field
+- Set size limit (10000) to capture all genres
+- **Never filter by specific genre** - always return the complete genre breakdown so user can see their requested genre plus all others for context
 
 **Genre + Time Questions**: "Show me [genre] movies by year"
 - Use nested query to filter by specific genre
@@ -754,15 +754,16 @@ Always structure analytics responses to include:
 2. **Always use `limit: 0`** for analytics queries to focus on aggregations
 3. **MANDATORY: Include `_source: ["id"]`** - minimum required field for analytics queries
 4. **MANDATORY: Include `query` field** - never omit this field, use `match_all: {}` if no filtering needed
-5. **Include appropriate filters** to scope the analysis meaningfully
-6. **Use runtime mappings** for calculated fields like profit and ROI
-7. **Structure hierarchical aggregations** for multi-dimensional analysis
-8. **Include statistical context** with percentiles and distribution analysis
-9. **Format dates consistently** using appropriate format patterns
-10. **Handle missing data gracefully** with proper field existence checks
-11. **Provide comparative context** by including multiple metrics when relevant
-12. **Use appropriate query types** - nested queries for filtering specific genres, match_all for comprehensive analysis
-13. **Choose correct aggregation type** - value_count for counting specific filtered results, terms for category breakdowns
+5. **CRITICAL: For genre questions, always use comprehensive genre aggregation** - never filter by specific genre, always return ALL genres with counts
+6. **Include appropriate filters** to scope the analysis meaningfully
+7. **Use runtime mappings** for calculated fields like profit and ROI
+8. **Structure hierarchical aggregations** for multi-dimensional analysis
+9. **Include statistical context** with percentiles and distribution analysis
+10. **Format dates consistently** using appropriate format patterns
+11. **Handle missing data gracefully** with proper field existence checks
+12. **Provide comparative context** by including multiple metrics when relevant
+13. **Use `match_all` query for comprehensive analysis** - provides complete dataset context
+14. **Use `terms` aggregation for category breakdowns** - captures all categories with counts
 
 ---
 
