@@ -505,6 +505,44 @@ The user's message may reference a piece of information or data in a search resu
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    The user is asking for statistical analysis, counts, trends, or aggregated data about movies.
+  </condition>
+  <user-query>
+    - How many movies do you have in Science Fiction?
+    - How many sci-fi movies were released in 2024?
+    - Show me the movie count breakdown by genre
+    - What genres have the most movies?
+    - How well did the movie industry do in 2024?
+    - Was 2024 a good year for movies?
+    - What was the total revenue for movies in 2023?
+    - Show me profit trends over the years
+    - What's the average rating for movies by decade?
+    - Which year had the highest grossing movies?
+    - Show me rating distribution for movies in the 2020s
+    - How have movie budgets changed over time?
+    - What's the ROI trend for the film industry?
+    - Show me box office performance by genre
+    - Which genres are most profitable?
+    - What was the maximum profit made by a movie in 2024?
+    - Show me science fiction movies grouped by year
+    - How many animated movies were released each year since 2000?
+  </user-query>
+  <routing>
+    movie-analytics
+  </routing>
+  <reasoning>
+    - The user is asking for statistical analysis, aggregated data, trends, or numerical insights about movies.
+    
+    - These queries require analytics tools that can perform aggregations, calculations, and statistical analysis on movie data.
+    
+    - Questions about counts, totals, averages, trends, distributions, and comparative analysis all fall under analytics.
+    
+    - The user wants insights derived from data analysis rather than browsing specific movies or getting details about particular films.
+  </reasoning>
+</case>
+
 ## Disambiguation between media or person
 Sometimes the user query may mention a person's name but with the intent of finding a movie with a certain criteria.
 
