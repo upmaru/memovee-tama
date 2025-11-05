@@ -1208,18 +1208,27 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **Standard next values**: Use `"maybe-fallback-to-text-search-or-sort-filter-found-results"` for most queries
   - **NEVER omit**: Omitting "next" parameter will cause system failure when no results found
 
+1.5. **MANDATORY: Comma-Separated Keywords**:
+  - **FORMAT REQUIREMENT**: All keywords in query string MUST be separated by commas
+  - **CORRECT**: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery"`
+  - **WRONG**: `"visually stunning cinematography beautiful visuals breathtaking imagery"`
+  - **REQUIRED FORMAT**: Each descriptive term/phrase separated by comma and space
+
 2. **MANDATORY: Keyword Escalation Strategy (5-7→8-10)**:
   - **Start with 5-7 keywords**: Initial attempt should use 5-7 keywords for comprehensive search
   - **Expand to 8-10 keywords**: If 0 results, system expands to 8-10 keywords for maximum coverage
   - **Example escalation**: "science fiction space movies" (4 keywords) → "science fiction futuristic space adventure movies" (6 keywords) → "science fiction futuristic space adventure movies aliens technology" (8 keywords)
   - **Extract relevant content**: Ignore user opinions like "basically", "I think", "in my opinion" - focus only on descriptive content
 
-3. **Extract Relevant Content, Ignore User Opinions**:
+3. **Extract Relevant Content, Ignore User Opinions & Use Variations**:
   - **Filter out user commentary**: Ignore phrases like "basically", "I think", "in my opinion", "you know", "kind of"
   - **Focus on descriptive content**: Extract only the actual movie characteristics and themes
-  - **Example**: "visually stunning and not very popular - hidden gems basically" → Extract: "visually stunning", "not very popular", "hidden gems" (ignore "basically")
-  - **Example**: "I want movies that are, you know, really emotional and deep basically" → Extract: "emotional", "deep" (ignore "I want", "you know", "basically")
-  - **Preserve user's exact descriptive phrasing** - maintain the integrity of how they describe movie characteristics
+  - **Use multiple variations of the same concept**: Include synonyms and related terms for better matching
+  - **Example**: "visually stunning" → Include: "visually stunning, visually striking, beautiful visuals, breathtaking imagery"
+  - **Example**: "emotional" → Include: "emotional, touching, heartwarming, moving"
+  - **Example**: "action-packed" → Include: "action-packed, thrilling, exciting, adrenaline"
+  - **Extract Example**: "visually stunning and not very popular - hidden gems basically" → Extract: "visually stunning, visually striking, beautiful visuals" (ignore "basically", "not very popular", "hidden gems")
+  - **Preserve user's exact descriptive phrasing** while adding variations within the 5-7 keyword limit
   - Use the most relevant keywords and phrases that will match well with movie descriptions
   - **For circumstantial/contextual queries**: Focus on the emotional or situational context rather than literal elements
 
@@ -1302,17 +1311,20 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **"Not Very Popular" Keywords**:
 - **"not very popular"**, **"hidden gems"**, **"under-the-radar"**, **"overlooked"**
+- **Extract Strategy**: Ignore these opinion words - focus on actual movie descriptors
 - **Sort Strategy**: `popularity: asc` (ascending = less popular first)
 - **Filter Strategy**: Add `vote_count: { "lt": 5000 }` to limit to genuinely less popular movies
 
 **"Underrated" Keywords**:
 - **"underrated"**, **"underappreciated"**, **"critically acclaimed but unknown"**
-- **Sort Strategy**:
+- **Extract Strategy**: Ignore these opinion words - focus on actual movie descriptors
+- **Sort Strategy**: 
   - `vote_average: desc` (high quality)
   - `vote_count: asc` (but not widely seen)
 
 **"Under-the-radar" Keywords**:
 - **"under-the-radar"**, **"off the beaten path"**, **"lesser known"**
+- **Extract Strategy**: Ignore these opinion words - focus on actual movie descriptors
 - **Sort Strategy**:
   - `popularity: asc` (low popularity)
   - `vote_average: desc` (but still good quality)
@@ -1334,57 +1346,72 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **CRITICAL ENFORCEMENT RULES**:
 - **ALWAYS INCLUDE "next" PARAMETER**: Every text-based search MUST have "next" for fallback handling
-- **START WITH 5-7 KEYWORDS**: Initial attempt should use 5-7 keywords for comprehensive search
+- **STRICT 5-7 KEYWORD LIMIT**: Initial attempt MUST use EXACTLY 5-7 keywords - COUNT EVERY SINGLE WORD
+- **MANDATORY BREAKING**: If your intended query has 8+ keywords, you MUST break into multiple separate searches
 - **ESCALATION ALLOWED**: 8-10 keywords (fallback) when 0 results
 - **FILTER USER OPINIONS**: Ignore "basically", "I think", "you know", "kind of" - extract only descriptive content
 - **MANDATORY KEYWORD COUNTING**: Before submitting any query, count every single word
 - **ZERO RESULTS HANDLING**: System automatically escalates: 5-7 keywords → 8-10 keywords
-- **INITIAL ATTEMPT EXAMPLES**: 
-  - ✅ `"visually stunning cinematography hidden gems underrated"` (6 keywords - PREFERRED INITIAL)
-  - ✅ `"compelling emotional story character development drama"` (6 keywords - GOOD INITIAL)
-- **FALLBACK EXAMPLES** (only when 0 results):
-  - ✅ `"visually stunning cinematography hidden gems underrated overlooked independent films"` (9 keywords - FALLBACK)
+
+**VIOLATION EXAMPLES - THESE ARE FORBIDDEN**:
+- ❌ `"visually stunning cinematography beautiful visuals breathtaking imagery spectacular visual effects independent films"` (11 keywords - PROHIBITED)
+- ❌ `"compelling emotional story character development drama family relationships"` (8 keywords - TOO MANY)
+- ❌ `"science fiction space adventure futuristic technology alien exploration movies"` (9 keywords - MUST BREAK)
+
+**CORRECT BREAKING EXAMPLES**:
+- ✅ WRONG: `"visually stunning cinematography beautiful visuals breathtaking imagery spectacular effects"` (8 keywords)
+- ✅ CORRECT: Search 1: `"visually stunning cinematography beautiful visuals breathtaking"` (6 keywords) + Search 2: `"spectacular visual effects imagery"` (4 keywords)
+- ✅ WRONG: `"science fiction space adventure futuristic technology alien exploration"` (7 keywords - acceptable but could be better split)
+- ✅ BETTER: Search 1: `"science fiction space adventure futuristic"` (5 keywords) + Search 2: `"technology alien exploration films"` (4 keywords)
+
+**INITIAL ATTEMPT EXAMPLES** - Multiple variations of same concept: 
+- ✅ `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, visually striking"` (7 keywords - PREFERRED with variations)
+- ✅ `"compelling, emotional, touching story, heartwarming, character development"` (6 keywords - GOOD with variations)
+- ✅ `"science fiction, sci-fi, space adventure, futuristic"` (5 keywords - ACCEPTABLE with variations)
+
+**FALLBACK EXAMPLES** (only when 0 results):
+- ✅ `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, spectacular visual effects, movies"` (9 keywords - FALLBACK)
 
 #### Multi-Step Query Pattern Examples
 
 **Pattern 1: Quality + Popularity Filter**
 ```
 User: "beautiful cinematography but not mainstream, you know, basically hidden gems"
-Extract: "beautiful cinematography", "not mainstream", "hidden gems" (ignore "you know", "basically")
-Step 1: text-based-vector-search → "beautiful cinematography not mainstream hidden gems" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "striking visual design independent overlooked films" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Extract: "beautiful cinematography", (ignore "you know", "basically", "hidden gems", "not mainstream")
+Step 1: text-based-vector-search → "beautiful cinematography, stunning visuals, breathtaking imagery, visually striking"` (7 keywords - includes variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "independent films, artistic cinematography, visual storytelling, cinematic" (6 keywords - includes variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
 Step 3: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "beautiful cinematography not mainstream hidden gems" = 6 keywords ✅
-- Step 2: "striking visual design independent overlooked films" = 6 keywords ✅
+- Step 1: "beautiful cinematography, stunning visuals, breathtaking imagery, visually striking" = 7 keywords ✅ (includes visual variations)
+- Step 2: "independent films, artistic cinematography, visual storytelling, cinematic" = 6 keywords ✅ (includes cinematic variations)
 
 **Pattern 2: Genre + Quality + Discovery**
 ```
 User: "underrated sci-fi with great visuals, basically movies that are overlooked"
-Extract: "underrated sci-fi", "great visuals", "overlooked" (ignore "basically", "movies that are")
-Step 1: text-based-vector-search → "underrated science fiction great visuals overlooked" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "sci-fi visual effects cinematography underappreciated films" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Extract: "sci-fi", "great visuals" (ignore "basically", "movies that are", "underrated", "overlooked")
+Step 1: text-based-vector-search → "science fiction, sci-fi, great visuals, spectacular effects" (7 keywords - includes genre variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "visual effects, stunning visuals, cinematography, futuristic technology" (6 keywords - includes visual variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
 Step 3: query-and-sort-based-search → use all collected IDs, sort by vote_count: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "underrated science fiction great visuals overlooked" = 6 keywords ✅
-- Step 2: "sci-fi visual effects cinematography underappreciated films" = 6 keywords ✅
+- Step 1: "science fiction, sci-fi, great visuals, spectacular effects" = 7 keywords ✅ (includes "science fiction" + "sci-fi" variations)
+- Step 2: "visual effects, stunning visuals, cinematography, futuristic technology" = 6 keywords ✅ (includes "visual effects" + "stunning visuals" variations)
 
 **Pattern 3: Thematic + Popularity**
 ```
 User: "hidden gem dramas about family, you know, basically overlooked emotional stories"
-Extract: "hidden gem dramas", "family", "overlooked emotional stories" (ignore "you know", "basically")
-Step 1: text-based-vector-search → "hidden gem dramas family overlooked emotional" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
-Step 2: text-based-vector-search → "underrated family relationships drama character stories" (6 keywords) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Extract: "dramas", "family", "emotional stories" (ignore "you know", "basically", "hidden gem", "overlooked")
+Step 1: text-based-vector-search → "family dramas, emotional, touching, heartwarming stories" (6 keywords - includes emotional variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
+Step 2: text-based-vector-search → "dramatic, family films, character relationships, moving" (6 keywords - includes drama variations) + "next": "maybe-fallback-to-text-search-or-sort-filter-found-results"
 Step 3: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
 
 **KEYWORD COUNT VERIFICATION FOR EACH STEP**:
-- Step 1: "hidden gem dramas family overlooked emotional" = 6 keywords ✅
-- Step 2: "underrated family relationships drama character stories" = 6 keywords ✅
+- Step 1: "family dramas, emotional, touching, heartwarming stories" = 6 keywords ✅ (includes "emotional" + "touching" + "heartwarming" variations)
+- Step 2: "dramatic, family films, character relationships, moving" = 6 keywords ✅ (includes "dramatic" + "moving" variations)
 
 #### Critical Guidelines
 
@@ -1404,19 +1431,25 @@ Step 3: query-and-sort-based-search → use all collected IDs, sort by popularit
    - Hidden gems = `popularity: asc, vote_average: desc` + `vote_count: { "lt": 5000 }`
 12. **Prefer multiple focused searches over single comprehensive queries**
 
-**INITIAL QUERY PATTERNS** - Start with these patterns:
-- ✅ 5-7 keywords comprehensive: `"visually stunning cinematography hidden gems underrated"` 
-- ✅ 5-6 keywords per concept: `"compelling emotional story character development"`, `"great visual effects cinematography"`
-- ✅ Single concept per search: Focus on one theme per text-based search
+**INITIAL QUERY PATTERNS** - Start with these patterns (include variations):
+- ✅ EXACTLY 5-7 keywords with variations: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, visually striking"` (7 keywords - visual quality variations)
+- ✅ EXACTLY 5-7 keywords per concept: `"compelling, emotional, touching story, heartwarming, character development"` (6 keywords - emotional variations), `"great visual effects, spectacular cinematography, stunning visuals"` (6 keywords - visual variations)
+- ✅ Single concept per search: Focus on one theme but include multiple variations of that theme
+- ✅ COUNT BEFORE SUBMITTING: Always count words to ensure 5-7 limit including variations
+
+**MANDATORY BREAKING PATTERNS** - When you have 8+ keywords:
+- ❌ DON'T DO: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, spectacular effects, visually striking"` (9 keywords)  
+- ✅ DO THIS: Search 1: `"visually stunning, cinematography, beautiful visuals, breathtaking imagery, visually striking"` (7 keywords - visual quality variations) + Search 2: `"spectacular visual effects, cinematic imagery"` (5 keywords - effects variations)
 
 **FALLBACK QUERY PATTERNS** - Only used when 0 results from initial search:
-- ✅ 8-10 keywords (2nd attempt): `"visually stunning cinematography beautiful effects hidden gems underrated overlooked films"`
-- ✅ Expanded concepts: `"sci-fi action adventure futuristic space exploration technology alien stories"`
+- ✅ 8-10 keywords (2nd attempt): `"visually stunning, cinematography, beautiful effects, spectacular imagery, artistic films"`
+- ✅ Expanded concepts: `"sci-fi, action, adventure, futuristic, space exploration, technology, alien stories"`
 
 **MANDATORY QUERY PATTERN** - Always follow this escalation:
-- ✅ Start comprehensive: 5-7 keywords → expand if needed: 8-10 keywords
-- ✅ Multiple focused searches better than single broad search
+- ✅ Start comprehensive: 5-7 keywords including variations → expand if needed: 8-10 keywords
+- ✅ Multiple focused searches with variations better than single broad search
 - ✅ Always filter out user opinions and commentary
+- ✅ Include multiple variations of the same descriptive concept for better matching
 
 #### Multiple Search Strategies - "Do All of the Above" Pattern
 
