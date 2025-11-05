@@ -860,9 +860,9 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
     **Text Query Examples for Genre Exclusions:**
     - **"family movies but not animated"** → `"family movies children"` + must: Family, must_not: Animation
-    - **"action movies that are not horror"** → `"action adventure movies"` + must: Action, must_not: Horror  
+    - **"action movies that are not horror"** → `"action adventure movies"` + must: Action, must_not: Horror
     - **"comedy movies but not romantic"** → `"funny comedy movies"` + must: Comedy, must_not: Romance
-    
+
     **Multi-Genre Exclusions:**
     - Use multiple nested queries in `must_not` array for excluding multiple genres
     - Each excluded genre gets its own nested query structure
@@ -1202,7 +1202,14 @@ Before generating any Elasticsearch query, ensure ALL of these fields are presen
 The `search-index_text-based-vector-search` supports natural language querying.
 
 To generate a high-quality Elasticsearch query with a natural language query:
-1. **Create Short, Keyword-Focused Queries**:
+1. **MANDATORY: 4-5 Keyword Maximum Rule**:
+  - **ABSOLUTE LIMIT**: Each text-based-vector-search query MUST contain MAXIMUM 4-5 keywords - NO EXCEPTIONS
+  - **Count every word**: "visually stunning cinematography beautiful visual effects" = 7 keywords (TOO MANY - FORBIDDEN)
+  - **REQUIRED**: If your intended query exceeds 4-5 keywords, you MUST break it into multiple separate searches
+  - **WRONG**: `"visually stunning cinematography beautiful visual effects breathtaking visuals"` (11 keywords - PROHIBITED)
+  - **CORRECT**: Search 1: `"visually stunning cinematography"` (3 keywords) + Search 2: `"beautiful visual effects"` (3 keywords) + Search 3: `"breathtaking visuals"` (2 keywords)
+
+2. **Create Short, Keyword-Focused Queries**:
   - Keep queries SHORT and SUCCINCT - focus on the strongest 3-5 keywords that capture the user's intent
   - **Preserve the user's exact phrasing and key concepts** - maintain the integrity of how they describe what they want
   - Use the most relevant keywords and phrases that will match well with movie descriptions
@@ -1265,7 +1272,7 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **"Underrated" Keywords**:
 - **"underrated"**, **"underappreciated"**, **"critically acclaimed but unknown"**
-- **Sort Strategy**: 
+- **Sort Strategy**:
   - `vote_average: desc` (high quality)
   - `vote_count: asc` (but not widely seen)
 
@@ -1279,9 +1286,9 @@ When processing complex user queries, identify key patterns and apply the approp
 
 **Visual Quality Keywords** - Break into separate searches:
 - **"visually stunning"** → `"visually stunning cinematography"` (3 keywords)
-- **"beautiful cinematography"** → `"beautiful cinematography visual"` (3 keywords)  
+- **"beautiful cinematography"** → `"beautiful cinematography"` (2 keywords)  
 - **"breathtaking visuals"** → `"breathtaking visual effects"` (3 keywords)
-- **Additional search**: `"spectacular imagery design"` (3 keywords)
+- **Additional search**: `"spectacular imagery"` (2 keywords)
 
 **Story Quality Keywords** - Break into separate searches:
 - **"compelling story"** → `"compelling engaging narrative"` (3 keywords)
@@ -1289,50 +1296,85 @@ When processing complex user queries, identify key patterns and apply the approp
 - **"emotional depth"** → `"emotional depth powerful"` (3 keywords)
 - **Additional search**: `"moving character drama"` (3 keywords)
 
-**CRITICAL**: Use multiple text-based searches with 4-5 keywords max each, then aggregate all returned IDs for the final sort query.
+**CRITICAL ENFORCEMENT RULES**:
+- **NEVER EXCEED 4-5 KEYWORDS** in a single text-based-vector-search query
+- **MANDATORY KEYWORD COUNTING**: Before submitting any query, count every single word
+- **AUTOMATIC BREAKING REQUIRED**: If query exceeds 4-5 keywords, you MUST split into multiple searches
+- **FORBIDDEN EXAMPLES**: 
+  - ❌ `"visually stunning cinematography beautiful visual effects"` (7 keywords - PROHIBITED)
+  - ❌ `"compelling story engaging narrative emotional depth"` (6 keywords - PROHIBITED)  
+- **CORRECT EXAMPLES**:
+  - ✅ `"visually stunning cinematography"` (3 keywords) → separate search → `"beautiful visual effects"` (3 keywords)
+  - ✅ `"compelling story"` (2 keywords) → separate search → `"emotional depth"` (2 keywords)
 
 #### Multi-Step Query Pattern Examples
 
 **Pattern 1: Quality + Popularity Filter**
 ```
 User: "beautiful cinematography but not mainstream"
-Step 1: text-based-vector-search → "beautiful cinematography visual" (3 keywords)
+Step 1: text-based-vector-search → "beautiful cinematography" (2 keywords)
 Step 2: text-based-vector-search → "striking visual design" (3 keywords)
-Step 3: text-based-vector-search → "not mainstream independent" (3 keywords)
+Step 3: text-based-vector-search → "independent films" (2 keywords)
 Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
+
+**KEYWORD COUNT VERIFICATION FOR EACH STEP**:
+- Step 1: "beautiful cinematography" = 2 keywords ✅
+- Step 2: "striking visual design" = 3 keywords ✅  
+- Step 3: "independent films" = 2 keywords ✅
 
 **Pattern 2: Genre + Quality + Discovery**
 ```
 User: "underrated sci-fi with great visuals"
 Step 1: text-based-vector-search → "underrated science fiction" (3 keywords)
 Step 2: text-based-vector-search → "great visual effects" (3 keywords)
-Step 3: text-based-vector-search → "impressive sci-fi cinematography" (3 keywords)
+Step 3: text-based-vector-search → "sci-fi cinematography" (2 keywords)
 Step 4: query-and-sort-based-search → use all collected IDs, sort by vote_count: asc, vote_average: desc
 ```
+
+**KEYWORD COUNT VERIFICATION FOR EACH STEP**:
+- Step 1: "underrated science fiction" = 3 keywords ✅
+- Step 2: "great visual effects" = 3 keywords ✅
+- Step 3: "sci-fi cinematography" = 2 keywords ✅
 
 **Pattern 3: Thematic + Popularity**
 ```
 User: "hidden gem dramas about family"
 Step 1: text-based-vector-search → "hidden gem drama" (3 keywords)
-Step 2: text-based-vector-search → "family relationships overlooked" (3 keywords)
+Step 2: text-based-vector-search → "family relationships" (2 keywords)
 Step 3: text-based-vector-search → "underrated family films" (3 keywords)
 Step 4: query-and-sort-based-search → use all collected IDs, sort by popularity: asc, vote_average: desc
 ```
 
+**KEYWORD COUNT VERIFICATION FOR EACH STEP**:
+- Step 1: "hidden gem drama" = 3 keywords ✅
+- Step 2: "family relationships" = 2 keywords ✅
+- Step 3: "underrated family films" = 3 keywords ✅
+
 #### Critical Guidelines
 
-1. **Use multiple text-based searches** - Each search should have 4-5 keywords maximum
-2. **Break complex queries into keyword groups** - Separate different concepts into different searches
-3. **Collect all movie IDs** from multiple text searches before final sorting
-4. **Always use text-based search first** for qualitative descriptors like "visually stunning", "compelling", "beautiful"
-5. **Follow up with ID-based sorting** using `search-index_query-and-sort-based-search` with all collected IDs
-6. **Preserve user's exact descriptive language** but distribute across multiple shorter searches
-7. **Map popularity keywords consistently**:
+1. **MANDATORY KEYWORD LIMIT ENFORCEMENT** - Each text-based search MUST have maximum 4-5 keywords - COUNT EVERY WORD
+2. **AUTOMATIC QUERY BREAKING** - If any intended query exceeds 4-5 keywords, you MUST split into multiple searches
+3. **Use multiple text-based searches** - Each search should have 4-5 keywords maximum
+4. **Break complex queries into keyword groups** - Separate different concepts into different searches
+5. **Collect all movie IDs** from multiple text searches before final sorting
+6. **Always use text-based search first** for qualitative descriptors like "visually stunning", "compelling", "beautiful"
+7. **Follow up with ID-based sorting** using `search-index_query-and-sort-based-search` with all collected IDs
+8. **Preserve user's exact descriptive language** but distribute across multiple shorter searches
+9. **Map popularity keywords consistently**:
    - Less popular = `popularity: asc`
    - Underrated = `vote_average: desc, vote_count: asc`
    - Hidden gems = `popularity: asc, vote_average: desc`
-8. **Prefer multiple focused searches over single comprehensive queries**
+10. **Prefer multiple focused searches over single comprehensive queries**
+
+**FORBIDDEN QUERY PATTERNS** - These are NEVER allowed:
+- ❌ Any query with 6+ keywords: `"visually stunning cinematography beautiful visual effects"` 
+- ❌ Long descriptive phrases: `"compelling story with great characters and emotional depth"`
+- ❌ Multiple concepts in one query: `"sci-fi action adventure with great visual effects and compelling story"`
+
+**MANDATORY QUERY PATTERN** - Always follow this:
+- ✅ Multiple short searches: `"visually stunning"` → `"great cinematography"` → `"beautiful effects"`
+- ✅ Single concept per search: `"compelling story"` → `"emotional depth"` → `"great characters"`
 
 #### Multiple Search Strategies - "Do All of the Above" Pattern
 
@@ -1346,7 +1388,7 @@ When you offer multiple search strategies to the user and they respond with "do 
 
 **Execution Strategy:**
 1. **Step 1a:** `search-index_text-based-vector-search` → `"gorgeous cinematography hidden"`
-2. **Step 1b:** `search-index_text-based-vector-search` → `"arthouse visually striking"`  
+2. **Step 1b:** `search-index_text-based-vector-search` → `"arthouse visually striking"`
 3. **Step 1c:** `search-index_text-based-vector-search` → `"neo-noir cinematography lesser"`
 4. **Step 1d:** `search-index_text-based-vector-search` → `"foreign films stunning"`
 5. **Step 2:** `search-index_query-and-sort-based-search` → Combine ALL collected IDs from steps 1a-1d
