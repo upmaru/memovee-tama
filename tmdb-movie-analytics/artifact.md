@@ -109,6 +109,8 @@ When using horizontal bar charts (`"horizontal": true`), set the data label orie
 
 **Best Practice**: Data labels should almost always be horizontal when the chart is horizontal to ensure text is readable and properly aligned with the bars.
 
+**Terminology Note**: When users refer to "numbers on the bars", "values on the bars", or "text on the bars", they are referring to the `dataLabels` configuration.
+
 ## Example: Rating Distribution Bar Chart
 
 Let's say you receive Elasticsearch aggregation data showing movie rating ranges like this:
