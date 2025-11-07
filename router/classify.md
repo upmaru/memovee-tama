@@ -281,9 +281,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </routing>
   <reasoning>
     - The user is requesting movies they haven't seen, which requires loading their seen markings first before browsing movies.
-    
+
     - Routing to "marking" will provide access to tooling that will load the user's seen movie markings, which can then be used to filter out seen movies during browsing.
-    
+
     - CRITICAL: Only route to "marking" if there is no existing list of seen movies in context. If seen movies are already available, route to "movie-browsing" instead.
   </reasoning>
 </case>
@@ -307,9 +307,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </routing>
   <reasoning>
     - The user is requesting movies they haven't seen, and there is already a list of seen movies available in context.
-    
+
     - Routing to "movie-browsing" will provide access to tooling that can use the existing seen movie markings to filter out seen movies during the search.
-    
+
     - Since the seen markings are already loaded, there's no need to route to "marking" first.
   </reasoning>
 </case>
@@ -542,13 +542,13 @@ The user's message may reference a piece of information or data in a search resu
   </routing>
   <reasoning>
     - The user is asking for statistical analysis, aggregated data, trends, numerical insights, visualizations, charts, graphs, or range distributions about movies.
-    
+
     - These queries require analytics tools that can perform aggregations, calculations, statistical analysis, and data visualization on movie data.
-    
+
     - Questions about counts, totals, averages, trends, distributions, range distributions, charts, graphs, visualizations, and comparative analysis all fall under analytics.
-    
+
     - Keywords like "range distribution", "chart", "graph", "visualization", "distribution" indicate analytical queries that need movie-analytics routing.
-    
+
     - The user wants insights derived from data analysis rather than browsing specific movies or getting details about particular films.
   </reasoning>
 </case>
@@ -556,7 +556,7 @@ The user's message may reference a piece of information or data in a search resu
 <case>
   <condition>
     Previous messages include charts, graphs, visualizations, or analytics data from movie-analytics.
-    
+
     The user is asking to modify, change, or transform an existing chart/visualization into a different format or chart type.
   </condition>
   <user-query>
@@ -584,13 +584,13 @@ The user's message may reference a piece of information or data in a search resu
   </routing>
   <reasoning>
     - The user is asking to modify the chart type or visualization format of existing analytics data.
-    
+
     - Chart modification requests require movie-analytics because they need access to the same underlying aggregation data and visualization tools.
-    
+
     - Routing to movie-analytics ensures the chart can be re-rendered with the new format while maintaining the same data source and analytical context.
-    
+
     - Keywords like "render as", "change to", "convert to", "display as", "transform into", "make this a" followed by chart types indicate chart modification requests.
-    
+
     - CRITICAL: Any request to change chart types or visualization formats from existing analytics data should ALWAYS route to movie-analytics, NOT movie-browsing.
   </reasoning>
 </case>
@@ -598,7 +598,7 @@ The user's message may reference a piece of information or data in a search resu
 <case>
   <condition>
     Previous messages include charts, graphs, visualizations, or analytics data from movie-analytics.
-    
+
     The user is asking to modify chart elements, styling, or configuration (bars, labels, orientation, data labels, axes, colors, etc.).
   </condition>
   <user-query>
@@ -628,13 +628,13 @@ The user's message may reference a piece of information or data in a search resu
   </routing>
   <reasoning>
     - The user is asking to modify chart elements, styling, or configuration of existing analytics data.
-    
+
     - Chart element modifications require movie-analytics because they need access to the chart configuration options and re-rendering capabilities.
-    
+
     - These modifications affect chart plotOptions, dataLabels, styling, axes, colors, and other ApexCharts configuration properties.
-    
+
     - Keywords like "bar", "labels", "orientation", "colors", "axis", "chart", "data labels" in the context of chart modifications indicate chart element requests.
-    
+
     - CRITICAL: Any request to modify chart elements, styling, or configuration should route to movie-analytics, NOT patch. Patch is only for basic display layout changes of non-chart content.
   </reasoning>
 </case>
