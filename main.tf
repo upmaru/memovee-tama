@@ -1,6 +1,6 @@
 module "memovee" {
   source  = "upmaru/base/tama//modules/messaging"
-  version = "0.4.7"
+  version = "0.4.8"
 
   depends_on = [module.global.schemas]
 
@@ -96,7 +96,7 @@ resource "tama_prompt" "reply-artifact" {
 
 module "artifact-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.4.7"
+  version = "0.4.8"
 
   thought_id = tama_modular_thought.reply-artifact.id
   contexts = {
@@ -191,7 +191,7 @@ resource "tama_thought_processor" "reply-processor" {
 
 module "reply-context" {
   source  = "upmaru/base/tama//modules/thought-context"
-  version = "0.4.7"
+  version = "0.4.8"
 
   thought_id = tama_modular_thought.reply-generation.id
   contexts = {
@@ -286,6 +286,11 @@ resource "tama_listener_filter" "personalization" {
 resource "tama_listener_filter" "marking" {
   listener_id = tama_listener.memovee-ui-listener.id
   chain_id    = tama_chain.handle-marking.id
+}
+
+resource "tama_listener_filter" "movie-analytics" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.movie-analytics.chain_id
 }
 
 resource "tama_listener_filter" "movie-browsing" {
