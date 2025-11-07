@@ -92,9 +92,10 @@ This ensures proper color distribution across treemap segments for better visual
 
 **Note**: If the user specifically requests a "less colorful" or "monochrome" treemap, you can remove the entire `plotOptions` section to use the default treemap coloring scheme.
 
-#### Horizontal Bar Charts
-When using horizontal bar charts (`"horizontal": true`), set the data label orientation to horizontal for better readability:
+#### Bar Charts Data Labels
+For both horizontal and vertical bar charts, data labels should use horizontal orientation for better readability:
 
+**Horizontal Bar Charts:**
 ```json
 "plotOptions": {
   "bar": {
@@ -107,7 +108,24 @@ When using horizontal bar charts (`"horizontal": true`), set the data label orie
 }
 ```
 
-**Best Practice**: Data labels should almost always be horizontal when the chart is horizontal to ensure text is readable and properly aligned with the bars.
+**Vertical Bar Charts:**
+```json
+"plotOptions": {
+  "bar": {
+    "horizontal": false,
+    "dataLabels": {
+      "position": "top",
+      "orientation": "horizontal"
+    }
+  }
+}
+```
+
+**Critical Rule**: Data labels should NEVER use `"orientation": "vertical"` as it makes text hard to read. Always use `"orientation": "horizontal"` or omit data labels entirely if they would be cluttered.
+
+**Best Practice**: If horizontal data labels would be too crowded or hard to read, disable data labels completely with `"dataLabels": {"enabled": false}` rather than using vertical orientation.
+
+**Preferred Approach**: Use tooltips instead of data labels whenever possible. Tooltips provide a cleaner chart appearance and make it easier for users to see precise data values when they hover over chart elements. Set `"dataLabels": {"enabled": false}` and ensure tooltips are properly configured with appropriate formatters.
 
 **Terminology Note**: When users refer to "numbers on the bars", "values on the bars", or "text on the bars", they are referring to the `dataLabels` configuration.
 
