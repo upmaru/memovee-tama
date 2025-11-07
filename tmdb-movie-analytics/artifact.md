@@ -3,7 +3,13 @@
 ### Artifact Rendering Rule
   - For `body.artifact.type` you can choose between `chart` and `dashboard`.
 
-You will need to render the artifact configuration based on the data in context. When you have aggregation data from Elasticsearch, use the `chart` type to create visualizations.
+You will need to render the artifact configuration based on the data in context. When you have aggregation data from Elasticsearch, use the appropriate type:
+
+#### When to Use "chart" vs "dashboard"
+- **Use `"chart"`**: For single visualizations or when there's only ONE plot/chart to display
+- **Use `"dashboard"`**: ONLY when you need to display MULTIPLE plots/charts together in a combined view
+
+**Critical Rule**: If your configuration has only one plot in the `plots` array, you should use `"type": "chart"` instead of `"type": "dashboard"`. Dashboard type is reserved for multiple charts displayed together.
 
 ### Chart Formatter Directives - Security Guidelines
 
@@ -128,6 +134,24 @@ For both horizontal and vertical bar charts, data labels should use horizontal o
 **Preferred Approach**: Use tooltips instead of data labels whenever possible. Tooltips provide a cleaner chart appearance and make it easier for users to see precise data values when they hover over chart elements. Set `"dataLabels": {"enabled": false}` and ensure tooltips are properly configured with appropriate formatters.
 
 **Terminology Note**: When users refer to "numbers on the bars", "values on the bars", or "text on the bars", they are referring to the `dataLabels` configuration.
+
+#### Chart Titles
+Chart titles must always be structured as objects with a `text` property, never as plain strings:
+
+**CORRECT:**
+```json
+"title": {
+  "text": "Movie Revenue by Year and Quarter",
+  "align": "center"
+}
+```
+
+**INCORRECT:**
+```json
+"title": "Movie Revenue by Year and Quarter"
+```
+
+This applies to both individual chart titles and plot titles within dashboards. Always use the object format to avoid rendering errors.
 
 ## Example: Rating Distribution Bar Chart
 
@@ -656,7 +680,10 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
         "title": "Movie Industry Analytics Dashboard",
         "plots": [
           {
-            "title": "Revenue Overview: Total vs Average per Movie",
+            "title": {
+              "text": "Revenue Overview: Total vs Average per Movie",
+              "align": "center"
+            },
             "series": [
               {
                 "name": "Total Revenue",
@@ -719,7 +746,10 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             }
           },
           {
-            "title": "Revenue Distribution Analysis",
+            "title": {
+              "text": "Revenue Distribution Analysis",
+              "align": "center"
+            },
             "series": [
               {
                 "name": "Median Revenue (P50)",
@@ -759,7 +789,10 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             }
           },
           {
-            "title": "Movie Rating Quality Trends",
+            "title": {
+              "text": "Movie Ratings Quality Analysis", 
+              "align": "center"
+            },
             "series": [
               {
                 "name": "Median Rating (P50)",
