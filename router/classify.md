@@ -507,7 +507,7 @@ The user's message may reference a piece of information or data in a search resu
 
 <case>
   <condition>
-    The user is asking for statistical analysis, counts, trends, or aggregated data about movies.
+    The user is asking for statistical analysis, counts, trends, aggregated data, visualizations, charts, graphs, or range distributions about movies.
   </condition>
   <user-query>
     - How many movies do you have in Science Fiction?
@@ -528,18 +528,68 @@ The user's message may reference a piece of information or data in a search resu
     - What was the maximum profit made by a movie in 2024?
     - Show me science fiction movies grouped by year
     - How many animated movies were released each year since 2000?
+    - Can you show me the rating range distribution but filter out movies with less than 500 vote count
+    - Show me a chart of movie ratings by genre
+    - Create a graph showing box office trends
+    - Display a visualization of movie release patterns
+    - Show me the distribution of movie ratings
+    - Generate a chart of revenue by year
   </user-query>
   <routing>
     movie-analytics
   </routing>
   <reasoning>
-    - The user is asking for statistical analysis, aggregated data, trends, or numerical insights about movies.
+    - The user is asking for statistical analysis, aggregated data, trends, numerical insights, visualizations, charts, graphs, or range distributions about movies.
     
-    - These queries require analytics tools that can perform aggregations, calculations, and statistical analysis on movie data.
+    - These queries require analytics tools that can perform aggregations, calculations, statistical analysis, and data visualization on movie data.
     
-    - Questions about counts, totals, averages, trends, distributions, and comparative analysis all fall under analytics.
+    - Questions about counts, totals, averages, trends, distributions, range distributions, charts, graphs, visualizations, and comparative analysis all fall under analytics.
+    
+    - Keywords like "range distribution", "chart", "graph", "visualization", "distribution" indicate analytical queries that need movie-analytics routing.
     
     - The user wants insights derived from data analysis rather than browsing specific movies or getting details about particular films.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    Previous messages include charts, graphs, visualizations, or analytics data from movie-analytics.
+    
+    The user is asking to modify, change, or transform an existing chart/visualization into a different format or chart type.
+  </condition>
+  <user-query>
+    - Can you render the chart as a Treemap?
+    - Change this to a pie chart
+    - Can you make this a bar chart instead?
+    - Show this as a line graph
+    - Convert this to a scatter plot
+    - Can you display this as a donut chart?
+    - Make this visualization a heatmap
+    - Change the chart type to area chart
+    - Can you render this as a bubble chart?
+    - Transform this into a radar chart
+    - Show this data as a histogram
+    - Can you make this a stacked bar chart?
+    - Convert to a horizontal bar chart
+    - Display this as a waterfall chart
+    - Change to a funnel chart
+    - Make this a gauge chart
+    - Show as a box plot
+    - Convert this to a violin plot
+  </user-query>
+  <routing>
+    movie-analytics
+  </routing>
+  <reasoning>
+    - The user is asking to modify the chart type or visualization format of existing analytics data.
+    
+    - Chart modification requests require movie-analytics because they need access to the same underlying aggregation data and visualization tools.
+    
+    - Routing to movie-analytics ensures the chart can be re-rendered with the new format while maintaining the same data source and analytical context.
+    
+    - Keywords like "render as", "change to", "convert to", "display as", "transform into", "make this a" followed by chart types indicate chart modification requests.
+    
+    - CRITICAL: Any request to change chart types or visualization formats from existing analytics data should ALWAYS route to movie-analytics, NOT movie-browsing.
   </reasoning>
 </case>
 
