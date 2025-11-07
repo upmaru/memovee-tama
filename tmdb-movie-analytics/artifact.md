@@ -75,6 +75,40 @@ You can use formatters in these chart option locations:
 - User metrics: `"unit:users"`
 - Percentages: `"percent:1"`
 
+### Chart-Specific Configuration Requirements
+
+#### Treemap Charts
+When using treemap charts (`"type": "treemap"`), you must include the following plotOptions configuration:
+
+```json
+"plotOptions": {
+  "treemap": {
+    "distributed": true
+  }
+}
+```
+
+This ensures proper color distribution across treemap segments for better visual distinction.
+
+**Note**: If the user specifically requests a "less colorful" or "monochrome" treemap, you can remove the entire `plotOptions` section to use the default treemap coloring scheme.
+
+#### Horizontal Bar Charts
+When using horizontal bar charts (`"horizontal": true`), set the data label orientation to horizontal for better readability:
+
+```json
+"plotOptions": {
+  "bar": {
+    "horizontal": true,
+    "dataLabels": {
+      "position": "center",
+      "orientation": "horizontal"
+    }
+  }
+}
+```
+
+**Best Practice**: Data labels should almost always be horizontal when the chart is horizontal to ensure text is readable and properly aligned with the bars.
+
 ## Example: Rating Distribution Bar Chart
 
 Let's say you receive Elasticsearch aggregation data showing movie rating ranges like this:
@@ -332,7 +366,7 @@ To render this nested data as a stacked bar chart showing movies by year with ra
             "data": [0, 0, 0, 0, 0, 0, 0, 0, 0]
           },
           {
-            "name": "1-2", 
+            "name": "1-2",
             "data": [0, 0, 0, 0, 1, 0, 0, 0, 0]
           },
           {

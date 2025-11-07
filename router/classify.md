@@ -110,7 +110,9 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
     - Routing to "patch" will provide access to tooling that will allow the modification of the results rendering/display format or column order of a table.
 
-    - CRITICAL: "patch" is ONLY for visual/display changes, NOT for changing search parameters like sorting, filtering, or data content.
+    - CRITICAL: "patch" is ONLY for basic visual/display changes of non-chart content, NOT for changing search parameters like sorting, filtering, or data content.
+
+    - CRITICAL: "patch" is NOT for chart modifications (bars, labels, colors, orientations, etc.). Chart element modifications should route to "movie-analytics".
   </reasoning>
 </case>
 
@@ -590,6 +592,50 @@ The user's message may reference a piece of information or data in a search resu
     - Keywords like "render as", "change to", "convert to", "display as", "transform into", "make this a" followed by chart types indicate chart modification requests.
     
     - CRITICAL: Any request to change chart types or visualization formats from existing analytics data should ALWAYS route to movie-analytics, NOT movie-browsing.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    Previous messages include charts, graphs, visualizations, or analytics data from movie-analytics.
+    
+    The user is asking to modify chart elements, styling, or configuration (bars, labels, orientation, data labels, axes, colors, etc.).
+  </condition>
+  <user-query>
+    - The number on the bar is hard to read can you adjust the orientation?
+    - Can you remove the number on the bar itself?
+    - Make the bars horizontal instead of vertical
+    - Can you change the bar colors?
+    - Remove the data labels from the chart
+    - Can you make the bars thicker?
+    - Adjust the bar spacing
+    - Change the axis labels
+    - Can you rotate the x-axis labels?
+    - Make the chart title bigger
+    - Can you add data labels to the bars?
+    - Change the legend position
+    - Can you make the bars narrower?
+    - Adjust the chart height
+    - Can you change the tooltip format?
+    - Remove the grid lines
+    - Can you add borders to the bars?
+    - Change the font size of the labels
+    - Make the chart colors more vibrant
+    - Can you adjust the margins?
+  </user-query>
+  <routing>
+    movie-analytics
+  </routing>
+  <reasoning>
+    - The user is asking to modify chart elements, styling, or configuration of existing analytics data.
+    
+    - Chart element modifications require movie-analytics because they need access to the chart configuration options and re-rendering capabilities.
+    
+    - These modifications affect chart plotOptions, dataLabels, styling, axes, colors, and other ApexCharts configuration properties.
+    
+    - Keywords like "bar", "labels", "orientation", "colors", "axis", "chart", "data labels" in the context of chart modifications indicate chart element requests.
+    
+    - CRITICAL: Any request to modify chart elements, styling, or configuration should route to movie-analytics, NOT patch. Patch is only for basic display layout changes of non-chart content.
   </reasoning>
 </case>
 
