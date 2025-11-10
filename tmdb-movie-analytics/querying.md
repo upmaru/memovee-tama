@@ -45,7 +45,37 @@ All analytics queries should follow this pattern:
     "_source": ["id"],    // REQUIRED: Minimum for analytics queries
     "limit": 0,          // REQUIRED: Focus on aggregations only
     "query": { ... }     // REQUIRED: Never omit this field
-  }
+  },
+  "next": "validate-results-or-retry"  // REQUIRED: Error handling parameter
+}
+```
+
+**MANDATORY: "next" Parameter**
+- **ALWAYS include** the `"next": "validate-results-or-retry"` parameter at the top level
+- This allows the LLM to rewrite queries if Elasticsearch returns errors
+- Use `"next": "validate-results-or-retry"` for all analytics queries
+- Return `no-call()` only when the Elasticsearch response is the desired result
+
+**CRITICAL: Valid JSON Syntax Rules**
+- **NEVER use invalid JSON syntax** like `"aggs?": "placeholder"` or similar constructs
+- **NO comments, placeholders, or question marks** in JSON keys or values
+- **NO trailing commas** in JSON objects or arrays
+- **ALL strings must be properly quoted** and escaped
+- If you need to add placeholder content, use valid JSON values like `"temp_agg": {"value_count": {"field": "id"}}`
+
+**COMMON ERROR TO AVOID:**
+```json
+// ❌ WRONG - This causes parsing errors:
+"high_vote_movies": {
+  "filter": {...},
+  "aggs": {...},
+  "aggs?": "placeholder"  // Invalid JSON syntax with ? and placeholder
+}
+
+// ✅ CORRECT - Valid JSON only:
+"high_vote_movies": {
+  "filter": {...},
+  "aggs": {...}
 }
 ```
 
@@ -90,7 +120,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -138,7 +169,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -201,7 +233,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -270,7 +303,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -339,7 +373,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -481,7 +516,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -564,7 +600,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -600,7 +637,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -653,7 +691,8 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
@@ -669,7 +708,8 @@ Before generating any Elasticsearch analytics query, ensure ALL of these fields 
     "_source": ["id"],                     // REQUIRED: Minimum field for analytics
     "limit": 0,                            // REQUIRED: 0 for aggregation-only queries
     "query": { "match_all": {} }           // REQUIRED: Never omit this field
-  }
+  },
+  "next": "validate-results-or-retry"      // REQUIRED: Error handling parameter
 }
 ```
 
@@ -754,20 +794,22 @@ Always structure analytics responses to include:
 2. **Always use `limit: 0`** for analytics queries to focus on aggregations
 3. **MANDATORY: Include `_source: ["id"]`** - minimum required field for analytics queries
 4. **MANDATORY: Include `query` field** - never omit this field, use `match_all: {}` if no filtering needed
-5. **CRITICAL: Aggregation structure rules** - Each aggregation name can have only ONE aggregation type definition:
+5. **MANDATORY: Include `next` parameter** - always include `"next": "validate-results-or-retry"` for error handling
+6. **CRITICAL: Valid JSON syntax only** - never use invalid constructs like `"aggs?": "placeholder"` or similar
+7. **CRITICAL: Aggregation structure rules** - Each aggregation name can have only ONE aggregation type definition:
    - ✓ CORRECT: Single aggregation type with sub-aggregations nested in `aggs` block
    - ✗ WRONG: Multiple aggregation types as siblings under same name (causes parsing error)
    - When using filter/nested/terms aggregations, all additional metrics must be nested inside the parent aggregation's `aggs` block
-6. **CRITICAL: For genre questions, always use comprehensive genre aggregation** - never filter by specific genre, always return ALL genres with counts
-7. **Include appropriate filters** to scope the analysis meaningfully
-8. **Use runtime mappings** for calculated fields like profit and ROI
-9. **Structure hierarchical aggregations** for multi-dimensional analysis
-10. **Include statistical context** with percentiles and distribution analysis
-11. **Format dates consistently** using appropriate format patterns
-12. **Handle missing data gracefully** with proper field existence checks
-13. **Provide comparative context** by including multiple metrics when relevant
-14. **Use `match_all` query for comprehensive analysis** - provides complete dataset context
-15. **Use `terms` aggregation for category breakdowns** - captures all categories with counts
+8. **CRITICAL: For genre questions, always use comprehensive genre aggregation** - never filter by specific genre, always return ALL genres with counts
+9. **Include appropriate filters** to scope the analysis meaningfully
+10. **Use runtime mappings** for calculated fields like profit and ROI
+11. **Structure hierarchical aggregations** for multi-dimensional analysis
+12. **Include statistical context** with percentiles and distribution analysis
+13. **Format dates consistently** using appropriate format patterns
+14. **Handle missing data gracefully** with proper field existence checks
+15. **Provide comparative context** by including multiple metrics when relevant
+16. **Use `match_all` query for comprehensive analysis** - provides complete dataset context
+17. **Use `terms` aggregation for category breakdowns** - captures all categories with counts
 
 ## Aggregation Structure Rules
 
@@ -808,7 +850,8 @@ Always structure analytics responses to include:
         }
       }
     }
-  }
+  },
+  "next": "validate-results-or-retry"
 }
 ```
 
