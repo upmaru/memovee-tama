@@ -27,7 +27,7 @@ When using `"type": "dashboard"`, you MUST include a `"title"` field at the top 
 
 Examples of when to use dashboard for multiple statistics:
 - Revenue stats + Profit stats + Rating stats
-- Multiple percentile breakdowns (revenue percentiles + vote percentiles)  
+- Multiple percentile breakdowns (revenue percentiles + vote percentiles)
 - Summary stats + Top movies + Monthly breakdowns
 - Any case with 3+ different metric types that would benefit from separate visualizations
 
@@ -220,6 +220,46 @@ You can use formatters in these chart option locations:
 - `dataLabels.formatter`
 - `plotOptions.[chartType].dataLabels.formatter`
 
+#### MANDATORY: DataLabels Formatter Requirements
+
+**Always use formatters for dataLabels when enabled** to ensure readable values on charts:
+
+```json
+"dataLabels": {
+  "enabled": true,
+  "formatter": "unit:million",  // MANDATORY when dataLabels are enabled
+  "offsetY": -20,
+  "style": {
+    "fontSize": "12px",
+    "colors": ["#304758"]
+  }
+}
+```
+
+**Control position via plotOptions (NO formatter here):**
+```json
+"plotOptions": {
+  "bar": {
+    "horizontal": false,
+    "dataLabels": {
+      "position": "top"  // Position only - formatter goes in top-level dataLabels
+    }
+  }
+}
+```
+
+**Critical Rules:**
+- **NEVER enable dataLabels without a formatter** - raw large numbers are unreadable
+- **ALWAYS use string-based formatters** - never JavaScript functions (security requirement)
+- **Formatter goes in top-level `dataLabels` object** - not in `plotOptions.*.dataLabels`
+- **Use same formatter as y-axis** for consistency (e.g., if yaxis uses `"unit:million"`, dataLabels should too)
+- **Consider disabling dataLabels** (`"enabled": false`) if they would be cluttered, rely on tooltips instead
+- **Format examples:**
+  - Revenue data: `"formatter": "unit:million"` → displays "156.5M" instead of "156499028"
+  - Movie counts: `"formatter": "unit:movies"` → displays "100 movies"
+  - Ratings: `"formatter": "tofixed:1:stars"` → displays "7.5 stars"
+  - ROI: `"formatter": "percentraw:1"` → displays "277.8%"
+
 #### Common Movie Analytics Use Cases
 - **Revenue/Budget charts**: `"unit:billion"` or `"unit:million"` for large amounts, `"currency"` for smaller amounts
 - **Movie counts**: `"unit:movies"` for multiple, `"unit:movie"` for singular
@@ -231,7 +271,7 @@ You can use formatters in these chart option locations:
 
 **Critical Formatter Mapping for Movie Data:**
 - Average Revenue (e.g., 156499028.37) → `"unit:million"` → "156.5M"
-- Average Profit (e.g., 132311894.93) → `"unit:million"` → "132.3M" 
+- Average Profit (e.g., 132311894.93) → `"unit:million"` → "132.3M"
 - ROI Percentage (e.g., 277.77777778) → `"percentraw:1"` → "277.8%"
 - Vote Average (e.g., 7.01861535) → `"tofixed:2:stars"` → "7.02 stars"
 - Movie Count (e.g., 100) → `"unit:movies"` → "100 movies"
@@ -243,7 +283,7 @@ ApexCharts supports the following chart types. You MUST use one of these exact v
 
 **Valid Chart Types:**
 - `"line"` - Line charts for time series data
-- `"area"` - Area charts for filled line charts  
+- `"area"` - Area charts for filled line charts
 - `"bar"` - Bar charts (both horizontal and vertical)
 - `"pie"` - Pie charts for proportional data
 - `"donut"` - Donut charts (pie with center hole)
@@ -293,6 +333,10 @@ For both horizontal and vertical bar charts, data labels should use horizontal o
       "orientation": "horizontal"
     }
   }
+},
+"dataLabels": {
+  "enabled": true,
+  "formatter": "unit:million"  // MANDATORY: Goes at top level, not in plotOptions
 }
 ```
 
@@ -306,10 +350,16 @@ For both horizontal and vertical bar charts, data labels should use horizontal o
       "orientation": "horizontal"
     }
   }
+},
+"dataLabels": {
+  "enabled": true,
+  "formatter": "unit:million"  // MANDATORY: Goes at top level, not in plotOptions
 }
 ```
 
 **Critical Rule**: Data labels should NEVER use `"orientation": "vertical"` as it makes text hard to read. Always use `"orientation": "horizontal"` or omit data labels entirely if they would be cluttered.
+
+**MANDATORY Formatter Rule**: When dataLabels are enabled, **ALWAYS include a `formatter`** in the top-level `dataLabels` object (NOT in plotOptions) to make values readable. Use string-based formatters and match the y-axis formatter for consistency.
 
 **Best Practice**: If horizontal data labels would be too crowded or hard to read, disable data labels completely with `"dataLabels": {"enabled": false}` rather than using vertical orientation.
 
@@ -988,7 +1038,7 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
           },
           {
             "title": {
-              "text": "Movie Ratings Quality Analysis", 
+              "text": "Movie Ratings Quality Analysis",
               "align": "center"
             },
             "series": [
