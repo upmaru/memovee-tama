@@ -754,16 +754,69 @@ Always structure analytics responses to include:
 2. **Always use `limit: 0`** for analytics queries to focus on aggregations
 3. **MANDATORY: Include `_source: ["id"]`** - minimum required field for analytics queries
 4. **MANDATORY: Include `query` field** - never omit this field, use `match_all: {}` if no filtering needed
-5. **CRITICAL: For genre questions, always use comprehensive genre aggregation** - never filter by specific genre, always return ALL genres with counts
-6. **Include appropriate filters** to scope the analysis meaningfully
-7. **Use runtime mappings** for calculated fields like profit and ROI
-8. **Structure hierarchical aggregations** for multi-dimensional analysis
-9. **Include statistical context** with percentiles and distribution analysis
-10. **Format dates consistently** using appropriate format patterns
-11. **Handle missing data gracefully** with proper field existence checks
-12. **Provide comparative context** by including multiple metrics when relevant
-13. **Use `match_all` query for comprehensive analysis** - provides complete dataset context
-14. **Use `terms` aggregation for category breakdowns** - captures all categories with counts
+5. **CRITICAL: Aggregation structure rules** - Each aggregation name can have only ONE aggregation type definition:
+   - ✓ CORRECT: Single aggregation type with sub-aggregations nested in `aggs` block
+   - ✗ WRONG: Multiple aggregation types as siblings under same name (causes parsing error)
+   - When using filter/nested/terms aggregations, all additional metrics must be nested inside the parent aggregation's `aggs` block
+6. **CRITICAL: For genre questions, always use comprehensive genre aggregation** - never filter by specific genre, always return ALL genres with counts
+7. **Include appropriate filters** to scope the analysis meaningfully
+8. **Use runtime mappings** for calculated fields like profit and ROI
+9. **Structure hierarchical aggregations** for multi-dimensional analysis
+10. **Include statistical context** with percentiles and distribution analysis
+11. **Format dates consistently** using appropriate format patterns
+12. **Handle missing data gracefully** with proper field existence checks
+13. **Provide comparative context** by including multiple metrics when relevant
+14. **Use `match_all` query for comprehensive analysis** - provides complete dataset context
+15. **Use `terms` aggregation for category breakdowns** - captures all categories with counts
+
+## Aggregation Structure Rules
+
+### ❌ INCORRECT Structure (Causes "Found two aggregation type definitions" error):
+```json
+"aggs": {
+  "high_impact_movies": {
+    "filter": {
+      "bool": {
+        "must": [{"range": {"vote_count": {"gte": 100}}}]
+      }
+    },
+    "total_movies": {
+      "value_count": {"field": "id"}
+    }
+  }
+}
+```
+
+### ✅ CORRECT Structure (Nested aggregations):
+```json
+"aggs": {
+  "high_impact_movies": {
+    "filter": {
+      "bool": {
+        "must": [{"range": {"vote_count": {"gte": 100}}}]
+      }
+    },
+    "aggs": {
+      "total_movies": {
+        "value_count": {"field": "id"}
+      },
+      "top_movies": {
+        "top_hits": {
+          "sort": [{"revenue": {"order": "desc"}}],
+          "size": 5,
+          "_source": ["title", "revenue", "vote_average"]
+        }
+      }
+    }
+  }
+}
+```
+
+### Key Rules:
+- Each aggregation name can only have ONE aggregation type (filter, terms, date_histogram, etc.)
+- Additional aggregations must be nested under the `aggs` key within the parent aggregation
+- Never put multiple aggregation types as direct siblings under the same aggregation name
+- Always structure as: `"aggregation_name": { "type": {...}, "aggs": {...} }`
 
 ---
 
