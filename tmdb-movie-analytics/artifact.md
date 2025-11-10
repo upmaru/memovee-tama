@@ -83,6 +83,33 @@ You can use formatters in these chart option locations:
 
 ### Chart-Specific Configuration Requirements
 
+#### Valid Chart Types
+ApexCharts supports the following chart types. You MUST use one of these exact values for the `chart.type` field:
+
+**Valid Chart Types:**
+- `"line"` - Line charts for time series data
+- `"area"` - Area charts for filled line charts  
+- `"bar"` - Bar charts (both horizontal and vertical)
+- `"pie"` - Pie charts for proportional data
+- `"donut"` - Donut charts (pie with center hole)
+- `"radialBar"` - Radial progress bars
+- `"scatter"` - Scatter plots for correlation data
+- `"bubble"` - Bubble charts for 3-dimensional data
+- `"heatmap"` - Heat maps for matrix data
+- `"candlestick"` - Candlestick charts for financial data
+- `"boxPlot"` - Box plot charts for statistical distributions
+- `"radar"` - Radar/spider charts for multi-axis comparison
+- `"polarArea"` - Polar area charts
+- `"rangeBar"` - Range bar charts for intervals
+- `"rangeArea"` - Range area charts for time ranges
+- `"treemap"` - Tree map charts for hierarchical data
+
+**CRITICAL: Invalid Chart Types**
+- ❌ `"column"` - This is NOT valid in ApexCharts! Use `"bar"` instead
+- ❌ Any other type not listed above will cause rendering errors
+
+**Common Mistake**: Many chart libraries use `"column"` for vertical bar charts, but ApexCharts uses `"bar"` for both horizontal and vertical orientations. Control the orientation with `plotOptions.bar.horizontal: true/false`.
+
 #### Treemap Charts
 When using treemap charts (`"type": "treemap"`), you must include the following plotOptions configuration:
 
