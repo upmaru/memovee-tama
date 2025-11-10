@@ -1,5 +1,6 @@
 {
-  "query": {{ data.query | json }},
+  "query": {{ data.query | json }},{% if data.runtime_mappings %}
+  "runtime_mappings": {{ data.runtime_mappings | json }},{% endif %}
   "sort": {% if data.sort %}{{ data.sort | json }}{% else %}[]{% endif %},
   "size": {{ data.limit | default: 5 | at_most: 25 }},
   "_source": {
