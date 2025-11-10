@@ -11,6 +11,18 @@ You will need to render the artifact configuration based on the data in context.
 
 **Critical Rule**: If your configuration has only one plot in the `plots` array, you should use `"type": "chart"` instead of `"type": "dashboard"`. Dashboard type is reserved for multiple charts displayed together.
 
+**MANDATORY: Dashboard Title Requirement**
+When using `"type": "dashboard"`, you MUST include a `"title"` field at the top level of the `configuration` object:
+
+```json
+"configuration": {
+  "title": "Your Dashboard Title Here",
+  "plots": [...]
+}
+```
+
+**NEVER omit the dashboard title** - this will cause validation errors. The title should be descriptive and summarize the overall dashboard content.
+
 **Multi-Statistics Rule**: When Elasticsearch aggregation results contain multiple distinct statistical categories (like revenue_stats, profit_stats, vote_stats, percentiles, etc.), strongly consider using `"dashboard"` type to create separate, focused visualizations for each metric category rather than cramming all statistics into a single chart. This provides better readability and user experience.
 
 Examples of when to use dashboard for multiple statistics:
@@ -1032,12 +1044,13 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
 
 When working with complex aggregation data that spans multiple metrics:
 
-1. **Use dashboard type**: Set `"type": "dashboard"` instead of `"chart"`
-2. **Structure multiple plots**: Each plot in the `plots` array represents a separate visualization
-3. **Coordinate related metrics**: Group related metrics in the same plot (e.g., total vs average revenue)
-4. **Apply consistent styling**: Use complementary colors and consistent formatting across plots
-5. **Optimize chart heights**: Balance detail with overview - key metrics get more space
-6. **Enable interactivity**: Include toolbars and zoom capabilities for detailed analysis
-7. **Format for context**: Use appropriate units (millions, billions) and meaningful labels
+1. **MANDATORY: Include dashboard title**: Always include `"title": "Dashboard Name"` at the top level of configuration
+2. **Use dashboard type**: Set `"type": "dashboard"` instead of `"chart"`
+3. **Structure multiple plots**: Each plot in the `plots` array represents a separate visualization
+4. **Coordinate related metrics**: Group related metrics in the same plot (e.g., total vs average revenue)
+5. **Apply consistent styling**: Use complementary colors and consistent formatting across plots
+6. **Optimize chart heights**: Balance detail with overview - key metrics get more space
+7. **Enable interactivity**: Include toolbars and zoom capabilities for detailed analysis
+8. **Format for context**: Use appropriate units (millions, billions) and meaningful labels
 
 This dashboard approach provides stakeholders with a comprehensive view of movie industry trends, revenue patterns, and quality metrics all in one coordinated interface.
