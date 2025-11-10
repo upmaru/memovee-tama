@@ -11,6 +11,117 @@ You will need to render the artifact configuration based on the data in context.
 
 **Critical Rule**: If your configuration has only one plot in the `plots` array, you should use `"type": "chart"` instead of `"type": "dashboard"`. Dashboard type is reserved for multiple charts displayed together.
 
+**Multi-Statistics Rule**: When Elasticsearch aggregation results contain multiple distinct statistical categories (like revenue_stats, profit_stats, vote_stats, percentiles, etc.), strongly consider using `"dashboard"` type to create separate, focused visualizations for each metric category rather than cramming all statistics into a single chart. This provides better readability and user experience.
+
+Examples of when to use dashboard for multiple statistics:
+- Revenue stats + Profit stats + Rating stats
+- Multiple percentile breakdowns (revenue percentiles + vote percentiles)  
+- Summary stats + Top movies + Monthly breakdowns
+- Any case with 3+ different metric types that would benefit from separate visualizations
+
+### CRITICAL: ApexCharts Array-Based Schema Requirements
+
+**MANDATORY SCHEMA RULES** - The following fields MUST use array format, even for single values:
+
+#### 1. Stroke Width (`stroke.width`)
+**ALWAYS use array format:**
+```json
+"stroke": {
+  "width": [3],        // CORRECT: Array with single value
+  "curve": "smooth"
+}
+```
+**NEVER use scalar:**
+```json
+"stroke": {
+  "width": 3,          // WRONG: Will fail validation
+  "curve": "smooth"
+}
+```
+
+**For multi-series with different widths:**
+```json
+"stroke": {
+  "width": [0, 4],     // Column (no stroke) + Line (4px stroke)
+  "curve": "smooth"
+}
+```
+
+#### 2. Y-Axis Configuration (`yaxis`) - MANDATORY FORMATTERS
+**ALWAYS use array format AND include formatters for readability:**
+```json
+"yaxis": [
+  {
+    "title": {"text": "Revenue (USD)"},
+    "labels": {"formatter": "unit:million"}
+  }
+]
+```
+
+**CRITICAL: Y-Axis Formatter Requirements**
+- **NEVER omit `labels.formatter`** - Raw large numbers (like 156499028.36666667) are unreadable
+- **ALWAYS format financial data** with appropriate units:
+  - Revenue/Budget: Use `"unit:million"` or `"unit:billion"`
+  - Small amounts: Use `"currency"`
+  - ROI/Percentages: Use `"percent:1"` or `"percent:2"`
+- **ALWAYS format counts** with appropriate units:
+  - Movie counts: Use `"unit:movies"`
+  - Rating data: Use `"tofixed:1:stars"` or `"tofixed:2"`
+- **Example of WRONG approach**: `"yaxis": [{"title": {"text": "Value"}}]` ❌ NO FORMATTER
+- **Example of CORRECT approach**: `"yaxis": [{"title": {"text": "Revenue"}, "labels": {"formatter": "unit:million"}}]` ✅
+**NEVER use object:**
+```json
+"yaxis": {
+  "title": {"text": "Revenue (USD)"},  // WRONG: Will fail validation
+  "labels": {"formatter": "currency"}
+}
+```
+
+**For dual Y-axes (mixed charts):**
+```json
+"yaxis": [
+  {
+    "title": {"text": "Revenue"},
+    "labels": {"formatter": "currency"}
+  },
+  {
+    "opposite": true,
+    "title": {"text": "Count"},
+    "labels": {"formatter": "unit:movies"}
+  }
+]
+```
+
+#### 3. Tooltip Y Formatter (`tooltip.y`)
+**ALWAYS use array format:**
+```json
+"tooltip": {
+  "y": [
+    {"formatter": "currency"}
+  ]
+}
+```
+**NEVER use object:**
+```json
+"tooltip": {
+  "y": {"formatter": "currency"}  // WRONG: Will fail validation
+}
+```
+
+**For multi-series with different formatters:**
+```json
+"tooltip": {
+  "shared": true,
+  "intersect": false,
+  "y": [
+    {"formatter": "currency"},
+    {"formatter": "percent:2"}
+  ]
+}
+```
+
+**CRITICAL RULE**: Array lengths must match the number of series when using per-series configurations. Always use arrays even for single-series charts to ensure schema compliance.
+
 ### Chart Formatter Directives - Security Guidelines
 
 When working with charts in this Phoenix LiveView application, you must use safe formatter directives instead of JavaScript functions for security reasons. Here's how to use them:
@@ -38,10 +149,33 @@ When working with charts in this Phoenix LiveView application, you must use safe
 - `"number:localestring"` → `1,234,567`
 - `"number:integer"` → `42` (rounds to whole number)
 
-##### Percentage Formatters
-- `"percent:0"` → `75%` (no decimals)
-- `"percent:1"` → `75.5%` (1 decimal)
-- `"percent:2"` → `75.50%` (2 decimals)
+##### Percentage Formatter Guidelines
+
+There are two types of percentage formatters - choose based on your data format:
+
+**Use `percent:N` when data is in decimal form (0-1 scale):**
+- `"percent:0"` - Input: 0.755 → Output: 75%
+- `"percent:1"` - Input: 0.755 → Output: 75.5%
+- `"percent:2"` - Input: 0.755 → Output: 75.50%
+
+Example: Conversion rate of 75.5% stored as 0.755
+
+**Use `percentraw:N` when data is already in percentage form:**
+- `"percentraw:0"` - Input: 277.78 → Output: 278%
+- `"percentraw:1"` - Input: 277.78 → Output: 277.8%
+- `"percentraw:2"` - Input: 277.78 → Output: 277.78%
+
+Example: ROI of 277.8% stored as 277.78
+
+**Common use cases for `percentraw`:**
+- ROI (Return on Investment)
+- Year-over-year growth rates
+- Any metric where the percentage value exceeds 100%
+- Data that's already been multiplied by 100
+
+**Quick Decision Guide:**
+- If your value is between 0 and 1 → use `percent:N`
+- If your value is already the percentage number (can be >100) → use `percentraw:N`
 
 ##### Dynamic Formatters
 
@@ -75,11 +209,20 @@ You can use formatters in these chart option locations:
 - `plotOptions.[chartType].dataLabels.formatter`
 
 #### Common Movie Analytics Use Cases
-- Revenue charts: `"unit:billion"` or `"unit:million"`
-- Movie counts: `"unit:movies"`
-- Star ratings: `"tofixed:1:stars"`
-- User metrics: `"unit:users"`
-- Percentages: `"percent:1"`
+- **Revenue/Budget charts**: `"unit:billion"` or `"unit:million"` for large amounts, `"currency"` for smaller amounts
+- **Movie counts**: `"unit:movies"` for multiple, `"unit:movie"` for singular
+- **Star ratings**: `"tofixed:1:stars"` for averages (7.5 stars), `"tofixed:2"` for precise values
+- **User metrics**: `"unit:users"` for vote counts and user-related data
+- **ROI/Growth percentages**: `"percentraw:1"` (277.8%) or `"percentraw:2"` (277.78%) for values already in percentage form
+- **Profit margins**: Use `"currency"` with `"unit:million"` for readability
+- **Statistical averages**: `"tofixed:2"` for precise decimal values without units
+
+**Critical Formatter Mapping for Movie Data:**
+- Average Revenue (e.g., 156499028.37) → `"unit:million"` → "156.5M"
+- Average Profit (e.g., 132311894.93) → `"unit:million"` → "132.3M" 
+- ROI Percentage (e.g., 277.77777778) → `"percentraw:1"` → "277.8%"
+- Vote Average (e.g., 7.01861535) → `"tofixed:2:stars"` → "7.02 stars"
+- Movie Count (e.g., 100) → `"unit:movies"` → "100 movies"
 
 ### Chart-Specific Configuration Requirements
 
@@ -270,11 +413,13 @@ To render this data as a bar chart showing the distribution of movie ratings, yo
             "text": "Rating Ranges"
           }
         },
-        "yaxis": {
-          "title": {
-            "text": "Number of Movies"
+        "yaxis": [
+          {
+            "title": {
+              "text": "Number of Movies"
+            }
           }
-        },
+        ],
         "series": [
           {
             "name": "Movies Count",
@@ -300,9 +445,11 @@ To render this data as a bar chart showing the distribution of movie ratings, yo
         },
         "colors": ["#008FFB"],
         "tooltip": {
-          "y": {
-            "formatter": "unit:movies"
-          }
+          "y": [
+            {
+              "formatter": "unit:movies"
+            }
+          ]
         }
       }
     }
@@ -416,11 +563,13 @@ To render this nested data as a stacked bar chart showing movies by year with ra
             "text": "Release Year"
           }
         },
-        "yaxis": {
-          "title": {
-            "text": "Number of Movies"
+        "yaxis": [
+          {
+            "title": {
+              "text": "Number of Movies"
+            }
           }
-        },
+        ],
         "legend": {
           "position": "top",
           "horizontalAlign": "center"
@@ -469,9 +618,11 @@ To render this nested data as a stacked bar chart showing movies by year with ra
         "tooltip": {
           "shared": true,
           "intersect": false,
-          "y": {
-            "formatter": "unit:movies"
-          }
+          "y": [
+            {
+              "formatter": "unit:movies"
+            }
+          ]
         },
         "dataLabels": {
           "enabled": false
@@ -572,14 +723,16 @@ To render this percentile data as a multi-line chart showing revenue trends acro
             "text": "Release Year"
           }
         },
-        "yaxis": {
-          "title": {
-            "text": "Revenue (USD)"
-          },
-          "labels": {
-            "formatter": "unit:million"
+        "yaxis": [
+          {
+            "title": {
+              "text": "Revenue (USD)"
+            },
+            "labels": {
+              "formatter": "unit:million"
+            }
           }
-        },
+        ],
         "series": [
           {
             "name": "50th percentile (Median)",
@@ -600,7 +753,7 @@ To render this percentile data as a multi-line chart showing revenue trends acro
         ],
         "stroke": {
           "curve": "smooth",
-          "width": 3
+          "width": [3]
         },
         "colors": ["#008FFB", "#00E396", "#FEB019", "#FF4560"],
         "legend": {
@@ -610,9 +763,11 @@ To render this percentile data as a multi-line chart showing revenue trends acro
         "tooltip": {
           "shared": true,
           "intersect": false,
-          "y": {
-            "formatter": "currency"
-          }
+          "y": [
+            {
+              "formatter": "currency"
+            }
+          ]
         },
         "markers": {
           "size": 4,
@@ -794,7 +949,7 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             },
             "colors": ["#2ecc71", "#9b59b6"],
             "stroke": {
-              "width": 3,
+              "width": [3],
               "curve": "smooth"
             },
             "markers": { "size": 5 },
@@ -802,17 +957,21 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             "xaxis": {
               "title": { "text": "Year" }
             },
-            "yaxis": {
-              "title": { "text": "Revenue (Millions $)" },
-              "labels": {
-                "formatter": "unit:million"
+            "yaxis": [
+              {
+                "title": { "text": "Revenue (Millions $)" },
+                "labels": {
+                  "formatter": "unit:million"
+                }
               }
-            },
+            ],
             "tooltip": {
               "shared": true,
-              "y": {
-                "formatter": "unit:million"
-              }
+              "y": [
+                {
+                  "formatter": "unit:million"
+                }
+              ]
             }
           },
           {
@@ -837,7 +996,7 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             },
             "colors": ["#f39c12", "#e67e22"],
             "stroke": {
-              "width": 3,
+              "width": [3],
               "curve": "smooth"
             },
             "markers": { "size": 5 },
@@ -845,17 +1004,21 @@ To render this multi-metric data as a dashboard with multiple coordinated visual
             "xaxis": {
               "title": { "text": "Year" }
             },
-            "yaxis": {
-              "title": { "text": "Vote Rating" },
-              "min": 6,
-              "max": 9,
-              "tickAmount": 6
-            },
+            "yaxis": [
+              {
+                "title": { "text": "Vote Rating" },
+                "min": 6,
+                "max": 9,
+                "tickAmount": 6
+              }
+            ],
             "tooltip": {
               "shared": true,
-              "y": {
-                "formatter": "tofixed:2:stars"
-              }
+              "y": [
+                {
+                  "formatter": "tofixed:2:stars"
+                }
+              ]
             }
           }
         ]
