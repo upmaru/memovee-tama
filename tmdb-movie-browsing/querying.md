@@ -1688,6 +1688,80 @@ This error occurs when nested query syntax is incorrect, commonly when `score_mo
 }
 ```
 
+## Critical: Multiple Range Filters in Elasticsearch Queries
+**NEVER place multiple `range` clauses within the same object.** Each range filter must be a separate object in the `must` array.
+
+**Incorrect structure that causes parsing errors:**
+```json
+{
+  "body": {
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "range": {
+              "release_date": {
+                "gte": "2024-01-01",
+                "lte": "2024-12-31"
+              },
+              "range": {
+                "vote_count": {
+                  "gte": 500
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+**Correct structure for multiple range filters:**
+```json
+{
+  "body": {
+    "_source": [
+      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
+    ],
+    "limit": 10,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "range": {
+              "release_date": {
+                "gte": "2024-01-01",
+                "lte": "2024-12-31"
+              }
+            }
+          },
+          {
+            "range": {
+              "vote_count": {
+                "gte": 500
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "next": null,
+  "path": {
+    "index": "tama-movie-db-movie-details"
+  }
+}
+```
+
+**Key points for multiple filters:**
+- Each `range` filter must be a separate object in the `must` array
+- Each `nested` filter must be a separate object in the `must` array  
+- Each `term` filter must be a separate object in the `must` array
+- NEVER nest range objects within other range objects
+- Each filter condition requires its own object wrapper
+
 ## The `_source` property
 
 ### Standard `_source` Fields
