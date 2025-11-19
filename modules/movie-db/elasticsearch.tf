@@ -20,7 +20,7 @@ resource "tama_source_identity" "movie-db-query-elasticsearch" {
   api_key = var.elasticsearch_api_key
 
   validation {
-    path   = "/_cluster/health"
+    path   = "/"
     method = "GET"
     codes  = [200]
   }

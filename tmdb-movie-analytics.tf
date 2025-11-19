@@ -1,21 +1,25 @@
-resource "tama_prompt" "media-browsing-tooling" {
+resource "tama_prompt" "movie-analytics-tooling" {
   space_id = tama_space.media-conversation.id
-  name     = "Media Browsing Tooling"
+  name     = "Movie Analytics Tooling"
   role     = "system"
-  content  = file("media-browsing/querying.md")
+  content  = file("tmdb-movie-analytics/querying.md")
 }
 
-resource "tama_prompt" "media-browsing-reply" {
+resource "tama_prompt" "movie-analytics-reply" {
   space_id = tama_space.media-conversation.id
-  name     = "Media Browsing Reply"
+  name     = "Movie Analytics Reply"
   role     = "system"
-  content  = file("media-browsing/reply.md")
+  content  = file("tmdb-movie-analytics/reply.md")
 }
 
-//
-// Media Browsing
-//
-module "media-browsing" {
+resource "tama_prompt" "movie-analytics-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Movie Analytics Artifact"
+  role     = "system"
+  content  = file("tmdb-movie-analytics/artifact.md")
+}
+
+module "movie-analytics" {
   source = "./modules/media-conversate"
 
   depends_on = [
@@ -23,13 +27,11 @@ module "media-browsing" {
     module.index-definition-generation
   ]
 
-  name                        = "Media Browsing"
+  name                        = "Movie Analytics"
   media_conversation_space_id = tama_space.media-conversation.id
-  target_class_id             = module.media-browsing-forwardable.class.id
+  target_class_id             = module.movie-analytics-forwardable.class.id
 
-  author_class_name  = module.memovee.schemas.actor.name
-  thread_class_name  = module.memovee.schemas.thread.name
-  message_class_name = module.memovee.schemas.user-message.name
+  thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
@@ -40,9 +42,10 @@ module "media-browsing" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id = tama_prompt.media-browsing-tooling.id
+  tooling_prompt_id = tama_prompt.movie-analytics-tooling.id
 
-  reply_prompt_id             = tama_prompt.media-browsing-reply.id
+  reply_prompt_id             = tama_prompt.movie-analytics-reply.id
+  reply_artifact_prompt_id    = tama_prompt.movie-analytics-artifact.id
   reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 

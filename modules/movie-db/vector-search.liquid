@@ -1,6 +1,8 @@
 {%- capture vectorize_input -%}
   {"thought_id":"{{ data.metadata.thought_id }}","text":"{{ data.query }}"}
 {%- endcapture -%}
+{%- assign limit_value = data.limit | default: 5 | at_most: 25 -%}
+{%- assign num_candidates_value = limit_value | times: 3 -%}
 {
   "retriever": {
     "text_similarity_reranker": {
@@ -8,18 +10,19 @@
         "knn": {
           "field": "concepts.chunks.embedding",
           "query_vector": {{ vectorize_input | vectorize }},
-          "k": 5,
-          "num_candidates": 10
+          "k": {{ limit_value }},
+          "num_candidates": {{ num_candidates_value }}
         }
       },
       "field": "preload.concept.content.merge",
       "inference_id": "voyageai-rerank",
       "inference_text": "{{ data.query }}",
-      "rank_window_size": 100,
-      "min_score": 0.5
+      "min_score": 0.5,
+      "rank_window_size": {{ limit_value }}{% if data.filter %},
+      "filter": {{ data.filter | json }}{% endif %}
     }
   },
-  "size": {{ data.limit | default: 3 }},
+  "size": {{ limit_value }},
   "_source": {
     "includes": {{ data._source | json }},
     "excludes": ["*.embedding"]

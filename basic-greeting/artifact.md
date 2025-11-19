@@ -1,4 +1,11 @@
 ## User Greeting Protocol
 
 ### Artifact Rendering Rule
-- Use the `no-call` and **DO NOT** Render any artifact.
+<case>
+  <condition>
+    - User greeting requires no artifact.
+  </condition>
+  <action>
+    - Use the `no-call()` tool and **DO NOT** render any artifact.
+  </action>
+</case>

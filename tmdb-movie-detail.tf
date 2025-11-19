@@ -1,21 +1,28 @@
 //
 // Media Detail
 //
-resource "tama_prompt" "media-detail-tooling" {
+resource "tama_prompt" "movie-detail-tooling" {
   space_id = tama_space.media-conversation.id
   name     = "Media Detail Tooling"
   role     = "system"
-  content  = file("media-detail/querying.md")
+  content  = file("tmdb-movie-detail/querying.md")
 }
 
-resource "tama_prompt" "media-detail-reply" {
+resource "tama_prompt" "movie-detail-reply" {
   space_id = tama_space.media-conversation.id
   name     = "Media Detail Reply"
   role     = "system"
-  content  = file("media-detail/reply.md")
+  content  = file("tmdb-movie-detail/reply.md")
 }
 
-module "media-detail" {
+resource "tama_prompt" "movie-detail-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Artifact Handling Prompt"
+  role     = "system"
+  content  = file("tmdb-movie-detail/artifact.md")
+}
+
+module "movie-detail" {
   source = "./modules/media-conversate"
 
   depends_on = [
@@ -23,13 +30,11 @@ module "media-detail" {
     module.index-definition-generation
   ]
 
-  name                        = "Media Detail"
+  name                        = "Movie Detail"
   media_conversation_space_id = tama_space.media-conversation.id
-  target_class_id             = module.media-detail-forwardable.class.id
+  target_class_id             = module.movie-detail-forwardable.class.id
 
-  author_class_name  = module.memovee.schemas.actor.name
-  thread_class_name  = module.memovee.schemas.thread.name
-  message_class_name = module.memovee.schemas.user-message.name
+  thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
@@ -40,9 +45,12 @@ module "media-detail" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id           = tama_prompt.media-detail-tooling.id
-  reply_prompt_id             = tama_prompt.media-detail-reply.id
-  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
+  tooling_prompt_id = tama_prompt.movie-detail-tooling.id
+
+  reply_artifact_prompt_id  = tama_prompt.movie-detail-artifact.id
+  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
+
+  reply_prompt_id             = tama_prompt.movie-detail-reply.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id
@@ -63,7 +71,7 @@ module "watch-providers" {
 // Watch Providers Tooling
 //
 resource "tama_thought_tool" "watch-providers" {
-  thought_id = module.media-detail.tooling_thought_id
+  thought_id = module.movie-detail.tooling_thought_id
   action_id  = module.watch-providers.action_id
 }
 
@@ -80,7 +88,7 @@ resource "tama_tool_output_option" "watch-providers-region" {
 //
 // Check User Preferences Tooling
 //
-resource "tama_thought_tool" "media-detail-check-user-preferences" {
-  thought_id = module.media-detail.tooling_thought_id
+resource "tama_thought_tool" "movie-detail-check-user-preferences" {
+  thought_id = module.movie-detail.tooling_thought_id
   action_id  = data.tama_action.get-user-preferences.id
 }

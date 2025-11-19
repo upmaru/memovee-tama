@@ -5,7 +5,7 @@ variable "mistral_api_key" {
 
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.3"
+  version = "0.4.9"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -33,7 +33,7 @@ variable "xai_api_key" {
 
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.3"
+  version = "0.4.9"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key
@@ -61,7 +61,17 @@ module "xai" {
       identifier = "grok-code-fast-1"
       path       = "/chat/completions",
       parameters = jsonencode({})
-    }
+    },
+    {
+      identifier = "grok-4-fast-non-reasoning"
+      path       = "/chat/completions",
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "grok-4-fast-reasoning"
+      path       = "/chat/completions",
+      parameters = jsonencode({})
+    },
   ]
 }
 
@@ -72,7 +82,7 @@ variable "openai_api_key" {
 
 module "openai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.3"
+  version = "0.4.9"
 
   space_id = module.global.space.id
   api_key  = var.openai_api_key
@@ -106,6 +116,36 @@ module "openai" {
   ]
 }
 
+variable "anthropic_api_key" {
+  type        = string
+  description = "The API key for the Anthropic inference service"
+}
+
+module "anthropic" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.anthropic_api_key
+  endpoint = "https://api.anthropic.com/v1"
+  name     = "anthropic"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "claude-sonnet-4-5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "claude-haiku-4-5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"
@@ -113,7 +153,7 @@ variable "voyageai_api_key" {
 
 module "voyageai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.3"
+  version = "0.4.9"
 
   space_id = module.global.space.id
   api_key  = var.voyageai_api_key

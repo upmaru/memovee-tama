@@ -10,7 +10,7 @@ variable "elasticsearch_management_api_key" {
 
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
-  version = "0.4.3"
+  version = "0.4.9"
 
   depends_on = [
     module.global.schemas
@@ -27,4 +27,10 @@ module "elasticsearch" {
   index_mapping_generation_model_parameters = jsonencode({
     reasoning_effort = "low"
   })
+
+  validation = {
+    path   = "/"
+    method = "GET"
+    codes  = [200]
+  }
 }

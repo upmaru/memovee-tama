@@ -1,6 +1,6 @@
 module "router" {
   source  = "upmaru/base/tama//modules/router"
-  version = "0.4.3"
+  version = "0.4.9"
 
   root_messaging_space_id = module.memovee.space_id
   author_class_name       = module.memovee.schemas.actor.name
@@ -59,14 +59,19 @@ resource "tama_thought_path" "route-to-personalization" {
   target_class_id = module.personalization.class.id
 }
 
-resource "tama_thought_path" "route-to-media-detail" {
+resource "tama_thought_path" "route-to-marking" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = module.media-detail-forwardable.class.id
+  target_class_id = module.marking.class.id
 }
 
-resource "tama_thought_path" "route-to-media-browsing" {
+resource "tama_thought_path" "route-to-movie-detail" {
   thought_id      = module.router.routing_thought_id
-  target_class_id = module.media-browsing-forwardable.class.id
+  target_class_id = module.movie-detail-forwardable.class.id
+}
+
+resource "tama_thought_path" "route-to-movie-browsing" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = module.movie-browsing-forwardable.class.id
 }
 
 resource "tama_thought_path" "route-to-person-detail" {
@@ -77,4 +82,9 @@ resource "tama_thought_path" "route-to-person-detail" {
 resource "tama_thought_path" "route-to-person-browsing" {
   thought_id      = module.router.routing_thought_id
   target_class_id = module.person-browsing-forwardable.class.id
+}
+
+resource "tama_thought_path" "route-to-movie-analytics" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = module.movie-analytics-forwardable.class.id
 }

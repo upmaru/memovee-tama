@@ -17,12 +17,8 @@ resource "tama_modular_thought" "tooling" {
     parameters = jsonencode({
       consecutive_limit = 5
       thread = {
-        limit = 2
-        classes = {
-          author  = var.author_class_name
-          thread  = var.thread_class_name
-          message = var.message_class_name
-        }
+        limit   = var.thread_limit
+        classes = var.thread_classes
         relations = {
           routing = var.routing_thought_relation
           focus   = ["tooling", "search-tooling", "reply"]
@@ -63,7 +59,6 @@ resource "tama_thought_tool" "query-elasticsearch" {
   thought_id = tama_modular_thought.tooling.id
   action_id  = data.tama_action.query-elasticsearch.id
 }
-
 
 resource "tama_thought_tool_initializer" "import-index-definition" {
   thought_tool_id = tama_thought_tool.query-elasticsearch.id
@@ -109,6 +104,12 @@ resource "tama_modular_thought" "forwarding" {
 resource "tama_thought_path" "forwarding" {
   thought_id      = tama_modular_thought.forwarding.id
   target_class_id = var.response_class_id
+}
+
+resource "tama_thought_path_directive" "artifact-directive" {
+  thought_path_id   = tama_thought_path.forwarding.id
+  prompt_id         = var.reply_artifact_prompt_id
+  target_thought_id = var.reply_artifact_thought_id
 }
 
 resource "tama_thought_path_directive" "reply-directive" {

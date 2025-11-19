@@ -5,14 +5,21 @@ resource "tama_prompt" "person-browse-tooling" {
   space_id = tama_space.media-conversation.id
   name     = "Person Browse Tooling"
   role     = "system"
-  content  = file("media-person-browse/querying.md")
+  content  = file("tmdb-person-browsing/querying.md")
 }
 
 resource "tama_prompt" "person-browse-reply" {
   space_id = tama_space.media-conversation.id
   name     = "Person Browse Reply"
   role     = "system"
-  content  = file("media-person-browse/reply.md")
+  content  = file("tmdb-person-browsing/reply.md")
+}
+
+resource "tama_prompt" "person-browse-artifact" {
+  space_id = tama_space.media-conversation.id
+  name     = "Person Browse Artifact"
+  role     = "system"
+  content  = file("tmdb-person-browsing/artifact.md")
 }
 
 module "person-browsing" {
@@ -27,9 +34,7 @@ module "person-browsing" {
   media_conversation_space_id = tama_space.media-conversation.id
   target_class_id             = module.person-browsing-forwardable.class.id
 
-  author_class_name  = module.memovee.schemas.actor.name
-  thread_class_name  = module.memovee.schemas.thread.name
-  message_class_name = module.memovee.schemas.user-message.name
+  thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
@@ -40,9 +45,12 @@ module "person-browsing" {
     reasoning_effort = "minimal"
   })
 
-  tooling_prompt_id           = tama_prompt.person-browse-tooling.id
+  tooling_prompt_id = tama_prompt.person-browse-tooling.id
+
+  reply_artifact_prompt_id  = tama_prompt.person-browse-artifact.id
+  reply_artifact_thought_id = tama_modular_thought.reply-artifact.id
+
   reply_prompt_id             = tama_prompt.person-browse-reply.id
-  reply_artifact_thought_id   = tama_modular_thought.reply-artifact.id
   reply_generation_thought_id = tama_modular_thought.reply-generation.id
 
   response_class_id = local.response_class_id

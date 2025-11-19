@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:tama_ex, github: "upmaru/tama-ex"}
+  {:tama_ex, "~> 0.1.7"}
 ])
 ```
 
@@ -64,18 +64,10 @@ Load the `person-details` class.
 ```elixir
 {:ok, person_details_class} = 
   Neural.get_class(client, movie_db_space, "person-details")
-```
 
-Load the sample person for indexing chain.
-
-```elixir
 {:ok, person_index_chain} = 
   Perception.get_chain(client, movie_db_space, "sample-for-person-index-generation") 
-```
 
-Run the chain
-
-```elixir
 Neural.create_class_operation(client, person_details_class, %{
   chain_ids: [person_index_chain.id]
 })

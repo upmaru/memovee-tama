@@ -98,3 +98,15 @@ data "tama_action" "update-user" {
   method           = "PUT"
   path             = "/tama/accounts/users/{id}"
 }
+
+data "tama_action" "create-record-markings" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "POST"
+  path             = "/tama/content/users/{user_id}/markings"
+}
+
+data "tama_action" "list-record-markings" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "GET"
+  path             = "/tama/content/users/{user_id}/markings"
+}

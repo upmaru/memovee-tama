@@ -42,25 +42,10 @@ You are operating a heads up display (HUD) for an information system. You will u
       "body": {
         "artifact": {
           "type": "grid",
-          // the index name of the data source. should come from the function argument `path.index`.
-          "index": 0,
-          // the tool_call_id from the search results to display.
-          "reference": "[the tool_call_id from the search results to display]",
-          // the properties to display in the table, higher relevance means columns come first. In the below case the poster_path will be the first column followed by the title, and then the id.
-          "properties": [
-            {
-              "name": "id",
-              "relevance": 0
-            },
-            {
-              "name": "poster_path",
-              "relevance": 2,
-            },
-            {
-              "name": "title",
-              "relevance": 1
-            }
-          ]
+          // the tool_call_ids from the search results relevant to user's query to display.
+          "references": [
+            "tool_call_id_1"
+           ]
         }
       }
     }
@@ -89,25 +74,27 @@ You are operating a heads up display (HUD) for an information system. You will u
       "body": {
         "artifact": {
           "type": "table",
-          // the index name of the data source. should come from the function argument `path.index`.
-          "index": 0,
-          // the tool_call_id from the search results to display.
-          "reference": "[the tool_call_id from the search results to display]",
+          // the tool_call_ids from the search results relevant to user's query to display.
+          "references": [
+            //the tool_call_ids from the search results to display add multiple tool_call_ids if necessary
+           ],
           // the properties to display in the table, higher relevance means columns come first. In the below case the poster_path will be the first column followed by the title, and then the id. **ONLY* Use the properties from the search query `_source`
-          "properties": [
-            {
-              "name": "id",
-              "relevance": 0
-            },
-            {
-              "name": "picture",
-              "relevance": 2,
-            },
-            {
-              "name": "title",
-              "relevance": 1
-            }
-          ]
+          "configuration": {
+            "columns": [
+              {
+                "name": "id",
+                "relevance": 0
+              },
+              {
+                "name": "picture",
+                "relevance": 2,
+              },
+              {
+                "name": "title",
+                "relevance": 1
+              }
+            ]
+          }
         }
       }
     }
@@ -150,27 +137,10 @@ You are operating a heads up display (HUD) for an information system. You will u
           "type": "list",
           // the index name of the data source. should come from the function argument `path.index`.
           "index": 0,
-          // the tool_call_id from the search results to display.
-          "reference": "[the tool_call_id from the search results to display]",
-          // the properties to display in the table, higher relevance means columns come first. In the below case the poster_path will be the first column followed by the title, and then the id. **ONLY* Use the properties from the search query `_source`
-          "properties": [
-            {
-              "name": "id",
-              "relevance": 0
-            },
-            {
-              "name": "picture",
-              "relevance": 3,
-            },
-            {
-              "name": "title",
-              "relevance": 2
-            },
-            {
-              "name": "overview",
-              "relevance": 1
-            }
-          ]
+          // the tool_call_ids from the search results relevant to user's query to display.
+          "references": [
+            "tool_call_id_1"
+           ]
         }
       }
     }
@@ -198,24 +168,10 @@ You are operating a heads up display (HUD) for an information system. You will u
       "body": {
         "artifact": {
           "type": "detail",
-          // the index name of the data source. should come from the function argument `path.index`.
-          "index": 0,
-          // the tool_call_id from the search results to display.
-          "reference": "[the tool_call_id from the search results to display]",
-          // the properties to display in the detail view, higher relevance means the data will be rendere higher. In the below case the title will be the first item in view followed by the overview, and then the id.
-          "properties": [
-            {
-              "name": "id",
-              "relevance": 0
-            },
-            {
-              "name": "title",
-              "relevance": 2,
-            },
-            {
-              "name": "overview",
-              "relevance": 1
-            }
+          // the tool_call_ids from the search results relevant to user's query to display.
+          "references": [
+            "tool_call_id_1",
+            "tool_call_id_2"
           ]
         }
       }
@@ -267,30 +223,10 @@ You are operating a heads up display (HUD) for an information system. You will u
           "type": "detail",
           // the index name of the data source. should come from the function argument `path.index`.
           "index": 0,
-          // the tool_call_id from the search results to display.
-          "reference": "[the tool_call_id from the search results to display]",
-          // the properties to display in the detail view, higher relevance means the data will be rendere higher. In the below case the title will be the first item in view followed by the overview, and then the id.
-          "properties": [
-            {
-              "name": "movie-credits.cast.profile_path",
-              "relevance": 7
-            },
-            {
-              "name": "movie-credits.cast.character",
-              "relevance": 6
-            },
-            {
-              "name": "movie-credits.cast.name",
-              "relevance": 5
-            },
-            {
-              "name": "title",
-              "relevance": 2,
-            },
-            {
-              "name": "overview",
-              "relevance": 1
-            }
+          // the tool_call_ids from the search results relevant to user's query to display.
+          "references": [
+            "tool_call_id_1",
+            "tool_call_id_2"
           ]
         }
       }

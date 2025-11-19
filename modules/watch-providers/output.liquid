@@ -1,8 +1,13 @@
 {%- assign selected_region = options["region"] -%}
-{%- assign watch_data = results[selected_region] -%}
+{%- assign watch_data = data.results[selected_region] -%}
 
 {%- if watch_data -%}
 {
+  "metadata": {
+    "space": "movie-db",
+    "class": "movie-watch-providers"
+  },
+  "id": {{ data.id}},
   "region": "{{ selected_region }}",
   "link": "{{ watch_data.link }}"{% if watch_data.flatrate %},
   "flatrate": [
@@ -58,6 +63,6 @@
 }
 {%- else -%}
 {
-  "error": "Region '{{ selected_region }}' not found"
+  "error": "Watch provider information for the movie / tv show not available for region {{ selected_region }}."
 }
 {%- endif -%}
