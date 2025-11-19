@@ -200,19 +200,9 @@ resource "tama_thought_path" "index-movie-details-class" {
   target_class_id = data.tama_class.movie-details.id
 }
 
-resource "tama_thought_path_activation" "index-movie-details-chain" {
-  thought_path_id = tama_thought_path.index-movie-details-class.id
-  chain_id        = tama_chain.index-movie-details.id
-}
-
 resource "tama_thought_path" "index-person-details-class" {
   thought_id      = tama_modular_thought.index-class-entities.id
   target_class_id = data.tama_class.person-details.id
-}
-
-resource "tama_thought_path_activation" "index-person-details-chain" {
-  thought_path_id = tama_thought_path.index-person-details-class.id
-  chain_id        = tama_chain.index-person-details.id
 }
 
 resource "tama_node" "handle-class-indexing" {
