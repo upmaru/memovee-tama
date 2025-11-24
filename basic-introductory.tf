@@ -21,11 +21,10 @@ module "upsert-profile-tooling" {
   relation = "tooling"
   index    = 0
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = {
-    reasoning_effort = "minimal"
-  }
+  tool_call_model_id          = module.xai.model_ids.grok-4-1-fast-non-reasoning
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = {}
+
   action_ids = [
     data.tama_action.update-user.id
   ]

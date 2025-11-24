@@ -72,6 +72,16 @@ module "xai" {
       path       = "/chat/completions",
       parameters = jsonencode({})
     },
+    {
+      identifier = "grok-4-1-fast-reasoning"
+      path       = "/chat/completions",
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "grok-4-1-fast-non-reasoning"
+      path       = "/chat/completions",
+      parameters = jsonencode({})
+    }
   ]
 }
 

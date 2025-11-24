@@ -36,11 +36,9 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
-  tool_call_model_temperature = 1.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "minimal"
-  })
+  tool_call_model_id          = module.xai.model_ids.grok-4-1-fast-non-reasoning
+  tool_call_model_temperature = 0.0
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.movie-browsing-tooling.id
 
