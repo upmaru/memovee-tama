@@ -123,11 +123,13 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.xai.model_ids.grok-4-1-fast-non-reasoning
+  model_id   = module.openai.model_ids.gpt-5-mini
 
   completion {
-    temperature = 0.0
-    parameters  = jsonencode({})
+    temperature = 1.0
+    parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
   }
 }
 
