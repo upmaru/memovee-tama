@@ -163,6 +163,41 @@ module "anthropic" {
   ]
 }
 
+variable "google_api_key" {
+  type        = string
+  description = "The API key for Google AI Studio"
+}
+
+module "google" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.google_api_key
+  endpoint = "https://generativelanguage.googleapis.com/v1beta/openai"
+  name     = "google"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "gemini-2.5-flash"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "none"
+      })
+    },
+    {
+      identifier = "gemini-3-pro-preview"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    }
+  ]
+}
+
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"

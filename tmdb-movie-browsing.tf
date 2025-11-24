@@ -36,9 +36,11 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.xai.model_ids.grok-4-1-fast-non-reasoning
+  tool_call_model_id          = module.google.model_ids.gemini-3-pro-preview
   tool_call_model_temperature = 0.0
-  tool_call_model_parameters  = jsonencode({})
+  tool_call_model_parameters = jsonencode({
+    reasoning_effort = "low"
+  })
 
   tooling_prompt_id = tama_prompt.movie-browsing-tooling.id
 
