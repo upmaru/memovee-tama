@@ -21,9 +21,11 @@ module "update-user-perference" {
   relation = "tooling"
   index    = 0
 
-  tool_call_model_id          = module.xai.model_ids.grok-4-1-fast-non-reasoning
-  tool_call_model_temperature = 0.0
-  tool_call_model_parameters  = {}
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
+  tool_call_model_temperature = 1.0
+  tool_call_model_parameters = {
+    reasoning_effort = "minimal"
+  }
 
   action_ids = [
     data.tama_action.get-user-preferences.id,
