@@ -32,9 +32,9 @@ Examples of when to use dashboard for multiple statistics:
 - Any case with 3+ different metric types that would benefit from separate visualizations
 
 **MANDATORY: Always Include Data Series**
-- Every chart or dashboard plot MUST provide a populated `series` array that is sourced directly from the aggregation results returned by the immediately preceding Elasticsearch tool call. The artifact is invalid if the data series are omitted, even when the input aggregations are sparse.
+- Every chart or dashboard plot MUST provide a populated `series` array that is sourced directly from the aggregation results returned by the referenced Elasticsearch tool call(s). If multiple tool calls were made, make sure each plot’s `series` pulls from the correct call. The artifact is invalid if the data series are omitted, even when the input aggregations are sparse.
 - When a metric has no data, either omit that metric entirely or supply an explicit zeroed series derived from the tool output; never leave `series` undefined or `[]`.
-- Think of the series array as the backbone of the visualization—without it the user cannot see the requested insights, and it must always reflect the latest tool response.
+- Think of the series array as the backbone of the visualization—without it the user cannot see the requested insights, and it must always reflect the latest tool response(s).
 
 ### CRITICAL: ApexCharts Array-Based Schema Requirements
 
