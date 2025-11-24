@@ -128,7 +128,7 @@ resource "tama_thought_processor" "artifact-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning_effort = "minimal"
+      reasoning_effort = "low"
     })
   }
 }

@@ -122,6 +122,13 @@ module "openai" {
       parameters = jsonencode({
         reasoning_effort = "low"
       })
+    },
+    {
+      identifier = "gpt-5.1-2025-11-13",
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "minimal"
+      })
     }
   ]
 }
