@@ -20,7 +20,7 @@ module "check-profile-tooling" {
   chain_id = tama_chain.load-profile-and-greet.id
   index    = 0
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5
+  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = {
     reasoning_effort = "minimal"
