@@ -229,6 +229,36 @@ module "togetherai" {
   ]
 }
 
+variable "fireworksai_api_key" {
+  type        = string
+  description = "The API key for FireworksAI inference service"
+}
+
+module "fireworksai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.fireworksai_api_key
+  endpoint = "https://api.fireworks.ai/inference/v1"
+  name     = "fireworksai"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "accounts/fireworks/models/deepseek-v3p1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "accounts/fireworks/models/deepseek-v3p1-terminus"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"

@@ -123,13 +123,11 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.openai.model_ids.gpt-5-mini
+  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
 
   completion {
-    temperature = 1.0
-    parameters = jsonencode({
-      reasoning_effort = "minimal"
-    })
+    temperature = 0.0
+    parameters  = jsonencode({})
   }
 }
 
@@ -179,13 +177,11 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.openai.model_ids.gpt-5-mini
+  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
 
   completion {
-    temperature = 1.0
-    parameters = jsonencode({
-      reasoning_effort = "minimal"
-    })
+    temperature = 0.0
+    parameters  = jsonencode({})
   }
 }
 
