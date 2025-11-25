@@ -37,7 +37,7 @@ module "person-detail" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
+  tool_call_model_id          = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1"]
   tool_call_model_temperature = 0.0
   tool_call_model_parameters  = jsonencode({})
 

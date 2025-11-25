@@ -123,7 +123,7 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
+  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1"]
 
   completion {
     temperature = 0.0
@@ -177,7 +177,7 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
+  model_id   = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1"]
 
   completion {
     temperature = 0.0

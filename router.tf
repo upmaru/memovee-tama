@@ -17,7 +17,7 @@ module "router" {
     module.memovee.schemas["user-message"].id
   ]
 
-  routing_model_id          = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1-terminus"]
+  routing_model_id          = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1"]
   routing_model_temperature = 0.0
   routing_model_parameters  = jsonencode({})
 }
