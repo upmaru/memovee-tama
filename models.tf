@@ -215,11 +215,16 @@ module "togetherai" {
 
   models = [
     {
-      identifier = "openai/gpt-oss-120b",
+      identifier = "openai/gpt-oss-120b"
       path       = "/chat/completions"
       parameters = jsonencode({
         reasoning_effort = "low"
       })
+    },
+    {
+      identifier = "deepseek-ai/DeepSeek-V3.1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }
