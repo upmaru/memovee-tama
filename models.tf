@@ -225,6 +225,11 @@ module "togetherai" {
       identifier = "deepseek-ai/DeepSeek-V3.1"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }
