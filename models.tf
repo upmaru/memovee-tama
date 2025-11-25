@@ -197,6 +197,32 @@ module "google" {
   ]
 }
 
+variable "togetherai_api_key" {
+  type        = string
+  description = "The API key for TogetherAI inference service"
+}
+
+module "togetherai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.togetherai_api_key
+  endpoint = "https://api.together.xyz/v1"
+  name     = "togetherai"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "openai/gpt-oss-120b",
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    }
+  ]
+}
 
 variable "voyageai_api_key" {
   type        = string
