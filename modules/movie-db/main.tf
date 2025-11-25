@@ -339,7 +339,7 @@ resource "tama_modular_thought" "generate-description" {
       await = {
         relations               = [local.create_movie_keywords_relation]
         created_in_last_seconds = 604800
-        max_attempts            = 30
+        max_attempts            = 15
       }
     })
   }
