@@ -268,6 +268,38 @@ module "fireworksai" {
   ]
 }
 
+variable "upstage_api_key" {
+  type        = string
+  description = "The API key for Upstage AI inference service"
+}
+
+module "upstage" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.upstage_api_key
+  endpoint = "https://api.upstage.ai/v1"
+  name     = "upstage"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "solar-pro2"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "minimal"
+      })
+    },
+    {
+      identifier = "solar-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"

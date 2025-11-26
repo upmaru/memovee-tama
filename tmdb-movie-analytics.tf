@@ -36,9 +36,11 @@ module "movie-analytics" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.fireworksai.model_ids["accounts/fireworks/models/deepseek-v3p1"]
+  tool_call_model_id          = module.upstage.model_ids.solar-pro2
   tool_call_model_temperature = 0.0
-  tool_call_model_parameters  = jsonencode({})
+  tool_call_model_parameters = jsonencode({
+    reasoning_effort = "high"
+  })
 
   tooling_prompt_id = tama_prompt.movie-analytics-tooling.id
 
