@@ -123,7 +123,7 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.mistral.model_ids["mistral-medium-latest"]
+  model_id   = module.mistral.model_ids["devstral-medium-latest"]
 
   completion {
     temperature = 0.0
