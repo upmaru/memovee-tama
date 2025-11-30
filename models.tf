@@ -234,6 +234,11 @@ module "togetherai" {
       identifier = "Qwen/Qwen3-Next-80B-A3B-Instruct"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "Qwen/Qwen3-235B-A22B-Instruct-2507-tput"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }

@@ -123,13 +123,11 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.upstage.model_ids.solar-pro2
+  model_id   = module.mistral.model_ids["codestral-2508"]
 
   completion {
     temperature = 0.0
-    parameters = jsonencode({
-      reasoning_effort = "minimal"
-    })
+    parameters  = jsonencode({})
   }
 }
 
@@ -179,10 +177,10 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.upstage.model_ids.solar-pro2
+  model_id   = module.mistral.model_ids["mistral-small-latest"]
 
   completion {
-    temperature = 0.0
+    temperature = 0.7
     parameters  = jsonencode({})
   }
 }
