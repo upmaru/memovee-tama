@@ -24,6 +24,10 @@ module "mistral" {
       path       = "/chat/completions"
     },
     {
+      identifier = "devstral-small-latest"
+      path       = "/chat/completions"
+    },
+    {
       identifier = "codestral-2508"
       path       = "/chat/completions"
     }
