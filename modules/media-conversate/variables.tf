@@ -33,6 +33,12 @@ variable "tool_call_model_id" {
   description = "The ID of the model for the tool call."
 }
 
+variable "tool_call_tool_choice" {
+  type        = string
+  description = "Tool choice setting for model valid choices: required, any, auto"
+  default     = "required"
+}
+
 variable "tool_call_model_temperature" {
   type        = number
   description = "The temperature parameter of the tool call model"
