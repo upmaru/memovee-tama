@@ -17,7 +17,7 @@ module "router" {
     module.memovee.schemas["user-message"].id
   ]
 
-  routing_model_id          = module.upstage.model_ids.solar-mini
+  routing_model_id          = module.mistral.model_ids["mistral-small-latest"]
   routing_model_temperature = 0.0
   routing_model_parameters  = jsonencode({})
 }
