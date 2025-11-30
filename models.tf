@@ -234,6 +234,11 @@ module "togetherai" {
       identifier = "Qwen/Qwen3-Next-80B-A3B-Instruct"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "Qwen/Qwen3-235B-A22B-Instruct-2507-tput"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }
@@ -294,6 +299,43 @@ module "upstage" {
     },
     {
       identifier = "solar-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "cerebras_api_key" {
+  type        = string
+  description = "The API key for Cerebras"
+}
+
+module "cerebras" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.cerebras_api_key
+  endpoint = "https://api.cerebras.ai/v1"
+  name     = "cerebras"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "zai-glm-4.6"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "gpt-oss-120b"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    },
+    {
+      identifier = "qwen-3-235b-a22b-instruct-2507"
       path       = "/chat/completions"
       parameters = jsonencode({})
     }

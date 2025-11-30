@@ -36,11 +36,9 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.upstage.model_ids.solar-pro2
+  tool_call_model_id          = module.mistral.model_ids["codestral-2508"]
   tool_call_model_temperature = 0.0
-  tool_call_model_parameters = jsonencode({
-    reasoning_effort = "minimal"
-  })
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.movie-browsing-tooling.id
 
