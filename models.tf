@@ -350,6 +350,82 @@ module "cerebras" {
   ]
 }
 
+variable "openrouter_api_key" {
+  type        = string
+  description = "The API key for OpenRouter"
+}
+
+module "openrouter" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.openrouter_api_key
+  endpoint = "https://openrouter.ai/api/v1"
+  name     = "openrouter"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "google/gemini-2.5-flash"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "google/gemini-2.0-flash-001"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "google/gemini-3-pro-preview"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "anthropic/claude-haiku-4.5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "azure_api_key" {
+  type        = string
+  description = "The API key for Azure AI foundry"
+}
+
+variable "azure_endpoint" {
+  type        = string
+  description = "The endpoint for azure"
+}
+
+module "azure" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.azure_api_key
+  endpoint = var.azure_endpoint
+  name     = "azure"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "gpt-5-nano"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "gpt-5-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+
 variable "voyageai_api_key" {
   type        = string
   description = "The API key for the VoyageAI inference service"

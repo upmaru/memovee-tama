@@ -44,7 +44,6 @@ module "movie-detail" {
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning_effort = "minimal"
-    service_tier     = "priority"
   })
 
   tooling_prompt_id = tama_prompt.movie-detail-tooling.id
