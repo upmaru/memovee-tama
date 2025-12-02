@@ -386,6 +386,26 @@ module "openrouter" {
       identifier = "anthropic/claude-haiku-4.5"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "arcee-ai/trinity-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "deepseek/deepseek-v3.2"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5.1-codex-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5.1-chat"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }

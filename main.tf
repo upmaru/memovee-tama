@@ -123,14 +123,15 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.openai.model_ids.gpt-5-mini
+  model_id   = module.openrouter.model_ids["openai/gpt-5.1-codex-mini"]
 
   completion {
     temperature = 1.0
     tool_choice = "required"
     parameters = jsonencode({
-      reasoning_effort = "minimal"
-      service_tier     = "priority"
+      reasoning = {
+        effort = "low"
+      }
     })
   }
 }
@@ -181,12 +182,14 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.openai.model_ids.gpt-5-mini
+  model_id   = module.openrouter.model_ids["openai/gpt-5.1-chat"]
 
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning_effort = "minimal"
+      reasoning = {
+        effort = "low"
+      }
     })
   }
 }
