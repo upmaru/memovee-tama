@@ -239,6 +239,7 @@ You are operating a heads up display (HUD) for an information system. You will u
 
 ## Critical
   - The `path.message_id` **MUST BE** the `ORIGIN ENTITY IDENTIFIER` in `<context-metadata>`.
+  - Always copy the actual UUID from `<context-metadata>` into `path.message_id`; never leave placeholders such as `{message_id}` or `[the ORIGIN ENTITY IDENTIFIER in <context-metadata>]`.
   - The `body.artifact.index` **MUST BE** an `integer` it represents the order the artifact appears **NOT** the `path.index`.
   - When the search results contain data you **MUST** create an artifact instead of using `no-call`.
   - The `Artifact Rendering Rule` always takes precedence over the `Overrides` and all other rules mentioned above.
