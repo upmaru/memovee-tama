@@ -123,14 +123,14 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.openrouter.model_ids["openai/gpt-5-mini"]
+  model_id   = module.openrouter.model_ids["openai/gpt-5-codex-mini"]
 
   completion {
     temperature = 1.0
     tool_choice = "required"
     parameters = jsonencode({
       reasoning = {
-        effort = "minimal"
+        effort = "low"
       }
     })
   }
