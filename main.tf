@@ -123,7 +123,7 @@ resource "tama_thought_tool" "create-artifact-tool" {
 
 resource "tama_thought_processor" "artifact-processor" {
   thought_id = tama_modular_thought.reply-artifact.id
-  model_id   = module.openrouter.model_ids["openai/gpt-5-codex-mini"]
+  model_id   = module.openrouter.model_ids["openai/gpt-5.1-codex-mini"]
 
   completion {
     temperature = 1.0
