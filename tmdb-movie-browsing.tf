@@ -36,12 +36,12 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.openrouter.model_ids["openai/gpt-5.1-codex-mini"]
+  tool_call_model_id          = module.openrouter.model_ids["openai/gpt-5-mini"]
   tool_call_tool_choice       = "required"
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning = {
-      effort = "low"
+      effort = "minimal"
     }
   })
 

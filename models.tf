@@ -141,6 +141,13 @@ module "openai" {
       parameters = jsonencode({
         reasoning_effort = "minimal"
       })
+    },
+    {
+      identifier = "gpt-5.1-chat-latest",
+      path       = "/chat/completions"
+      paraameters = jsonencode({
+        reasoning_effort = "minimal"
+      })
     }
   ]
 }
@@ -404,6 +411,11 @@ module "openrouter" {
     },
     {
       identifier = "openai/gpt-5.1-chat"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5-mini"
       path       = "/chat/completions"
       parameters = jsonencode({})
     }
