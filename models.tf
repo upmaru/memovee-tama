@@ -147,9 +147,9 @@ module "openai" {
     {
       identifier = "gpt-5.1-chat-latest"
       path       = "/responses"
-      paraameters = jsonencode({
+      parameters = jsonencode({
         reasoning = {
-          effort = "minimal"
+          effort = "medium"
         }
       })
     },

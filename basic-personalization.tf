@@ -21,10 +21,12 @@ module "update-user-perference" {
   relation = "tooling"
   index    = 0
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
+  tool_call_model_id          = module.openai.model_ids["gpt-5.1-codex-mini"]
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = {
-    reasoning_effort = "minimal"
+    reasoning = {
+      effort = "low"
+    }
   }
 
   action_ids = [
@@ -76,7 +78,9 @@ resource "tama_thought_processor" "personalization-routing-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning_effort = "minimal"
+      reasoning = {
+        effort = "minimal"
+      }
     })
   }
 }

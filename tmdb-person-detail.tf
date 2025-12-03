@@ -37,11 +37,13 @@ module "person-detail" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.openai.model_ids.gpt-5-mini
+  tool_call_model_id          = module.openai.model_ids["gpt-5.1-codex-mini"]
   tool_call_tool_choice       = "required"
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning_effort = "minimal"
+    reasoning = {
+      effort = "minimal"
+    }
   })
 
   tooling_prompt_id = tama_prompt.person-detail-tooling.id
