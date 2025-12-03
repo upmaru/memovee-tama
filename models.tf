@@ -116,11 +116,9 @@ module "openai" {
   models = [
     {
       identifier = "gpt-5-mini"
-      path       = "/responses"
+      path       = "/chat/completions"
       parameters = jsonencode({
-        reasoning = {
-          effort = "minimal"
-        }
+        reasoning_effort = "minimal"
       })
     },
     {
@@ -146,11 +144,9 @@ module "openai" {
     },
     {
       identifier = "gpt-5.1-chat-latest"
-      path       = "/responses"
+      path       = "/chat/completion"
       parameters = jsonencode({
-        reasoning = {
-          effort = "medium"
-        }
+        reasoning_effort = "low"
       })
     },
     {

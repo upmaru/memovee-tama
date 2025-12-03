@@ -40,9 +40,7 @@ module "movie-browsing" {
   tool_call_tool_choice       = "required"
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
-    reasoning = {
-      effort = "minimal"
-    }
+    reasoning_effort = "minimal"
   })
 
   tooling_prompt_id = tama_prompt.movie-browsing-tooling.id

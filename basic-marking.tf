@@ -89,9 +89,7 @@ resource "tama_thought_processor" "marking-routing-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning = {
-        effort = "minimal"
-      }
+      reasoning_effort = "minimal"
     })
   }
 }

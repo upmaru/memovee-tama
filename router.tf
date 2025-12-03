@@ -20,9 +20,7 @@ module "router" {
   routing_model_id          = module.openai.model_ids["gpt-5-mini"]
   routing_model_temperature = 1.0
   routing_model_parameters = jsonencode({
-    reasoning = {
-      effort = "minimal"
-    }
+    reasoning_effort = "minimal"
   })
 }
 

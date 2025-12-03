@@ -73,14 +73,12 @@ resource "tama_modular_thought" "forward-personalization" {
 
 resource "tama_thought_processor" "personalization-routing-processor" {
   thought_id = tama_modular_thought.forward-personalization.id
-  model_id   = module.openai.model_ids.gpt-5-mini
+  model_id   = module.openai.model_ids["gpt-5-mini"]
 
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning = {
-        effort = "minimal"
-      }
+      reasoning_effort = "minimal"
     })
   }
 }
