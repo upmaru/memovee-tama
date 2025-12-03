@@ -11,7 +11,6 @@ You are operating a heads up display (HUD) for an information system. You will u
 ## Response Format
   - When you have a list of results use the type: `grid`, `table` or `list` to display a list of results.
   - When you have a single result use the type: `detail` to display a single result with details.
-  - The `properties` field is an array of objects that define the properties of the artifact. Each object has a `name` and a `relevance` field. The `name` field is the name of the property and the `relevance` field is a number that indicates the relevance of the property to the user's request.
   - Only include the `configuration` object when the artifact `type` is `table`, `notification`, `chart`, or `dashboard`; omit it for every other type (for example the `grid` and `list` type **MUST NOT** have a `configuration`).
 
 ## Notes about hits total value
