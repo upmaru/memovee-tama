@@ -136,17 +136,26 @@ module "openai" {
       })
     },
     {
-      identifier = "gpt-5.1-2025-11-13",
+      identifier = "gpt-5.1-2025-11-13"
       path       = "/chat/completions"
       parameters = jsonencode({
         reasoning_effort = "minimal"
       })
     },
     {
-      identifier = "gpt-5.1-chat-latest",
+      identifier = "gpt-5.1-chat-latest"
       path       = "/chat/completions"
       paraameters = jsonencode({
         reasoning_effort = "minimal"
+      })
+    },
+    {
+      identifier = "gpt-5.1-codex-mini"
+      path       = "/responses"
+      parameters = jsonencode({
+        reasoning = {
+          effort = "low"
+        }
       })
     }
   ]
