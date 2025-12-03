@@ -2,9 +2,6 @@
 
 ### Artifact Rendering Rule
   - For `body.artifact.type` you can choose between `table`, `grid` or `list`.
-  - If you have only 1 item you can use `detail` in `body.artifact.type`.
-
-### Search Result Rendering
   - Always decide between `list`, `grid`, and `table` using the top-level `hits.total.value`; ignore counts from `inner_hits`.
   - When the user mentions wanting larger images you must use the `grid` layout because it renders the largest images.
   - When the user explicitly asks for a table you must use the `table` layout.
