@@ -17,7 +17,7 @@ module "router" {
     module.memovee.schemas["user-message"].id
   ]
 
-  routing_model_id          = module.openrouter.model_ids["openai/gpt-5-mini"]
+  routing_model_id          = module.openai.model_ids["gpt-5-mini"]
   routing_model_temperature = 1.0
   routing_model_parameters = jsonencode({
     reasoning = {

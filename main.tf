@@ -187,8 +187,12 @@ resource "tama_thought_processor" "reply-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      reasoning_effort = "medium"
-      verbosity        = "low"
+      reasoning = {
+        effort = "medium"
+      }
+      text = {
+        verbosity = "medium"
+      }
     })
   }
 }
