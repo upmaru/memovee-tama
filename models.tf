@@ -427,6 +427,11 @@ module "openrouter" {
       identifier = "openai/gpt-5-mini"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "amazon/nova-2-lite-v1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }
