@@ -144,9 +144,9 @@ module "openai" {
     },
     {
       identifier = "gpt-5.1-chat-latest"
-      path       = "/chat/completion"
+      path       = "/chat/completions"
       parameters = jsonencode({
-        reasoning_effort = "low"
+        reasoning_effort = "medium"
       })
     },
     {
