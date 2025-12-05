@@ -423,7 +423,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 **CRITICAL: Default Text-Search Filtering Strategy**
 - Start every text-based vector search with a quality gate that removes titles with `vote_count` < 500 or `vote_average` < 6.0.
-- Use a higher initial `limit` (25) so you have enough high-confidence candidates to sort later.
+- Use a higher initial `limit` (50) so you have enough high-confidence candidates; this ensures the follow-up sort can display the best 10 results while still keeping plenty of IDs in reserve if the user asks to see more.
 - Always set `"next": "verify-search-results-or-query-again"` so you can immediately re-run the same search without the quality filters when no hits are returned.
 - If `verify-search-results-or-query-again` indicates zero hits, drop ONLY the quality filters (keep user exclusion filters) and re-run the text query before trying other fallbacks.
 
@@ -436,14 +436,14 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 - This approach prevents complex nested boolean queries and improves performance
 
 - **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?" OR "What are some good movies for dealing with child's emotions?".
-  - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query. Start with the quality filters (vote count >= 500 and vote_average >= 6.0), a `limit` of 25, and plan to reissue the query without those filters if it returns zero hits.
+  - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query. Start with the quality filters (vote count >= 500 and vote_average >= 6.0), a `limit` of 50, and plan to reissue the query without those filters if it returns zero hits.
     ```json
     {
       "body": {
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 25,
+        "limit": 50,
         // CRITICAL: Keep queries SHORT and SUCCINCT with strong keywords that match the user's intent
         // Include movie titles ONLY if user explicitly mentions them - remove titles in fallback queries
         // Focus on the most important 3-5 keywords/phrases that capture what the user wants
@@ -505,7 +505,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 25,
+        "limit": 50,
         "query": "post apocalyptic zombie movies, undead survival films, zombie outbreak stories",
         "filter": {
           "bool": {
@@ -544,7 +544,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 **CRITICAL: Always Filter on IDs Before Sorting Text Results**
 - After running `search-index_text-based-vector-search`, you MUST pass those movie IDs into any `search-index_query-and-sort-based-search` follow-up. This keeps the context from Step 1 and prevents issues like the incorrect `"query": { "match_all": {} }` example that fails to sort correctly.
-- Use a `terms` filter on `"id"` plus any additional ranges/sorts the user needs:
+- Use a `terms` filter on `"id"` plus any additional ranges/sorts the user needs, and cap this follow-up step at `limit: 10` since it's just for sorting/refining:
   ```json
   {
     "path": {
@@ -554,7 +554,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
       "_source": [
         "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
       ],
-      "limit": 25,
+      "limit": 10,
       "query": {
         "bool": {
           "filter": [
@@ -582,6 +582,53 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   }
   ```
 - **Never** use `match_all` in this follow-up step—the query MUST stay scoped to the IDs returned by the text search.
+- **Showing more results after a follow-up request**:
+  - Keep the original pool of IDs from the text search intact so you can keep reusing it.
+  - When the user says "show me more", run another `search-index_query-and-sort-based-search` with the same `terms` filter on the ID pool, add a `must_not` clause containing the IDs of the movies you already displayed, and keep `limit: 10`. This effectively pages through the pre-fetched results without rerunning the expensive text search.
+    ```json
+    {
+      "path": {
+        "index": "tama-movie-db-movie-details"
+      },
+      "body": {
+        "_source": [
+          "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
+        ],
+        "limit": 10,
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "terms": {
+                  "id": ["ID_POOL_FROM_TEXT_SEARCH"]
+                }
+              }
+            ],
+            "must_not": [
+              {
+                "terms": {
+                  "id": ["ID_ALREADY_DISPLAYED_1", "ID_ALREADY_DISPLAYED_2", "..."]
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {
+            "vote_average": {
+              "order": "desc"
+            }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }
+    ```
+- Repeat the must_not expansion (adding the newly displayed IDs) each time the user wants to see the next batch of 10.
 
 - **Examples of correct query formation with explanatory text and concept separation:**
   - User asks: "Can you show me movies that take place in someone's mind?"
@@ -602,7 +649,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 25,
+        "limit": 50,
         // CRITICAL: Drastically condense to ONLY 2-3 core keywords, remove ALL specific details
         "query": "[ONLY 2-3 core keywords - NO quotes, NO detailed terms, NO repetition]",
         // IMPORTANT: Preserve user exclusion filters (must_not) but keep the quality gate removed once you've already retried without it
