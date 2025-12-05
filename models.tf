@@ -22,6 +22,18 @@ module "mistral" {
     {
       identifier = "mistral-small-latest"
       path       = "/chat/completions"
+    },
+    {
+      identifier = "devstral-small-latest"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "devstral-medium-latest"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "codestral-2508"
+      path       = "/chat/completions"
     }
   ]
 }
@@ -106,7 +118,7 @@ module "openai" {
       identifier = "gpt-5-mini"
       path       = "/chat/completions"
       parameters = jsonencode({
-        reasoning_effort = "high"
+        reasoning_effort = "minimal"
       })
     },
     {
@@ -124,10 +136,26 @@ module "openai" {
       })
     },
     {
-      identifier = "gpt-5.1-2025-11-13",
+      identifier = "gpt-5.1-2025-11-13"
       path       = "/chat/completions"
       parameters = jsonencode({
         reasoning_effort = "minimal"
+      })
+    },
+    {
+      identifier = "gpt-5.1-chat-latest"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "medium"
+      })
+    },
+    {
+      identifier = "gpt-5.1-codex-mini"
+      path       = "/responses"
+      parameters = jsonencode({
+        reasoning = {
+          effort = "low"
+        }
       })
     }
   ]
@@ -193,6 +221,252 @@ module "google" {
       parameters = jsonencode({
         reasoning_effort = "low"
       })
+    }
+  ]
+}
+
+variable "togetherai_api_key" {
+  type        = string
+  description = "The API key for TogetherAI inference service"
+}
+
+module "togetherai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.togetherai_api_key
+  endpoint = "https://api.together.xyz/v1"
+  name     = "togetherai"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "openai/gpt-oss-120b"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    },
+    {
+      identifier = "deepseek-ai/DeepSeek-V3.1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "Qwen/Qwen3-235B-A22B-Instruct-2507-tput"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "fireworksai_api_key" {
+  type        = string
+  description = "The API key for FireworksAI inference service"
+}
+
+module "fireworksai" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.fireworksai_api_key
+  endpoint = "https://api.fireworks.ai/inference/v1"
+  name     = "fireworksai"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "accounts/fireworks/models/deepseek-v3p1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "accounts/fireworks/models/deepseek-v3p1-terminus"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "upstage_api_key" {
+  type        = string
+  description = "The API key for Upstage AI inference service"
+}
+
+module "upstage" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.upstage_api_key
+  endpoint = "https://api.upstage.ai/v1"
+  name     = "upstage"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "solar-pro2"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "minimal"
+      })
+    },
+    {
+      identifier = "solar-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "cerebras_api_key" {
+  type        = string
+  description = "The API key for Cerebras"
+}
+
+module "cerebras" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.cerebras_api_key
+  endpoint = "https://api.cerebras.ai/v1"
+  name     = "cerebras"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "zai-glm-4.6"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "gpt-oss-120b"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "low"
+      })
+    },
+    {
+      identifier = "qwen-3-235b-a22b-instruct-2507"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "openrouter_api_key" {
+  type        = string
+  description = "The API key for OpenRouter"
+}
+
+module "openrouter" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.openrouter_api_key
+  endpoint = "https://openrouter.ai/api/v1"
+  name     = "openrouter"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "google/gemini-2.5-flash"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "google/gemini-2.0-flash-001"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "google/gemini-3-pro-preview"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "anthropic/claude-haiku-4.5"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "arcee-ai/trinity-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "deepseek/deepseek-v3.2"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5.1-codex-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5.1-chat"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-5-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "amazon/nova-2-lite-v1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "azure_api_key" {
+  type        = string
+  description = "The API key for Azure AI foundry"
+}
+
+variable "azure_endpoint" {
+  type        = string
+  description = "The endpoint for azure"
+}
+
+module "azure" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.4.9"
+
+  space_id = module.global.space.id
+  api_key  = var.azure_api_key
+  endpoint = var.azure_endpoint
+  name     = "azure"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "gpt-5-nano"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "gpt-5-mini"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }

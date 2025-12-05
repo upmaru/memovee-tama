@@ -246,6 +246,23 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    Previous messages include information about a specific movie that is still in context.
+  </condition>
+  <user-query>
+    - Which country is the movie from?
+    - What country is it from?
+    - Where was it produced?
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <reasoning>
+    - Whenever the user refers to the movie that is already in context (even indirectly via "the movie" or "it"), treat it as a request for more details about that title and route to "movie-detail".
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous message include search results for movies.
   </condition>
   <user-query>
