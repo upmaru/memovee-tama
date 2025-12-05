@@ -592,6 +592,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 - **Showing more results after a follow-up request**:
   - Keep the original pool of IDs from the text search intact so you can keep reusing it.
   - When the user says "show me more", run another `search-index_query-and-sort-based-search` with the same `terms` filter on the ID pool, add a `must_not` clause containing the IDs of the movies you already displayed, and keep `limit: 10`. This effectively pages through the pre-fetched results without rerunning the expensive text search.
+  - **CRITICAL**: Always include the FULL list of IDs from the original text search in the `terms` filter and track every ID you have already shown. The next call must keep the same `terms` list, append the seen IDs to `must_not`, and reuse the same sort array. This guarantees that the limit of 10 produces only unseen titles.
     ```json
     {
       "path": {
