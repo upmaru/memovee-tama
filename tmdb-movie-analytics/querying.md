@@ -30,6 +30,7 @@ All analytics queries should follow this pattern:
 - Set `limit: 0` to return only aggregations
 - **MANDATORY**: Include `_source: ["id"]` field (minimum requirement for analytics)
 - **MANDATORY**: Always include a `query` field - never omit it
+- **MANDATORY**: Provide a `next` value on every tool call (use a descriptive string for the follow-up action or `null` when no additional step is required)
 - Use appropriate time-based filters when analyzing trends
 - Include runtime mappings for calculated fields (profit, ROI, etc.)
 - Structure aggregations hierarchically for multi-dimensional analysis
@@ -64,7 +65,7 @@ All analytics queries should follow this pattern:
 - If you need to add placeholder content, use valid JSON values like `"temp_agg": {"value_count": {"field": "id"}}`
 
 **COMMON ERROR TO AVOID:**
-```json
+```jsonc
 // ❌ WRONG - This causes parsing errors:
 "high_vote_movies": {
   "filter": {...},
@@ -530,6 +531,7 @@ All analytics queries should follow this pattern:
   "path": {
     "index": "[the index name from the index-definition]"
   },
+  "next": "validate-results-or-retry",
   "body": {
     "_source": ["id"],
     "limit": 0,
@@ -600,8 +602,7 @@ All analytics queries should follow this pattern:
         }
       }
     }
-  },
-  "next": "validate-results-or-retry"
+  }
 }
 ```
 
