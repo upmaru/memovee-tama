@@ -421,6 +421,12 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 - Examples: "What are some good movies for dealing with child's emotions?", "Movies to help with grief", "Films about overcoming challenges"
 - The text search will better match the descriptive/emotional context, then use query-and-sort to refine by specific elements
 
+**CRITICAL: Default Text-Search Filtering Strategy**
+- Start every text-based vector search with a quality gate that removes titles with `vote_count` < 500 or `vote_average` < 6.0.
+- Use a higher initial `limit` (25) so you have enough high-confidence candidates to sort later.
+- Always set `"next": "verify-search-results-or-query-again"` so you can immediately re-run the same search without the quality filters when no hits are returned.
+- If `verify-search-results-or-query-again` indicates zero hits, drop ONLY the quality filters (keep user exclusion filters) and re-run the text query before trying other fallbacks.
+
 **CRITICAL: Preferred Filtering Strategy for Text-Based Vector Search**
 - **PREFERRED: Apply filtering in the first step - it's more efficient to do filtering in Step 1**
 - **RECOMMENDED: Use the "filter" parameter in text-based vector search for exclusions (seen movies, etc.)**
@@ -430,21 +436,38 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 - This approach prevents complex nested boolean queries and improves performance
 
 - **User Query:** "Can you find me movies based on a true story." OR "I want movies that inspire me." OR "Find me movies that are biopics" OR "Can you show me movies that take place in someone's mind?" OR "What are some good movies for dealing with child's emotions?".
-  - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query.
+  - Step 1: Use the `search-index_text-based-vector-search` to do a text based vector search for movies that closest match the user's query. Start with the quality filters (vote count >= 500 and vote_average >= 6.0), a `limit` of 25, and plan to reissue the query without those filters if it returns zero hits.
     ```json
     {
       "body": {
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 10,
+        "limit": 25,
         // CRITICAL: Keep queries SHORT and SUCCINCT with strong keywords that match the user's intent
         // Include movie titles ONLY if user explicitly mentions them - remove titles in fallback queries
         // Focus on the most important 3-5 keywords/phrases that capture what the user wants
         "query": "[short, keyword-focused text query - descriptive concepts, include user-mentioned titles]",
-        // OPTIONAL: Use filter to exclude specific movie IDs when user wants to filter out certain titles
+        // DEFAULT: Apply filter.bool.must for quality gating + OPTIONAL filter.bool.must_not to exclude user-provided IDs
         "filter": {
           "bool": {
+            // QUALITY GATE: remove very low-rated / low-vote movies on the first attempt
+            "must": [
+              {
+                "range": {
+                  "vote_count": {
+                    "gte": 500
+                  }
+                }
+              },
+              {
+                "range": {
+                  "vote_average": {
+                    "gte": 6.0
+                  }
+                }
+              }
+            ],
             "must_not": [
               {
                 "terms": {
@@ -455,18 +478,21 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           }
         }
       },
-      // use the `next` property to handle potential fallback if no results found
-      "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
+      // "verify-search-results-or-query-again" allows you to drop the quality filters if 0 hits come back
+      "next": "verify-search-results-or-query-again",
       "path": {
         "index": "[the index name from the definition]"
       }
     }
     ```
 
+  - If the verification step reports zero results, immediately re-run Step 1 without the `filter.bool.must` quality constraints (keep the `must_not` exclusions) while still using `"next": "verify-search-results-or-query-again"`. Only move on to the other fallback patterns once both the filtered and unfiltered text searches return no hits.
+
   - **Using the filter for exclusions:**
     - When user wants to filter out specific movies they've seen or don't want, include the `filter` object
     - Extract movie IDs from seen markings or other exclusion requirements
-    - Use `must_not` with `terms` to exclude the specified movie IDs
+    - Use `must_not` with `terms` to exclude the specified movie IDs in addition to the default quality `must` filters
+    - When you drop the quality filters after a zero-hit verification step, remove the `must` entries but keep the `must_not` list intact
     - Example: If user has seen movies with IDs "124223" and "567890", use `"id": ["124223", "567890"]`
     - If no filtering is needed, omit the entire `filter` object
 
@@ -479,10 +505,26 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 10,
+        "limit": 25,
         "query": "post apocalyptic zombie movies, undead survival films, zombie outbreak stories",
         "filter": {
           "bool": {
+            "must": [
+              {
+                "range": {
+                  "vote_count": {
+                    "gte": 500
+                  }
+                }
+              },
+              {
+                "range": {
+                  "vote_average": {
+                    "gte": 6.0
+                  }
+                }
+              }
+            ],
             "must_not": [
               {
                 "terms": {
@@ -493,12 +535,53 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           }
         }
       },
-      "next": "maybe-fallback-to-text-search-or-sort-filter-found-results",
+      "next": "verify-search-results-or-query-again",
       "path": {
         "index": "[the index name from the definition]"
       }
     }
     ```
+
+**CRITICAL: Always Filter on IDs Before Sorting Text Results**
+- After running `search-index_text-based-vector-search`, you MUST pass those movie IDs into any `search-index_query-and-sort-based-search` follow-up. This keeps the context from Step 1 and prevents issues like the incorrect `"query": { "match_all": {} }` example that fails to sort correctly.
+- Use a `terms` filter on `"id"` plus any additional ranges/sorts the user needs:
+  ```json
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
+      ],
+      "limit": 25,
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                "id": ["ID_FROM_TEXT_SEARCH_1", "ID_FROM_TEXT_SEARCH_2"]
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_count": {
+            "order": "desc"
+          }
+        }
+      ]
+    }
+  }
+  ```
+- **Never** use `match_all` in this follow-up step—the query MUST stay scoped to the IDs returned by the text search.
 
 - **Examples of correct query formation with explanatory text and concept separation:**
   - User asks: "Can you show me movies that take place in someone's mind?"
@@ -519,10 +602,10 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         "_source": [
           "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
         ],
-        "limit": 10,
+        "limit": 25,
         // CRITICAL: Drastically condense to ONLY 2-3 core keywords, remove ALL specific details
         "query": "[ONLY 2-3 core keywords - NO quotes, NO detailed terms, NO repetition]",
-        // IMPORTANT: If the original query had a filter, PRESERVE it in fallback queries
+        // IMPORTANT: Preserve user exclusion filters (must_not) but keep the quality gate removed once you've already retried without it
         "filter": {
           "bool": {
             "must_not": [

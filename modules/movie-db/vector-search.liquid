@@ -1,7 +1,7 @@
 {%- capture vectorize_input -%}
   {"thought_id":"{{ data.metadata.thought_id }}","text":"{{ data.query }}"}
 {%- endcapture -%}
-{%- assign limit_value = data.limit | default: 5 | at_most: 25 -%}
+{%- assign limit_value = data.limit | default: 5 | at_most: 50 -%}
 {%- assign num_candidates_value = limit_value | times: 3 -%}
 {
   "retriever": {
