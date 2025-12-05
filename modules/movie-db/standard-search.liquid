@@ -2,7 +2,7 @@
   "query": {{ data.query | json }},{% if data.runtime_mappings %}
   "runtime_mappings": {{ data.runtime_mappings | json }},{% endif %}
   "sort": {% if data.sort %}{{ data.sort | json }}{% else %}[]{% endif %},
-  "size": {{ data.limit | default: 5 | at_most: 25 }},
+  "size": {{ data.limit | default: 5 | at_most: 50 }},
   "_source": {
     "includes": {% if data._source %}{{ data._source | json }}{% else %}["id"]{% endif %},
     "excludes": ["*.embedding"]
