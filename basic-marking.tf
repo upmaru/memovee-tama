@@ -84,7 +84,7 @@ resource "tama_modular_thought" "forward-marking" {
 
 resource "tama_thought_processor" "marking-routing-processor" {
   thought_id = tama_modular_thought.forward-marking.id
-  model_id   = module.openai.model_ids["gpt-5.1-mini-codex"]
+  model_id   = module.openai.model_ids["gpt-5.1-codex-mini"]
 
   completion {
     temperature = 1.0
