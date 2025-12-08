@@ -40,29 +40,29 @@ The Memovee Tama system is designed to create an intelligent conversational AI p
 
 All models referenced via *_model_id, *_model_parameters, and tama_thought_processor resources:
 
-| Function | Model | Temperature | Reasoning effort | Service tier |
-| --- | --- | --- | --- | --- |
-| Memovee - Artifact Creation | gpt-5.1-codex-mini | 1.0 | low |  |
-| Memovee - Reply Generation | gpt-5.1-chat-latest | 1.0 | medium |  |
-| Router - Message Routing | gpt-5-mini | 1.0 | minimal |  |
-| Basic Greeting - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
-| Basic Introductory - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
-| Basic Personalization - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
-| Basic Personalization - Router | gpt-5-mini | 1.0 | minimal |  |
-| Basic Marking - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
-| Basic Marking - Router | gpt-5.1-codex-mini | 1.0 | low |  |
-| Movie Browsing - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
-| Movie Detail - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
-| Movie Analytics - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
-| Person Detail - Tool Call | gpt-5.1-codex-mini | 1.0 | minimal |  |
-| Person Browsing - Tool Call | gpt-5-mini | 1.0 | minimal |  |
-| Elasticsearch - Index Mapping Generation | gpt-5 | 1.0 | low |  |
-| Movie DB - Index Definition Generation | gpt-5 | 1.0 | low |  |
-| Movie DB - Generate Description | gpt-5-nano | 1.0 | low | flex |
-| Movie DB - Generate Setting | gpt-5-nano | 1.0 | low | flex |
-| Default Completion Processor | gpt-5-nano | 1.0 | minimal | flex |
-| VoyageAI - Embedding Processor | voyage-3.5 | - | - |  |
-| VoyageAI - Reranking Processor | rerank-2.5 | - | - |  |
+| Function | Provider | Model | Temperature | Reasoning effort | Service tier |
+| --- | --- | --- | --- | --- | --- |
+| Memovee - Artifact Creation | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Memovee - Reply Generation | OpenAI | gpt-5.1-chat-latest | 1.0 | medium |  |
+| Router - Message Routing | OpenAI | gpt-5-mini | 1.0 | minimal |  |
+| Basic Greeting - Tooling | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Introductory - Tooling | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Personalization - Tooling | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Personalization - Router | OpenAI | gpt-5-mini | 1.0 | minimal |  |
+| Basic Marking - Tooling | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Marking - Router | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Browsing - Tool Call | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Detail - Tool Call | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Analytics - Tool Call | OpenAI | gpt-5.1-codex-mini | 1.0 | low |  |
+| Person Detail - Tool Call | OpenAI | gpt-5.1-codex-mini | 1.0 | minimal |  |
+| Person Browsing - Tool Call | OpenAI | gpt-5-mini | 1.0 | minimal |  |
+| Elasticsearch - Index Mapping Generation | OpenAI | gpt-5 | 1.0 | low |  |
+| Movie DB - Index Definition Generation | OpenAI | gpt-5 | 1.0 | low |  |
+| Movie DB - Generate Description | OpenAI | gpt-5-nano | 1.0 | low | flex |
+| Movie DB - Generate Setting | OpenAI | gpt-5-nano | 1.0 | low | flex |
+| Default Completion Processor | OpenAI | gpt-5-nano | 1.0 | minimal | flex |
+| Embedding Processor | VoyageAI | voyage-3.5 | - | - |  |
+| Reranking Processor | VoyageAI | rerank-2.5 | - | - |  |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities
