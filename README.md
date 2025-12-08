@@ -42,19 +42,27 @@ All models referenced via *_model_id, *_model_parameters, and tama_thought_proce
 
 | Function | Model | Temperature | Reasoning effort | Service tier |
 | --- | --- | --- | --- | --- |
-| Memovee - Reply Generation | gpt-5-mini | 1.0 | low |  |
+| Memovee - Artifact Creation | gpt-5.1-codex-mini | 1.0 | low |  |
+| Memovee - Reply Generation | gpt-5.1-chat-latest | 1.0 | medium |  |
 | Router - Message Routing | gpt-5-mini | 1.0 | minimal |  |
+| Basic Greeting - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Introductory - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Personalization - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Personalization - Router | gpt-5-mini | 1.0 | minimal |  |
+| Basic Marking - Tooling | gpt-5.1-codex-mini | 1.0 | low |  |
+| Basic Marking - Router | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Browsing - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Detail - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
+| Movie Analytics - Tool Call | gpt-5.1-codex-mini | 1.0 | low |  |
+| Person Detail - Tool Call | gpt-5.1-codex-mini | 1.0 | minimal |  |
+| Person Browsing - Tool Call | gpt-5-mini | 1.0 | minimal |  |
 | Elasticsearch - Index Mapping Generation | gpt-5 | 1.0 | low |  |
-| Index Definition Generation | gpt-5 | 1.0 | low |  |
+| Movie DB - Index Definition Generation | gpt-5 | 1.0 | low |  |
 | Movie DB - Generate Description | gpt-5-nano | 1.0 | low | flex |
 | Movie DB - Generate Setting | gpt-5-nano | 1.0 | low | flex |
-| Media Browsing - Tool Call | gpt-5-mini | 1.0 | minimal |  |
-| Media Detail - Tool Call | gpt-5 | 1.0 | minimal |  |
-| Person Browsing - Tool Call | gpt-5-mini | 1.0 | minimal |  |
-| Person Detail - Tool Call | gpt-5 | 1.0 | minimal |  |
-| Memovee - Artifact Creation | gpt-5-mini | 1.0 | low |  |
-| Basic - Check Profile Tooling | gpt-5 | 1.0 | minimal |  |
-| Basic - Upsert Profile Tooling | gpt-5 | 1.0 | minimal |  |
+| Default Completion Processor | gpt-5-nano | 1.0 | minimal | flex |
+| VoyageAI - Embedding Processor | voyage-3.5 | - | - |  |
+| VoyageAI - Reranking Processor | rerank-2.5 | - | - |  |
 
 ### Data Storage
 - Elasticsearch module for indexing and searching capabilities
