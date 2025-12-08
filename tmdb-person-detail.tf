@@ -42,7 +42,7 @@ module "person-detail" {
   tool_call_model_temperature = 1.0
   tool_call_model_parameters = jsonencode({
     reasoning = {
-      effort = "minimal"
+      effort = "low"
     }
   })
 
