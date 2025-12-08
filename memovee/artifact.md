@@ -47,7 +47,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     }
     ```
     In the invalid payload above, `path` and `next` are incorrectly nested under `body`—the HUD will reject this payload.
-  - The `artifact.references` array is order sensitive. The renderer shows the **last** entry in `references` first, so append tool call IDs from least detailed/oldest to most detailed/newest (most detailed last). This guarantees the richest set of data is displayed at the top of the HUD.
+  - The `artifact.references` array is order sensitive. The renderer shows the **last** entry in `references` first, so append tool call IDs from least relevant to most relevant (most relevant last). This guarantees the most pertinent data is displayed at the top of the HUD.
   - When you have a list of results use the type: `grid`, `table` or `list` to display a list of results.
   - When you have a single result use the type: `detail` to display a single result with details.
   - Only include the `configuration` object when the artifact `type` is `table`, `notification`, `chart`, or `dashboard`; omit it for every other type (for example the `grid` and `list` type **MUST NOT** have a `configuration`).
