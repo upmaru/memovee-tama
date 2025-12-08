@@ -1285,6 +1285,77 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     }
     ```
 
+## User wants prequels/sequels/first entries from the same collection
+- When the user references a movie already in context (for example: "I'm looking at `[REC]²`—show me the first one") follow these steps:
+  - Any time the user’s request includes keywords such as *prequel*, *sequel*, *first*, *last*, *collection*, or similar phrasing, ensure `belongs_to_collection` is included in the `_source` of your lookup queries so the collection metadata is always available.
+  1. Re-query the movie itself to ensure you have its latest `_source` containing `belongs_to_collection`. This lookup should mirror the original search (match title, id, etc.), include `_source` fields such as `belongs_to_collection`, and set `"next": "look-up-movies-in-collection"` so the pipeline knows the follow-up request will enumerate the rest of the collection.
+  2. Read the collection id from the Step 1 response. Then issue a second `search-index_query-and-sort-based-search` call scoped to that `belongs_to_collection.id`. This second call should have `"next": null` because it directly returns the collection entries.
+  3. Use the returned list to surface the requested entries (e.g., the first film, sequels, prequels) and reference the second tool call in your artifact.
+
+  ```jsonc
+  // Example tool response snippet that exposes belongs_to_collection
+  {
+    "hits": {
+      "hits": [
+        {
+          "_source": {
+            "title": "[REC]²",
+            "belongs_to_collection": {
+              "id": 74508,
+              "name": "[REC] Collection",
+              "poster_path": "/x4nS8ZXzdFuascDxNGZJU9qkxgj.jpg",
+              "backdrop_path": "/txIG3D9UrvF4QRo8AEjhAeRMYSm.jpg"
+            }
+          }
+        }
+      ]
+    }
+  }
+  ```
+
+  ```jsonc
+  // Step 1: confirm the current movie's collection
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "title",
+        "belongs_to_collection",
+        "release_date",
+        "metadata"
+      ],
+      "query": {
+        "match_phrase": {
+          "title": "[REC]²"
+        }
+      },
+      "limit": 1
+    },
+    "next": "look-up-movies-in-collection"
+  }
+
+  // Step 2: fetch all entries within that collection
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        // include the standard detail fields needed for rendering
+      ],
+      "query": {
+        "terms": {
+          "belongs_to_collection.id": [74508]
+        }
+      }
+    },
+    "next": null
+  }
+  ```
+
 ## Query Generation Guidance
 
 ### Handling Empty Search Results

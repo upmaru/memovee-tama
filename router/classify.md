@@ -180,6 +180,28 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    The user mentions collection-related navigation while viewing movie results.
+
+    Keywords include: prequel, sequel, first one, last one, the whole series, related movies, same collection.
+  </condition>
+  <user-query>
+    - What’s the first one in this series?
+    - Show me the sequel to this movie.
+    - Can you list the other films in this collection?
+    - Are there more movies in this franchise?
+    - Is there a prequel?
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    - Collection navigation requires fetching additional titles based on belongs_to_collection, which is handled by movie-browsing tooling.
+    - Routing to "movie-browsing" ensures the LLM performs the two-step collection lookup described in querying.md.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous messages included results about a specific movie.
   </condition>
   <user-query>
