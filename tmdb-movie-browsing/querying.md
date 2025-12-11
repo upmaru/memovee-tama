@@ -21,9 +21,10 @@ You are an elasticsearch querying expert.
 
 ## User querying for a top movie list
 - **User Query:** "Can you show me the top 10 movies in 2024?" OR "Can you show me the top 10 Marvel movies?" OR "Show me the top Marvel movies" OR "Top 10 highest grossing movies" OR "Best rated movies"
-  - Step 1: When user mentions top 10 or top 20, you want to sort by the `vote_average` property (or other properties like `revenue`, `popularity` based on context). Use the `search-index_query-and-sort-based-search` tool to sort the movies by the appropriate property in descending order.
+  - Step 1: When user mentions top 10 or top 20, you want to sort by the `vote_average` property (or other properties like `revenue`, `popularity` based on context). Use the `search-index_query-and-sort-based-search` tool to sort the movies by the appropriate property in descending order, and add a secondary sort on `vote_count` (descending) to break ties with higher-confidence results.
+  - Step 2: Top lists must filter out low-signal titles. Unless the user explicitly requests otherwise, always add a range filter on `vote_count` with `"gte": 500` inside the `bool.filter` array, so results require at least 500 votes before being considered for "top" style rankings and the filter stays out of scoring.
   - **CRITICAL: Always include a `query` in the body, even for simple sorting requests. If no specific filters are needed, use `"query": { "match_all": {} }`**
-    ```json
+    ```jsonc
     {
       "path": {
         "index": "[the index name from the index-definition]"
@@ -40,6 +41,11 @@ You are an elasticsearch querying expert.
             "vote_average": {
               "order": "desc"
             }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
           }
         ],
         // You can adjust bool query based on the user's request. If the user only requested a specific year only include the range query, if the user requested specific year and production company name include both queries.
@@ -47,7 +53,15 @@ You are an elasticsearch querying expert.
         // NEVER omit the query field - it is REQUIRED for valid Elasticsearch queries.
         "query": {
           "bool": {
-            "must": [
+            "filter": [
+              // Require a minimum number of votes for relevance
+              {
+                "range": {
+                  "vote_count": {
+                    "gte": 500
+                  }
+                }
+              },
               // Search movies for a given year
               {
                 "range": {
@@ -79,7 +93,7 @@ You are an elasticsearch querying expert.
     }
     ```
   - **Example for simple top N request without filters:**
-    ```json
+    ```jsonc
     {
       "path": {
         "index": "tama-movie-db-movie-details"
@@ -94,10 +108,25 @@ You are an elasticsearch querying expert.
             "revenue": {
               "order": "desc"
             }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
           }
         ],
         "query": {
-          "match_all": {}
+          "bool": {
+            "filter": [
+              {
+                "range": {
+                  "vote_count": {
+                    "gte": 500
+                  }
+                }
+              }
+            ]
+          }
         }
       },
       "next": null
