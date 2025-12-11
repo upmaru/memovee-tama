@@ -116,3 +116,30 @@ variable "faculty_priority" {
   description = "The priority for the thoughts"
   default     = 1
 }
+
+variable "router" {
+  type        = any
+  description = "Configuration for enabling tama/agentic/router for forwarding."
+  default = {
+    enabled = false
+  }
+
+  validation {
+    condition = (
+      var.router == null ||
+      lookup(var.router, "enabled", false) == false ||
+      (
+        try(var.router.parameters, null) != null &&
+        try(var.router.prompt_id, null) != null &&
+        try(var.router.model_id, null) != null &&
+        try(var.router.model_temperature, null) != null &&
+        try(var.router.model_parameters, null) != null &&
+        length([
+          for class_id in try(var.router.routable_class_ids, []) : class_id
+          if class_id != var.response_class_id
+        ]) > 0
+      )
+    )
+    error_message = "When router.enabled is true, provide parameters, prompt_id, model_id, model_temperature, model_parameters, and at least one routable_class_id other than response_class_id."
+  }
+}

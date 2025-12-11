@@ -3,6 +3,19 @@ resource "tama_chain" "this" {
   name     = var.name
 }
 
+locals {
+  router_enabled           = try(var.router.enabled, false)
+  router_parameters        = try(var.router.parameters, null)
+  router_prompt_id         = try(var.router.prompt_id, null)
+  router_model_id          = try(var.router.model_id, null)
+  router_model_temperature = try(var.router.model_temperature, null)
+  router_model_parameters  = try(var.router.model_parameters, null)
+  router_routable_class_ids = distinct([
+    for class_id in try(var.router.routable_class_ids, []) : class_id
+    if class_id != var.response_class_id
+  ])
+}
+
 //
 // Browse Media Tooling
 //
@@ -106,7 +119,8 @@ resource "tama_modular_thought" "forwarding" {
   relation        = var.forwarding_relation
 
   module {
-    reference = "tama/concepts/forward"
+    reference  = local.router_enabled ? "tama/agentic/router" : "tama/concepts/forward"
+    parameters = local.router_enabled ? jsonencode(local.router_parameters) : null
   }
 
   dynamic "faculty" {
@@ -118,9 +132,35 @@ resource "tama_modular_thought" "forwarding" {
   }
 }
 
+resource "tama_thought_processor" "forwarding-router" {
+  count = local.router_enabled ? 1 : 0
+
+  thought_id = tama_modular_thought.forwarding.id
+  model_id   = local.router_model_id
+
+  completion {
+    temperature = local.router_model_temperature
+    parameters  = local.router_model_parameters
+  }
+}
+
+resource "tama_thought_context" "forwarding-router" {
+  count = local.router_enabled ? 1 : 0
+
+  thought_id = tama_modular_thought.forwarding.id
+  prompt_id  = local.router_prompt_id
+}
+
 resource "tama_thought_path" "forwarding" {
   thought_id      = tama_modular_thought.forwarding.id
   target_class_id = var.response_class_id
+}
+
+resource "tama_thought_path" "router" {
+  for_each = local.router_enabled ? { for class_id in local.router_routable_class_ids : class_id => class_id } : {}
+
+  thought_id      = tama_modular_thought.forwarding.id
+  target_class_id = each.value
 }
 
 resource "tama_thought_path_directive" "artifact-directive" {

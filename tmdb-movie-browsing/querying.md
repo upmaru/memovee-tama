@@ -1411,7 +1411,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 ## Query Generation Guidance
 
 ### Handling Empty Search Results
-When a search query returns no results (empty hits array), you should use `no-call()` for subsequent steps:
+When a search query returns no results (empty hits array), you should use `no-call()` for subsequent steps unless the conversation indicates that a prior tool call already failed to locate a specific title:
 
 **Example of empty result:**
 ```json
@@ -1439,6 +1439,10 @@ When a search query returns no results (empty hits array), you should use `no-ca
 **Instructions for handling empty results:**
 - **CRITICAL**: When `hits.hits` is empty (length = 0), use `no-call()` for any subsequent sorting or filtering steps
 - **Reason**: There are no movie IDs to sort or filter, so additional tool calls are unnecessary
+- **Exception (forwarded title lookups)**: If the conversation context shows a recent `search-index_query-and-sort-based-search` call that searched for an explicit movie title (typically from the movie-detail agent) and returned zero hits, do **not** stop. Instead:
+  1. Run a broader natural-language with the text from the title and search using the `search-index_text-based-vector-search` strategy in this document. Set `"next": "verify-results-or-re-query"` so the agent can decide whether to retry.
+  2. If the vector search still fails or is unsuitable, issue a follow-up partial-title match (e.g., `match_phrase`/`terms` on part of the provided title or related keywords) against the movie browsing index to surface near matches.
+  3. Only fall back to `no-call()` once these recovery strategies have been attempted or when context makes it clear no further search is possible.
 
 ### MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE:
 Before generating any Elasticsearch query, ensure ALL of these fields are present:
