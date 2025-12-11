@@ -26,6 +26,14 @@ resource "tama_modular_thought" "tooling" {
       }
     })
   }
+
+  dynamic "faculty" {
+    for_each = var.faculty_queue_id == null ? [] : [1]
+    content {
+      queue_id = var.faculty_queue_id
+      priority = var.faculty_priority
+    }
+  }
 }
 
 resource "tama_thought_context" "tooling" {
@@ -99,6 +107,14 @@ resource "tama_modular_thought" "forwarding" {
 
   module {
     reference = "tama/concepts/forward"
+  }
+
+  dynamic "faculty" {
+    for_each = var.faculty_queue_id == null ? [] : [1]
+    content {
+      queue_id = var.faculty_queue_id
+      priority = var.faculty_priority
+    }
   }
 }
 

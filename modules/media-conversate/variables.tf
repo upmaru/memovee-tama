@@ -104,3 +104,15 @@ variable "reply_generation_thought_id" {
   type        = string
   description = "The ID of the thought for reply generation."
 }
+
+variable "faculty_queue_id" {
+  type        = string
+  description = "The Queue ID to use for the thoughts"
+  default     = null
+}
+
+variable "faculty_priority" {
+  type        = number
+  description = "The priority for the thoughts"
+  default     = 1
+}
