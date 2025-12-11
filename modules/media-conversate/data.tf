@@ -58,3 +58,8 @@ data "tama_class" "forwarding" {
   space_id = data.tama_space.global.id
   name     = "forwarding"
 }
+
+data "tama_class" "message-routing" {
+  space_id = data.tama_space.global.id
+  name     = "message-routing"
+}

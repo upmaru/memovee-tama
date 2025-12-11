@@ -44,7 +44,7 @@ module "movie-detail" {
   thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
-  forwarding_relation      = local.forwarding_relation
+  forwarding_relation      = "routing"
 
   tool_call_model_id          = module.openai.model_ids["gpt-5.1-codex-mini"]
   tool_call_tool_choice       = "required"

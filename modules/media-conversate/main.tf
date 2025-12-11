@@ -114,7 +114,7 @@ resource "tama_thought_tool_input" "standard-search-request-body" {
 //
 resource "tama_modular_thought" "forwarding" {
   chain_id        = tama_chain.this.id
-  output_class_id = data.tama_class.forwarding.id
+  output_class_id = local.router_enabled ? data.tama_class.message-routing.id : data.tama_class.forwarding.id
   index           = 1
   relation        = var.forwarding_relation
 
