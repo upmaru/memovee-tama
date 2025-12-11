@@ -23,7 +23,7 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
     tool: [shows successful creation of user's regional preferences]
   </chat-history>
   <routing>
-    media-detail
+    movie-detail
   </routing>
   <reasoning>
     1. The user initially asked where they can stream a specific movie.
@@ -32,11 +32,11 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 
     3. The user provides their regional data.
 
-    4. The assistant saves the preferences and then should use the new information to query the tools in `media-detail`.
+    4. The assistant saves the preferences and then should use the new information to query the tools in `movie-detail`.
 
     5. Tool call was successful.
 
-    6. Next step is to use the data to query the tools in `media-detail`.
+    6. Next step is to use the data to query the tools in `movie-detail`.
   </reasoning>
 </case>
 

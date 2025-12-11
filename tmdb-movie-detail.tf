@@ -22,6 +22,13 @@ resource "tama_prompt" "movie-detail-artifact" {
   content  = file("tmdb-movie-detail/artifact.md")
 }
 
+resource "tama_prompt" "movie-detail-routing" {
+  space_id = tama_space.media-conversation.id
+  name     = "Movie Detail Routing"
+  role     = "system"
+  content  = file("tmdb-movie-detail/routing.md")
+}
+
 module "movie-detail" {
   source = "./modules/media-conversate"
 
@@ -37,7 +44,7 @@ module "movie-detail" {
   thread_classes = module.memovee.thread_classes
 
   routing_thought_relation = module.router.routing_thought_relation
-  forwarding_relation      = local.forwarding_relation
+  forwarding_relation      = "routing"
 
   tool_call_model_id          = module.openai.model_ids["gpt-5.1-codex-mini"]
   tool_call_tool_choice       = "required"
@@ -65,6 +72,31 @@ module "movie-detail" {
 
   faculty_queue_id = tama_queue.conversation.id
   faculty_priority = 0
+
+  router = {
+    enabled = true
+    parameters = {
+      class_name = var.router_classification_class_name
+      properties = var.router_classification_properties
+      thread = {
+        limit   = 7
+        classes = module.memovee.thread_classes
+        relations = {
+          routing = "routing"
+          focus   = ["tooling", "search-tooling", "reply"]
+        }
+      }
+    }
+
+    model_id          = module.openai.model_ids["gpt-5-mini"]
+    model_temperature = 1.0
+    model_parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
+
+    prompt_id          = tama_prompt.movie-detail-routing.id
+    routable_class_ids = [module.movie-browsing-forwardable.class.id]
+  }
 }
 
 module "watch-providers" {
