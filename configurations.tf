@@ -1,4 +1,6 @@
-provider "tama" {}
+provider "tama" {
+  timeout = 150
+}
 
 module "global" {
   source  = "upmaru/base/tama"
