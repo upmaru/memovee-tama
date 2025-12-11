@@ -1443,6 +1443,11 @@ When a search query returns no results (empty hits array), you should use `no-ca
   1. Run a broader natural-language with the text from the title and search using the `search-index_text-based-vector-search` strategy in this document. Set `"next": "verify-results-or-re-query"` so the agent can decide whether to retry.
   2. If the vector search still fails or is unsuitable, issue a follow-up partial-title match (e.g., `match_phrase`/`terms` on part of the provided title or related keywords) against the movie browsing index to surface near matches.
   3. Only fall back to `no-call()` once these recovery strategies have been attempted or when context makes it clear no further search is possible.
+- **Additional title lookup guidance**:
+  - When searching by title, if both the vector search and a `match_phrase` query on the title fail, retry using a `match` query (it is more forgiving).
+  - If the supplied title clearly contains a misspelled dictionary word, correct the spelling before issuing the next query.
+  - For long titles, split the name into meaningful segments and run `match_phrase` on the shorter fragments to improve recall.
+  - After trying `title`, repeat the same fallbacks using the `original_title` field in case the localized title differs.
 
 ### MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE:
 Before generating any Elasticsearch query, ensure ALL of these fields are present:
