@@ -2,6 +2,12 @@
 // Scribe Queue
 //
 
+resource "tama_queue" "default" {
+  role        = "scribe"
+  name        = "default"
+  concurrency = 2
+}
+
 resource "tama_queue" "branches" {
   role        = "scribe"
   name        = "branches"

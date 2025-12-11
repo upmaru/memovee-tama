@@ -58,4 +58,7 @@ module "movie-analytics" {
   movie_db_elasticsearch_specification_id = module.movie-db.query_elasticsearch_specification_id
 
   index_definition_relation = module.index-definition-generation.relations.movie-index
+
+  faculty_queue_id = tama_queue.conversation.id
+  faculty_priority = 0
 }
