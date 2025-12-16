@@ -31,7 +31,7 @@ resource "tama_modular_thought" "index-movie-details" {
 
 module "movie-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.4.9"
+  version = "0.5.0"
 
   thought_id = tama_modular_thought.index-movie-details.id
   class_id   = data.tama_class.movie-details.id
@@ -60,6 +60,15 @@ module "movie-details-preloader" {
   children = [
     {
       class = "movie-credits"
+      as    = "object"
+      record = {
+        rejections = [
+          { element = "value", matches = [""] }
+        ]
+      }
+    },
+    {
+      class = "memovee-movie-watch-providers"
       as    = "object"
       record = {
         rejections = [
@@ -117,7 +126,7 @@ resource "tama_modular_thought" "index-person-details" {
 
 module "person-details-preloader" {
   source  = "upmaru/base/tama//modules/initializer-preload"
-  version = "0.4.9"
+  version = "0.5.0"
 
   thought_id = tama_modular_thought.index-person-details.id
   class_id   = data.tama_class.person-details.id

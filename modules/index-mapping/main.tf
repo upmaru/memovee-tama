@@ -14,7 +14,7 @@ resource "tama_prompt" "person-db-index-constraints" {
 
 module "sample-movies-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Movie Index Generation"
@@ -25,8 +25,17 @@ module "sample-movies-for-index-generation" {
   preload_concept_with_relations = ["description", "overview", "setting"]
   preload_children = [
     {
-      class = "movie-credits",
-      as    = "object",
+      class = "movie-credits"
+      as    = "object"
+      record = {
+        rejections = [
+          { element = "value", matches = [""] }
+        ]
+      }
+    },
+    {
+      class = "memovee-movie-watch-providers"
+      as    = "object"
       record = {
         rejections = [
           { element = "value", matches = [""] }
@@ -44,7 +53,7 @@ module "sample-movies-for-index-generation" {
 
 module "sample-people-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Person Index Generation"

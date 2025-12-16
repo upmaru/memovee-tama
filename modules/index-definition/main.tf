@@ -96,6 +96,56 @@ resource "tama_thought_context_input" "elasticsearch-mapping" {
   class_corpus_id    = data.tama_class_corpus.elasticsearch-mapping.id
 }
 
+resource "tama_modular_thought" "swap-querying-alias" {
+  chain_id        = tama_chain.this.id
+  relation        = "swap-querying-alias"
+  index           = 1
+  output_class_id = data.tama_class.action-call.id
+
+  module {
+    reference = "tama/actions/caller"
+  }
+}
+
+resource "tama_thought_initializer" "import-create-index" {
+  thought_id = tama_modular_thought.swap-querying-alias.id
+  class_id   = data.tama_class.class-proxy.id
+
+  reference = "tama/initializers/import"
+  parameters = jsonencode({
+    resources = [
+      {
+        type     = "concept"
+        relation = var.create_index_relation
+        scope    = "entity"
+      }
+    ]
+  })
+}
+
+resource "tama_class_corpus" "swap-alias-request" {
+  class_id = data.tama_class.action-call.id
+  name     = "Swap Alias Request"
+  template = file("${path.module}/swap-alias-request.liquid")
+}
+
+resource "tama_thought_module_input" "input-swap-alias-request" {
+  thought_id      = tama_modular_thought.swap-querying-alias.id
+  type            = "concept"
+  class_corpus_id = tama_class_corpus.swap-alias-request.id
+}
+
+data "tama_action" "aliases" {
+  specification_id = var.elasticsearch_specification_id
+  method           = "POST"
+  path             = "/_aliases"
+}
+
+resource "tama_thought_tool" "aliases-action" {
+  thought_id = tama_modular_thought.swap-querying-alias.id
+  action_id  = data.tama_action.aliases.id
+}
+
 resource "tama_node" "handle-index-definition-generation" {
   space_id = var.movie_db_space_id
   class_id = data.tama_class.class-proxy.id

@@ -59,4 +59,7 @@ module "index-definition-generation" {
   index_definition_generation_model_parameters = jsonencode({
     reasoning_effort = "low"
   })
+
+  create_index_relation          = module.elasticsearch.create_index_relation
+  elasticsearch_specification_id = module.elasticsearch.specification_id
 }
