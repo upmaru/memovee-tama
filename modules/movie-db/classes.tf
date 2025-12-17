@@ -30,6 +30,10 @@ resource "tama_class" "memovee-movie-watch-providers" {
               type        = "string"
               description = "Type of availability such as flatrate, rent, or buy."
             }
+            logo_path = {
+              type        = "string"
+              description = "The path for the logo of the provider"
+            }
             provider_id = {
               type        = "integer"
               description = "TMDB identifier of the provider."
@@ -46,6 +50,7 @@ resource "tama_class" "memovee-movie-watch-providers" {
           required = [
             "country",
             "type",
+            "logo_path",
             "provider_id",
             "provider_name",
             "display_priority"
