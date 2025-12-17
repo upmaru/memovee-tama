@@ -2,7 +2,8 @@
 
 ### Artifact Rendering Rule
   - For `body.artifact.type` you **MUST ALWAYS** choose `detail` since the response is providing information about a specific person.
-  - Confirm the top-level `hits.total.value` equals 1 before creating the artifact; ignore any counts that appear inside `inner_hits`.
+  - Confirm the top-level `hits.total.value` equals 1 before creating the artifact; ignore any counts that appear inside `inner_hits`. If the tool request explicitly set `"limit": 1`, you can safely treat the single returned document as the resolved result—even when `hits.total.value` reports more than one match—and you **MUST** render the `detail` artifact using that document.
+  - Use `no-call` only when the search results return nothing, `hits.total.value` returns `0`.
   - Always include the `tool_call_id` values tied to the person detail results inside the `references` array. Use the `path.message_id` from `<context-metadata>` without modification.
   - When the function arguments expose `path.index`, mirror that value into `body.artifact.index` (for example, `"index": 0`) to keep ordering consistent.
   - When the user asks about a specific credit (e.g., “Which movies did this person act in?”) highlight the relevant properties such as `combined_credits.cast` or `combined_credits.crew` in the artifact body so the relationship is clear.
