@@ -46,10 +46,14 @@ module "movie-detail" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = "routing"
 
-  tool_call_model_id          = module.mistral.model_ids["codestral-2508"]
+  tool_call_model_id          = module.openai.model_ids["gpt-5.1-codex-mini"]
   tool_call_tool_choice       = "required"
-  tool_call_model_temperature = 0.0
-  tool_call_model_parameters  = jsonencode({})
+  tool_call_model_temperature = 1.0
+  tool_call_model_parameters = jsonencode({
+    reasoning = {
+      effort = "low"
+    }
+  })
 
   tooling_prompt_id = tama_prompt.movie-detail-tooling.id
 
@@ -84,9 +88,11 @@ module "movie-detail" {
       }
     }
 
-    model_id          = module.mistral.model_ids["ministral-14b-2512"]
-    model_temperature = 0.0
-    model_parameters  = jsonencode({})
+    model_id          = module.openai.model_ids["gpt-5-mini"]
+    model_temperature = 1.0
+    model_parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
 
     prompt_id          = tama_prompt.movie-detail-routing.id
     routable_class_ids = [module.movie-browsing-forwardable.class.id]
