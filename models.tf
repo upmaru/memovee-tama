@@ -399,6 +399,11 @@ module "openrouter" {
       parameters = jsonencode({})
     },
     {
+      identifier = "google/gemini-3-flash-preview"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
       identifier = "anthropic/claude-haiku-4.5"
       path       = "/chat/completions"
       parameters = jsonencode({})
