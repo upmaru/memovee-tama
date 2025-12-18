@@ -116,12 +116,12 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "sort": [
           {
-            "popularity": {
+            "vote_count": {
               "order": "desc"
             }
           },
           {
-            "vote_count": {
+            "popularity": {
               "order": "desc"
             }
           }
@@ -131,6 +131,67 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "next": null
     }
     ```
+  - When the media title and release year are provided together (e.g., "Hollywoodland 2006"):
+    ```json
+    {
+      "path": {
+        "index": "tama-movie-db-movie-details"
+      },
+      "body": {
+        "_source": [
+          "id",
+          "imdb_id",
+          "title",
+          "overview",
+          "poster_path",
+          "vote_average",
+          "vote_count",
+          "release_date",
+          "status",
+          "budget",
+          "revenue",
+          "metadata",
+          "genres",
+          "production_companies",
+          "runtime",
+          "popularity",
+          "origin_country"
+        ],
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "match_phrase": {
+                  "title": "Hollywoodland"
+                }
+              }
+            ],
+            "filter": [
+              {
+                "range": {
+                  "release_date": {
+                    "gte": "2006-01-01",
+                    "lt": "2007-01-01"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          { "popularity": { "order": "desc" } },
+          { "vote_count": { "order": "desc" } }
+        ],
+        "limit": 1
+      },
+      "next": null
+    }
+    ```
+    **Explanation**: When the user provides a movie title followed by a release year (e.g., "Hollywoodland 2006"), use a `bool` query with:
+    - A `must` clause containing a `match_phrase` for the movie title
+    - A `filter` clause with a `range` query on `release_date` that spans the entire year (from January 1 to December 31 of that year)
+    - Include `sort` by `popularity` desc and `vote_count` desc to prioritize the most recognized version
+    - Set `limit: 1` to return only the best match
 
 #### Multiple Items Query (General Details)
 **User Query**: "Movies with IDs 1, 2, 3"
