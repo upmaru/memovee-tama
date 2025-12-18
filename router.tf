@@ -17,13 +17,9 @@ module "router" {
     module.memovee.schemas["user-message"].id
   ]
 
-  routing_model_id          = module.openrouter.model_ids["google/gemini-3-flash-preview"]
+  routing_model_id          = module.mistral.model_ids["ministral-14b-2512"]
   routing_model_temperature = 0.0
-  routing_model_parameters = jsonencode({
-    reasoning = {
-      effort = "minimal"
-    }
-  })
+  routing_model_parameters  = jsonencode({})
 }
 
 resource "tama_thought_path" "route-to-off-topic" {

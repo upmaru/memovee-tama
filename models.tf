@@ -34,6 +34,14 @@ module "mistral" {
     {
       identifier = "codestral-2508"
       path       = "/chat/completions"
+    },
+    {
+      identifier = "mistral-large-2512"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "ministral-14b-2512"
+      path       = "/chat/completions"
     }
   ]
 }

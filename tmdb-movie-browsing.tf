@@ -36,14 +36,10 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.openrouter.model_ids["google/gemini-3-flash-preview"]
+  tool_call_model_id          = module.mistral.model_ids["mistral-medium-latest"]
   tool_call_tool_choice       = "required"
   tool_call_model_temperature = 0.0
-  tool_call_model_parameters = jsonencode({
-    reasoning = {
-      effort = "low"
-    }
-  })
+  tool_call_model_parameters  = jsonencode({})
 
   tooling_prompt_id = tama_prompt.movie-browsing-tooling.id
 
