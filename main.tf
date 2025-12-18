@@ -178,7 +178,7 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.mistral.model_ids["mistral-small-latest"]
+  model_id   = module.mistral.model_ids["mistral-large-2512"]
 
   completion {
     temperature = 0.7
