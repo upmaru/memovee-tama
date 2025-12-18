@@ -36,7 +36,7 @@ module "movie-browsing" {
   routing_thought_relation = module.router.routing_thought_relation
   forwarding_relation      = local.forwarding_relation
 
-  tool_call_model_id          = module.mistral.model_ids["mistral-medium-latest"]
+  tool_call_model_id          = module.mistral.model_ids["codestral-2508"]
   tool_call_tool_choice       = "required"
   tool_call_model_temperature = 0.0
   tool_call_model_parameters  = jsonencode({})
