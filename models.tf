@@ -165,6 +165,13 @@ module "openai" {
           effort = "low"
         }
       })
+    },
+    {
+      identifier = "gpt-5.2-chat-latest"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "medium"
+      })
     }
   ]
 }
