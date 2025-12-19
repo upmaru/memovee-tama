@@ -107,19 +107,19 @@ resource "tama_modular_thought" "swap-querying-alias" {
   }
 }
 
-resource "tama_thought_initializer" "import-create-index" {
-  thought_id = tama_modular_thought.swap-querying-alias.id
-  class_id   = data.tama_class.class-proxy.id
-
-  reference = "tama/initializers/import"
+resource "tama_thought_path" "swap-querying-alias-movie-details" {
+  thought_id      = tama_modular_thought.swap-querying-alias.id
+  target_class_id = data.tama_class.movie-details.id
   parameters = jsonencode({
-    resources = [
-      {
-        type     = "concept"
-        relation = var.create_index_relation
-        scope    = "entity"
-      }
-    ]
+    relation = local.movie_db_index_definition_relation
+  })
+}
+
+resource "tama_thought_path" "swap-querying-alias-person-details" {
+  thought_id      = tama_modular_thought.swap-querying-alias.id
+  target_class_id = data.tama_class.person-details.id
+  parameters = jsonencode({
+    relation = local.person_db_index_definition_relation
   })
 }
 
