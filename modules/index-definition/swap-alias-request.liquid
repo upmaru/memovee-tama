@@ -1,16 +1,34 @@
+{% assign index_name = data.content.index | strip %}
+{% assign segments = index_name | split: "-" %}
+{% assign segments_count = segments | size %}
+{% assign base_index = "" %}
+
+{% for segment in segments %}
+  {% if forloop.index < segments_count %}
+    {% if base_index != "" %}
+      {% assign base_index = base_index | append: "-" %}
+    {% endif %}
+    {% assign base_index = base_index | append: segment %}
+  {% endif %}
+{% endfor %}
+
+{% if base_index == "" %}
+  {% assign base_index = index_name %}
+{% endif %}
+
 {
   "body": {
     "actions": [
       {
         "remove": {
-          "index": "{{ data.index }}-*",
-          "alias": "{{ data.index }}"
+          "alias": "{{ base_index }}",
+          "index": "{{ base_index }}-*"
         }
       },
       {
         "add": {
-          "index": "{{ data.index }}",
-          "alias": "{{ data.index }}"
+          "alias": "{{ base_index }}",
+          "index": "{{ index_name }}"
         }
       }
     ]
