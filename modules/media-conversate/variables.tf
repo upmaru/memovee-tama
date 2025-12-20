@@ -133,13 +133,23 @@ variable "router" {
         try(var.router.prompt_id, null) != null &&
         try(var.router.model_id, null) != null &&
         try(var.router.model_temperature, null) != null &&
-        try(var.router.model_parameters, null) != null &&
-        length([
-          for class_id in try(var.router.routable_class_ids, []) : class_id
-          if class_id != var.response_class_id
-        ]) > 0
+        try(var.router.model_parameters, null) != null
       )
     )
-    error_message = "When router.enabled is true, provide parameters, prompt_id, model_id, model_temperature, model_parameters, and at least one routable_class_id other than response_class_id."
+    error_message = "When router.enabled is true, provide parameters, prompt_id, model_id, model_temperature, and model_parameters."
+  }
+}
+
+variable "routeable_classes" {
+  type        = map(string)
+  description = "Static-key map of routable class IDs for the router (keys must be known at plan time)."
+  default     = {}
+
+  validation {
+    condition = (
+      try(var.router.enabled, false) == false ||
+      length(var.routeable_classes) > 0
+    )
+    error_message = "Provide a non-empty routeable_classes map when router.enabled is true."
   }
 }

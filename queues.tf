@@ -20,6 +20,12 @@ resource "tama_queue" "steps" {
   concurrency = 4
 }
 
+resource "tama_queue" "flows" {
+  role        = "scribe"
+  name        = "flows"
+  concurrency = 4
+}
+
 resource "tama_queue" "specifications" {
   role        = "scribe"
   name        = "specifications"

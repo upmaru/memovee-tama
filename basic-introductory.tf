@@ -14,7 +14,7 @@ module "upsert-profile-tooling" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.4.9"
+  version = "0.5.0"
 
   chain_id = tama_chain.upsert-profile.id
 
