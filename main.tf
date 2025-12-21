@@ -182,7 +182,7 @@ locals {
 
 resource "tama_thought_processor" "reply-processor" {
   thought_id = tama_modular_thought.reply-generation.id
-  model_id   = module.openai.model_ids["gpt-5.2-chat-latest"]
+  model_id   = module.openai.model_ids["gpt-5.1-chat-latest"]
 
   completion {
     temperature = 1.0
