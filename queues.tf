@@ -20,6 +20,12 @@ resource "tama_queue" "steps" {
   concurrency = 4
 }
 
+resource "tama_queue" "flows" {
+  role        = "scribe"
+  name        = "flows"
+  concurrency = 4
+}
+
 resource "tama_queue" "specifications" {
   role        = "scribe"
   name        = "specifications"
@@ -35,7 +41,7 @@ resource "tama_queue" "agentic" {
 resource "tama_queue" "entities" {
   role        = "scribe"
   name        = "entities"
-  concurrency = 2
+  concurrency = 4
 }
 
 resource "tama_queue" "concepts" {

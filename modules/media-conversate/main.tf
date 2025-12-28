@@ -10,10 +10,8 @@ locals {
   router_model_id          = try(var.router.model_id, null)
   router_model_temperature = try(var.router.model_temperature, null)
   router_model_parameters  = try(var.router.model_parameters, null)
-  router_routable_class_ids = distinct([
-    for class_id in try(var.router.routable_class_ids, []) : class_id
-    if class_id != var.response_class_id
-  ])
+  # Require a static-key map so for_each keys are known at plan time (values may be unknown).
+  router_routable_class_map = tomap(var.routeable_classes)
 }
 
 //
@@ -157,7 +155,8 @@ resource "tama_thought_path" "forwarding" {
 }
 
 resource "tama_thought_path" "router" {
-  for_each = local.router_enabled ? { for class_id in local.router_routable_class_ids : class_id => class_id } : {}
+  # Use map keys supplied by the caller (or indexes) so the for_each keys are plan-time known.
+  for_each = local.router_enabled ? local.router_routable_class_map : {}
 
   thought_id      = tama_modular_thought.forwarding.id
   target_class_id = each.value

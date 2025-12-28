@@ -461,6 +461,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 **CRITICAL: Default Text-Search Filtering Strategy**
 - Start every text-based vector search with a quality gate that removes titles with `vote_count` < 500 or `vote_average` < 6.0.
 - Use a higher initial `limit` (50) so you have enough high-confidence candidates; this ensures the follow-up sort can display the best 10 results while still keeping plenty of IDs in reserve if the user asks to see more.
+- **MANDATORY:** Always include an explicit `limit` parameter in every `search-index_text-based-vector-search` call; never rely on implicit defaults.
 - Always set `"next": "verify-search-results-or-query-again"` so you can immediately re-run the same search without the quality filters when no hits are returned.
 - If `verify-search-results-or-query-again` indicates zero hits, drop ONLY the quality filters (keep user exclusion filters) and re-run the text query before trying other fallbacks.
 

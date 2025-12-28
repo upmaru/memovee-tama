@@ -36,3 +36,13 @@ data "tama_class_corpus" "elasticsearch-mapping" {
   class_id = data.tama_class.elasticsearch-mapping.id
   slug     = "elasticsearch-mapping"
 }
+
+data "tama_class" "dynamic" {
+  space_id = data.tama_space.global.id
+  name     = "dynamic"
+}
+
+data "tama_class" "action-call" {
+  space_id = data.tama_space.global.id
+  name     = "action-call"
+}

@@ -10,7 +10,7 @@ variable "elasticsearch_management_api_key" {
 
 module "elasticsearch" {
   source  = "upmaru/base/tama//modules/elasticsearch"
-  version = "0.4.9"
+  version = "0.5.0"
 
   depends_on = [
     module.global.schemas

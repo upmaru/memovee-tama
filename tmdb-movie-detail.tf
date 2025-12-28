@@ -73,6 +73,10 @@ module "movie-detail" {
   faculty_queue_id = tama_queue.conversation.id
   faculty_priority = 0
 
+  routeable_classes = {
+    movie_browsing = module.movie-browsing-forwardable.class.id
+  }
+
   router = {
     enabled = true
     parameters = {
@@ -94,8 +98,7 @@ module "movie-detail" {
       reasoning_effort = "minimal"
     })
 
-    prompt_id          = tama_prompt.movie-detail-routing.id
-    routable_class_ids = [module.movie-browsing-forwardable.class.id]
+    prompt_id = tama_prompt.movie-detail-routing.id
   }
 }
 

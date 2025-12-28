@@ -5,7 +5,7 @@ variable "mistral_api_key" {
 
 module "mistral" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.mistral_api_key
@@ -34,6 +34,14 @@ module "mistral" {
     {
       identifier = "codestral-2508"
       path       = "/chat/completions"
+    },
+    {
+      identifier = "mistral-large-2512"
+      path       = "/chat/completions"
+    },
+    {
+      identifier = "ministral-14b-2512"
+      path       = "/chat/completions"
     }
   ]
 }
@@ -45,7 +53,7 @@ variable "xai_api_key" {
 
 module "xai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.xai_api_key
@@ -104,7 +112,7 @@ variable "openai_api_key" {
 
 module "openai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.openai_api_key
@@ -157,6 +165,13 @@ module "openai" {
           effort = "low"
         }
       })
+    },
+    {
+      identifier = "gpt-5.2-chat-latest"
+      path       = "/chat/completions"
+      parameters = jsonencode({
+        reasoning_effort = "medium"
+      })
     }
   ]
 }
@@ -168,7 +183,7 @@ variable "anthropic_api_key" {
 
 module "anthropic" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.anthropic_api_key
@@ -198,7 +213,7 @@ variable "google_api_key" {
 
 module "google" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.google_api_key
@@ -232,7 +247,7 @@ variable "togetherai_api_key" {
 
 module "togetherai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.togetherai_api_key
@@ -274,7 +289,7 @@ variable "fireworksai_api_key" {
 
 module "fireworksai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.fireworksai_api_key
@@ -304,7 +319,7 @@ variable "upstage_api_key" {
 
 module "upstage" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.upstage_api_key
@@ -336,7 +351,7 @@ variable "cerebras_api_key" {
 
 module "cerebras" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.cerebras_api_key
@@ -373,7 +388,7 @@ variable "openrouter_api_key" {
 
 module "openrouter" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.openrouter_api_key
@@ -395,6 +410,11 @@ module "openrouter" {
     },
     {
       identifier = "google/gemini-3-pro-preview"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "google/gemini-3-flash-preview"
       path       = "/chat/completions"
       parameters = jsonencode({})
     },
@@ -448,7 +468,7 @@ variable "azure_endpoint" {
 
 module "azure" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.azure_api_key
@@ -479,7 +499,7 @@ variable "voyageai_api_key" {
 
 module "voyageai" {
   source  = "upmaru/base/tama//modules/inference-service"
-  version = "0.4.9"
+  version = "0.5.0"
 
   space_id = module.global.space.id
   api_key  = var.voyageai_api_key
