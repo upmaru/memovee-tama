@@ -5,6 +5,34 @@
   - `production_companies`
   - `movie-credits.cast`
   - `movie-credits.crew`
+  - `memovee-movie-watch-providers.watch_providers`
+- The `watch_providers` nested object must expose the following mapping so every property is explicitly typed:
+  ```json
+  {
+    "watch_providers": {
+      "type": "nested",
+      "properties": {
+        "country": { "type": "keyword" },
+        "type": { "type": "keyword" },
+        "logo_path": { "type": "text" },
+        "provider_id": { "type": "integer" },
+        "provider_name": { "type": "keyword" },
+        "display_priority": { "type": "integer" }
+      }
+    }
+  }
+  ```
+- When validating `watch_providers` documents, expect entries similar to:
+  ```json
+  {
+    "country": "MK",
+    "display_priority": 0,
+    "logo_path": "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg",
+    "provider_id": 8,
+    "provider_name": "Netflix",
+    "type": "flatrate"
+  }
+  ```
 - Make sure that the following fields are of type `text`:
   - `title`
   - `original_title`
