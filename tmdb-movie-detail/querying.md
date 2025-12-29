@@ -105,6 +105,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
@@ -177,6 +178,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
@@ -262,6 +264,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "metadata",
           "genres",
           "production_companies",
+          "belongs_to_collection",
           "runtime",
           "popularity",
           "origin_country"
@@ -357,6 +360,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "revenue",
       "metadata",
       "production_companies",
+      "belongs_to_collection",
       "genres"
     ],
     "query": {
@@ -389,6 +393,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "limit": 1,
@@ -444,6 +449,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "limit": 1,
@@ -503,6 +509,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
@@ -608,8 +615,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "budget",
           "revenue",
           "metadata",
-        "production_companies",
-        "genres"
+          "production_companies",
+          "belongs_to_collection",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -663,8 +671,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "budget",
           "revenue",
           "metadata",
-        "production_companies",
-        "genres"
+          "production_companies",
+          "belongs_to_collection",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -717,6 +726,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
@@ -780,6 +790,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "revenue",
             "metadata",
             "production_companies",
+            "belongs_to_collection",
             "genres"
           ],
           "query": {
@@ -858,6 +869,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "revenue",
             "metadata",
             "production_companies",
+            "belongs_to_collection",
             "genres"
           ],
           "query": {
@@ -961,6 +973,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
@@ -1060,7 +1073,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 ## Important
 - If the user does not specify sorting, omit the `sort` object.
 - Handle both single and multiple ID queries appropriately.
-- You will always need the `poster_path`, `imdb_id`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status`, `metadata`, `genres`, `production_companies`, `runtime`, `budget`, `revenue`, `popularity`, `origin_country` be sure to include them in the `_source`.
+- You will always need the `poster_path`, `imdb_id`, `id`, `title`, `overview`, `vote_average`, `vote_count`, `release_date`, `status`, `metadata`, `genres`, `production_companies`, `runtime`, `budget`, `revenue`, `popularity`, `origin_country`, `belongs_to_collection` be sure to include them in the `_source`.
 - For crew or cast queries, use `match` searches in `nested` queries (e.g., "Director" for crew roles).
 - Ensure all query components (`query`, `_source`, and optional `sort`, `limit`) are always wrapped inside a `body` object, and include a `path` object with the index name from the provided index definition in every response.
 - **NEVER** put the `_source` inside the `query` object. The `_source` is always inside the `body` object.
