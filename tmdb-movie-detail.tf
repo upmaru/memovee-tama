@@ -102,30 +102,6 @@ module "movie-detail" {
   }
 }
 
-module "watch-providers" {
-  source = "./modules/watch-providers"
-
-  tmdb_specification_id = module.movie-db.tmdb_specification_id
-}
-
-//
-// Watch Providers Tooling
-//
-resource "tama_thought_tool" "watch-providers" {
-  thought_id = module.movie-detail.tooling_thought_id
-  action_id  = module.watch-providers.action_id
-}
-
-resource "tama_thought_tool_output" "watch-providers-output" {
-  thought_tool_id = tama_thought_tool.watch-providers.id
-  class_corpus_id = module.watch-providers.class_corpus_id
-}
-
-resource "tama_tool_output_option" "watch-providers-region" {
-  thought_tool_output_id = tama_thought_tool_output.watch-providers-output.id
-  action_modifier_id     = module.watch-providers.action_modifier_id
-}
-
 //
 // Check User Preferences Tooling
 //

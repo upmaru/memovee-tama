@@ -14,6 +14,11 @@ resource "tama_modular_thought" "forward-off-topic" {
   module {
     reference = "tama/concepts/forward"
   }
+
+  faculty {
+    queue_id = tama_queue.conversation.id
+    priority = 0
+  }
 }
 
 resource "tama_thought_path" "forward-off-topic-reply" {

@@ -14,7 +14,7 @@ module "check-profile-tooling" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.5.0"
+  version = "0.5.1"
 
   relation = "tooling"
   chain_id = tama_chain.load-profile-and-greet.id
@@ -41,6 +41,9 @@ module "check-profile-tooling" {
       ]
     }
   }
+
+  faculty_queue_id = tama_queue.conversation.id
+  faculty_priority = 0
 }
 
 resource "tama_modular_thought" "forward-check-profile" {
@@ -53,6 +56,11 @@ resource "tama_modular_thought" "forward-check-profile" {
 
   module {
     reference = "tama/concepts/forward"
+  }
+
+  faculty {
+    queue_id = tama_queue.conversation.id
+    priority = 0
   }
 }
 

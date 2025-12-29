@@ -14,7 +14,7 @@ module "update-user-perference" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.5.0"
+  version = "0.5.1"
 
   chain_id = tama_chain.handle-personalization.id
 
@@ -44,6 +44,9 @@ module "update-user-perference" {
       ]
     }
   }
+
+  faculty_queue_id = tama_queue.conversation.id
+  faculty_priority = 0
 }
 
 resource "tama_modular_thought" "forward-personalization" {

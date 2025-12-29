@@ -4,7 +4,7 @@ provider "tama" {
 
 module "global" {
   source  = "upmaru/base/tama"
-  version = "0.5.0"
+  version = "0.5.1"
 }
 
 locals {
