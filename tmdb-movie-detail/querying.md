@@ -8,8 +8,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 - **CRITICAL**: Every query must include the complete structure: a `path` with `index`, a `body` containing `query`, `_source`, `limit`, and any optional `sort`, and a `next` value (descriptive string or `null`), exactly as defined by the index specification.
 
 ### Media Watch Providers
-- If the user asks about where they can `stream` or `watch` a movie.
-- You will need to load the user's preferences before making any queries by using the `list-user-preferences` tool to figure out which region they are in.
+- Whenever regional data is available, every movie-detail workflow must also return watch-provider availability for that region.
+- You must load the user's preferences before making any queries by using the `list-user-preferences` tool to figure out which region they are in.
   ```json
   {
     "next": "query-media-detail",
@@ -20,11 +20,11 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   ```
 - If after you have made the call to `list-user-preferences` and discovered that the user has not specified a region, make `no-call`; this will exit out of the query loop and ask the user to specify a region.
 - If the user explicitly provided a region (e.g., "in the US") you must still call `list-user-preferences`, but prefer the user-provided region when constructing the query filter.
-- Once the region is known (from the user’s preferences or an explicit mention in their request), include the watch-provider filter directly inside whichever media-detail query you are running (ID- or title-based, cast lookups, etc.). Add the nested filter and inner hits exactly as below, substituting the detected ISO alpha-2 region code:
-  ```jsonc
+- Once the region is known (from the user’s preferences or an explicit mention in their request), include the watch-provider clause directly inside **every** media-detail query you run (ID-based lookups, title lookups, cast queries, etc.). Use a `should` clause so the base movie query still succeeds when no providers exist for that region, and set `"minimum_should_match": 0`. Add the nested filter and inner hits exactly as below, substituting the detected ISO alpha-2 region code(s). If the user requests multiple countries, list each ISO code inside the `terms` array so availability from any of the requested regions qualifies. If no region is available you may omit this block and proceed without watch-provider data.
+  ```json
   {
     "bool": {
-      "filter": [
+      "should": [
         {
           "nested": {
             "path": "memovee-movie-watch-providers.watch_providers",
@@ -32,32 +32,35 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               "bool": {
                 "filter": [
                   {
-                    "term": {
-                      "memovee-movie-watch-providers.watch_providers.country": "[region iso alpha 2 code]"
+                    "terms": {
+                      "memovee-movie-watch-providers.watch_providers.country": [
+                        "[region iso alpha 2 code]"
+                      ]
                     }
                   }
                 ]
               }
             },
-              "inner_hits": {
-                "name": "watch-providers",
-                "size": 50,
-                "_source": true,
-                "sort": [
-                  {
-                    "memovee-movie-watch-providers.watch_providers.display_priority": {
-                      "order": "asc"
-                    }
+            "inner_hits": {
+              "name": "watch-providers",
+              "size": 50,
+              "_source": true,
+              "sort": [
+                {
+                  "memovee-movie-watch-providers.watch_providers.display_priority": {
+                    "order": "asc"
+                  }
                 }
               ]
             }
           }
         }
-      ]
+      ],
+      "minimum_should_match": 0
     }
   }
   ```
-- Make sure `_source` includes `"memovee-movie-watch-providers"` so the watch-provider data is returned alongside the other movie fields. Once this query is executed the workflow is complete, so set `"next": null` unless additional steps are still required for the user’s request.
+- Do **not** add `"memovee-movie-watch-providers"` to the top-level `_source`; the nested `inner_hits` already return the provider details. Once this query is executed the workflow is complete, so set `"next": null` unless additional steps are still required for the user’s request. Treat the clause as mandatory whenever a region is available; omit it entirely when no region information exists.
 
 
 ## Instructions
@@ -78,9 +81,10 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
   - Rating: "rating", "review".
 
 ### Query Examples
+**Watch-provider clause when region is available**: For each example, include the nested watch-provider `should` clause (with `minimum_should_match: 0`) whenever a region has been resolved from `list-user-preferences` or the user’s utterance. If no region exists, omit the entire `should` block and `minimum_should_match`.
 #### Single Item Query (General Details)
 **User Query**: "Details about Moana 2" or "Movie with ID 1241982"
-  - When the `id` or `_id` number for a particular movie (example: 1241982) is available in context:
+  - When the `id` or `_id` number for a particular movie (example: 1241982) is available in context, wrap the lookup inside a `bool`. If a region is known, include the watch-provider clause as shown below; otherwise remove the `should` block entirely:
     ```jsonc
     {
       "path": {
@@ -99,37 +103,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
-        ],
-        "query": {
-          "terms": {
-            "id": [1241982]
-          }
-        }
-      },
-      "next": null
-    }
-    ```
-  - **When the user also needs region-specific watch providers**, include the nested filter inside the same query (note the additional `_source` include and `bool` wrapper):
-    ```jsonc
-    {
-      "path": {
-        "index": "[the index name from the index-definition]"
-      },
-      "body": {
-        "_source": [
-          "id",
-          "imdb_id",
-          "title",
-          "overview",
-          "poster_path",
-          "vote_average",
-          "vote_count",
-          "release_date",
-          "status",
-          "budget",
-          "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -140,7 +116,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                 }
               }
             ],
-            "filter": [
+            "should": [
               {
                 "nested": {
                   "path": "memovee-movie-watch-providers.watch_providers",
@@ -148,8 +124,10 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                     "bool": {
                       "filter": [
                         {
-                          "term": {
-                            "memovee-movie-watch-providers.watch_providers.country": "US"
+                          "terms": {
+                            "memovee-movie-watch-providers.watch_providers.country": [
+                              "US"
+                            ]
                           }
                         }
                       ]
@@ -169,7 +147,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                   }
                 }
               }
-            ]
+            ],
+            "minimum_should_match": 0
           }
         },
         "limit": 1
@@ -177,7 +156,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "next": null
     }
     ```
-  - When only the media title is available in context:
+  - When only the media title is available in context (and a region is known, include the `should` block; otherwise omit it):
     ```json
     {
       "path": {
@@ -196,11 +175,52 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
-          "match_phrase": {
-            "title": "Moana 2"
+          "bool": {
+            "must": [
+              {
+                "match_phrase": {
+                  "title": "Moana 2"
+                }
+              }
+            ],
+            "should": [
+              {
+                "nested": {
+                  "path": "memovee-movie-watch-providers.watch_providers",
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "terms": {
+                            "memovee-movie-watch-providers.watch_providers.country": [
+                              "[REGION_ISO]"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "inner_hits": {
+                    "name": "watch-providers",
+                    "size": 50,
+                    "_source": true,
+                    "sort": [
+                      {
+                        "memovee-movie-watch-providers.watch_providers.display_priority": {
+                          "order": "asc"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "minimum_should_match": 0
           }
         },
         "sort": [
@@ -220,7 +240,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "next": null
     }
     ```
-  - When the media title and release year are provided together (e.g., "Hollywoodland 2006"):
+  - When the media title and release year are provided together (e.g., "Hollywoodland 2006") and regional information is available, include the `should` block; otherwise omit it:
     ```json
     {
       "path": {
@@ -264,7 +284,40 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
                   }
                 }
               }
-            ]
+            ],
+            "should": [
+              {
+                "nested": {
+                  "path": "memovee-movie-watch-providers.watch_providers",
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "terms": {
+                            "memovee-movie-watch-providers.watch_providers.country": [
+                              "[REGION_ISO]"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "inner_hits": {
+                    "name": "watch-providers",
+                    "size": 50,
+                    "_source": true,
+                    "sort": [
+                      {
+                        "memovee-movie-watch-providers.watch_providers.display_priority": {
+                          "order": "asc"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "minimum_should_match": 0
           }
         },
         "sort": [
@@ -302,7 +355,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "status",
       "budget",
       "revenue",
-      "metadata"
+      "metadata",
+      "production_companies",
+      "genres"
     ],
     "query": {
       "terms": {
@@ -332,7 +387,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "limit": 1,
         "query": {
@@ -385,7 +442,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "limit": 1,
         "query": {
@@ -442,7 +501,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -491,7 +552,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -544,7 +607,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+        "production_companies",
+        "genres"
         ],
         "query": {
           "bool": {
@@ -597,7 +662,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+        "production_companies",
+        "genres"
         ],
         "query": {
           "bool": {
@@ -648,7 +715,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
           "bool": {
@@ -709,7 +778,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "status",
             "budget",
             "revenue",
-            "metadata"
+            "metadata",
+            "production_companies",
+            "genres"
           ],
           "query": {
             "bool": {
@@ -785,7 +856,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             "status",
             "budget",
             "revenue",
-            "metadata"
+            "metadata",
+            "production_companies",
+            "genres"
           ],
           "query": {
             "bool": {
@@ -886,7 +959,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "status",
           "budget",
           "revenue",
-          "metadata"
+          "metadata",
+          "production_companies",
+          "genres"
         ],
         "query": {
           "bool": {
