@@ -561,6 +561,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "revenue",
           "metadata",
           "production_companies",
+          "belongs_to_collection",
           "genres"
         ],
         "query": {
