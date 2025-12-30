@@ -308,6 +308,21 @@ module "fireworksai" {
       identifier = "accounts/fireworks/models/deepseek-v3p1-terminus"
       path       = "/chat/completions"
       parameters = jsonencode({})
+    },
+    {
+      identifier = "accounts/fireworks/models/minimax-m2p1"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "accounts/fireworks/models/glm-4p7"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "accounts/fireworks/models/deepseek-v3p2"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
     }
   ]
 }
