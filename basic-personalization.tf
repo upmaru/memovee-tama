@@ -106,6 +106,13 @@ resource "tama_thought_path" "forward-personalization-media-detail" {
   target_class_id = module.movie-detail-forwardable.class.id
 }
 
+resource "tama_thought_path" "forward-personalization-media-browsing" {
+  depends_on = [tama_space_bridge.basic-conversation-media-conversation]
+
+  thought_id      = tama_modular_thought.forward-personalization.id
+  target_class_id = module.movie-browsing-forwardable.class.id
+}
+
 resource "tama_thought_path" "forward-personalization-reply" {
   depends_on = [tama_space_bridge.basic-conversation-memovee]
 
