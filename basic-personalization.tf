@@ -14,7 +14,7 @@ module "update-user-perference" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.5.1"
+  version = "0.5.2"
 
   chain_id = tama_chain.handle-personalization.id
 
