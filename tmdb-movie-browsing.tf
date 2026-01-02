@@ -62,3 +62,11 @@ module "movie-browsing" {
   faculty_queue_id = tama_queue.conversation.id
   faculty_priority = 0
 }
+
+//
+// Check User Preferences Tooling
+//
+resource "tama_thought_tool" "movie-browsing-check-user-preferences" {
+  thought_id = module.movie-browsing.tooling_thought_id
+  action_id  = data.tama_action.get-user-preferences.id
+}

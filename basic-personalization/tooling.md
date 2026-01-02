@@ -77,13 +77,13 @@ You have been provided with a set of tools to personalize the user's experience.
     }
   }
   ```
-- **theme**: Requires `setting` property and can be either `dark` or `light` or `system`.
+- **theme**: Requires `setting` property and can be either `dark` or `light`.
   ```json
   {
     "preference": {
       "type": "theme",
       "value": {
-        "setting": "<dark|light|system>"
+        "setting": "<dark|light>"
       }
     }
   }

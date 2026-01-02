@@ -14,9 +14,14 @@
       "properties": {
         "country": { "type": "keyword" },
         "type": { "type": "keyword" },
-        "logo_path": { "type": "text" },
+        "logo_path": { "type": "keyword" },
         "provider_id": { "type": "integer" },
-        "provider_name": { "type": "keyword" },
+        "provider_name": {
+          "type": "text",
+          "fields": {
+            "keyword": { "type": "keyword" }
+          }
+        },
         "display_priority": { "type": "integer" }
       }
     }

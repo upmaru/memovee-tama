@@ -356,7 +356,44 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 ## Referenced Tool Call IDS
 The user's message may reference a piece of information or data in a search result that is relevant to the context of the conversation. You are to also fill the `referenced_tool_call_ids` array with the IDs of the tool calls that were referenced in the user's message.
 
+> **Important:** Tool calls for `list-user-preferences` often provide reusable data, but anytime the user or assistant references information sourced from that call, its `tool_call_id` must be included in `referenced_tool_call_ids`. Reuse of the same call in multiple turns still requires referencing the original ID each time it is used.
+
 ### Examples
+<case>
+  <condition>
+    Previous messages include a list-user-preferences call.
+  </condition>
+  <tool-call-result>
+    ```json
+    {
+      "data": [
+        {
+          "id": "019b6973-9f40-749f-9ff9-73be8adc92a7",
+          "type": "region",
+          "value": {
+            "iso_alpha2": "TH",
+            "name": "Thailand"
+          }
+        }
+      ],
+      "tool_call_id": "fc_091e8fd6f5865151006952aa201bd08197b5b"
+    }
+    ```
+  </tool-call-result>
+  <user-query>
+    Keep using my Thailand preferences when you search for the next movie.
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <referenced-tool-call-ids>
+    - fc_091e8fd6f5865151006952aa201bd08197b5b
+  </referenced-tool-call-ids>
+  <reasoning>
+    - The user explicitly references the previously fetched region preference, so we must include its tool call ID even though the same data can be reused throughout the conversation.
+  </reasoning>
+</case>
+
 <case>
   <condition>
     Previous messages in context contains tool call results.

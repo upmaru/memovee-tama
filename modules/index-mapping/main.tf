@@ -14,7 +14,7 @@ resource "tama_prompt" "person-db-index-constraints" {
 
 module "sample-movies-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.5.0"
+  version = "0.5.2"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Movie Index Generation"
@@ -53,7 +53,7 @@ module "sample-movies-for-index-generation" {
 
 module "sample-people-for-index-generation" {
   source  = "upmaru/base/tama//modules/sample-forward-entities"
-  version = "0.5.0"
+  version = "0.5.2"
 
   space_id = var.movie_db_space_id
   name     = "Sample for Person Index Generation"

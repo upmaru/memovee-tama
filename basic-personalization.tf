@@ -14,7 +14,7 @@ module "update-user-perference" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.5.0"
+  version = "0.5.2"
 
   chain_id = tama_chain.handle-personalization.id
 
@@ -44,6 +44,9 @@ module "update-user-perference" {
       ]
     }
   }
+
+  faculty_queue_id = tama_queue.conversation.id
+  faculty_priority = 0
 }
 
 resource "tama_modular_thought" "forward-personalization" {
@@ -101,6 +104,13 @@ resource "tama_thought_path" "forward-personalization-media-detail" {
 
   thought_id      = tama_modular_thought.forward-personalization.id
   target_class_id = module.movie-detail-forwardable.class.id
+}
+
+resource "tama_thought_path" "forward-personalization-media-browsing" {
+  depends_on = [tama_space_bridge.basic-conversation-media-conversation]
+
+  thought_id      = tama_modular_thought.forward-personalization.id
+  target_class_id = module.movie-browsing-forwardable.class.id
 }
 
 resource "tama_thought_path" "forward-personalization-reply" {

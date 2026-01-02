@@ -14,7 +14,7 @@ module "manage-record-markings" {
   depends_on = [local.tool_call_class]
 
   source  = "upmaru/base/tama//modules/tooling"
-  version = "0.5.0"
+  version = "0.5.2"
 
   chain_id = tama_chain.handle-marking.id
 
@@ -55,6 +55,9 @@ module "manage-record-markings" {
       ]
     }
   }
+
+  faculty_queue_id = tama_queue.conversation.id
+  faculty_priority = 0
 }
 
 resource "tama_modular_thought" "forward-marking" {
