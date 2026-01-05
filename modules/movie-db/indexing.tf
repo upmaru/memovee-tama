@@ -27,6 +27,16 @@ resource "tama_modular_thought" "index-movie-details" {
   module {
     reference = "tama/actions/caller"
   }
+
+  faculty {
+    queue_id = var.indexing_queue_id
+    priority = 0
+  }
+}
+
+resource "tama_thought_pruning" "prune-movie-details-indexing" {
+  thought_id              = tama_modular_thought.index-movie-details.id
+  previous_versions_count = 0
 }
 
 module "movie-details-preloader" {
@@ -122,6 +132,16 @@ resource "tama_modular_thought" "index-person-details" {
   module {
     reference = "tama/actions/caller"
   }
+
+  faculty {
+    queue_id = var.indexing_queue_id
+    priority = 0
+  }
+}
+
+resource "tama_thought_pruning" "prune-person-details-indexing" {
+  thought_id              = tama_modular_thought.index-person-details.id
+  previous_versions_count = 0
 }
 
 module "person-details-preloader" {

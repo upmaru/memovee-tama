@@ -68,6 +68,12 @@ resource "tama_queue" "identities" {
   concurrency = 2
 }
 
+resource "tama_queue" "indexing" {
+  role        = "scribe"
+  name        = "indexing"
+  concurrency = 8
+}
+
 //
 // Oracle Queues
 //
