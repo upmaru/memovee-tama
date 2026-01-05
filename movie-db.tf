@@ -33,6 +33,8 @@ module "movie-db" {
     reasoning_effort = "low"
     service_tier     = "flex"
   })
+
+  indexing_queue_id = tama_queue.indexing.id
 }
 
 module "index-mapping-generation" {

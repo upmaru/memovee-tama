@@ -64,3 +64,8 @@ variable "generate_setting_model_temperature" {
   description = "The temperature to use for generating movie settings"
   default     = 1.0
 }
+
+variable "indexing_queue_id" {
+  type        = string
+  description = "The ID of the indexing queue"
+}
