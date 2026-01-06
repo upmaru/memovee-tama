@@ -187,6 +187,7 @@ resource "tama_thought_processor" "reply-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
+      prompt_cache_key = "memovee-reply-generation"
       reasoning_effort = "medium"
       verbosity        = "low"
     })
