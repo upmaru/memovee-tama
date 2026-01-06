@@ -53,6 +53,7 @@ module "movie-detail" {
     reasoning = {
       effort = "low"
     }
+    prompt_cache_retention = "24h"
   })
 
   tooling_prompt_id = tama_prompt.movie-detail-tooling.id
