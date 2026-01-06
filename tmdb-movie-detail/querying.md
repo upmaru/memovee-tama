@@ -368,8 +368,16 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         },
         "sort": [
-          { "popularity": { "order": "desc" } },
-          { "vote_count": { "order": "desc" } }
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          },
+          {
+            "popularity": {
+              "order": "desc"
+            }
+          }
         ],
         "limit": 1
       },
@@ -497,6 +505,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           "genres"
         ],
         "limit": 1,
+        "sort": [
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          },
+          {
+            "popularity": {
+              "order": "desc"
+            }
+          }
+        ],
         "query": {
           "bool": {
             "must": [
@@ -634,6 +654,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             ]
           }
         },
+        "sort": [
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          },
+          {
+            "popularity": {
+              "order": "desc"
+            }
+          }
+        ],
         "limit": 1
       },
       "next": null
@@ -800,6 +832,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             ]
           }
         },
+        "sort": [
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          },
+          {
+            "popularity": {
+              "order": "desc"
+            }
+          }
+        ],
         "limit": 1
       },
       "next": null
@@ -958,6 +1002,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               ]
             }
           },
+          "sort": [
+            {
+              "vote_count": {
+                "order": "desc"
+              }
+            },
+            {
+              "popularity": {
+                "order": "desc"
+              }
+            }
+          ],
           "limit": 1
         },
         "next": null
