@@ -6,6 +6,7 @@
   - **When user preferences return empty data** (for example, `{"data": []}` from `list-user-preferences`) and the user is asking about streaming or watching, you **MUST** use `no-call()` instead of creating an artifact, because you cannot determine the user's region.
   - Confirm the top-level `hits.total.value` equals 1 before responding; ignore values that appear inside `inner_hits`. If the tool request explicitly set `"limit": 1`, you can safely treat the single returned document as the resolved result—even when `hits.total.value` reports more than one match—and you **MUST** render the `detail` artifact using that document.
   - When the user's question is satisfied by the search result (for example, "What is the runtime of Titanic?" returning a single hit that contains the `runtime` field), you **MUST** create the `detail` artifact instead of choosing `no-call`. Even when the result doesn't completely satisfy the user's query but there IS A result you **MUST** create the `detail` artifact.
+  - Requests such as "Can you find <title>?" or "I want to know more about <title>" are always treated as general detail workflows. As long as the query returns a hit, you **MUST** build the `detail` artifact (include metadata, belongs_to_collection, etc.) even when the user only gave a title or no region information is available. Do **not** respond with `no-call` for these scenarios—the artifact is required whenever the detail query succeeded.
   - Use `no-call` only when the search results return nothing, `hits.total.value` returns `0`, OR when user preferences are empty and the query requires region information (streaming/watching queries).
   - Always include the `tool_call_id` values tied to the results you surface inside the `references` array. Use the path message id from `<context-metadata>` as-is.
   - When the function arguments expose `path.index`, mirror that value into `body.artifact.index` to preserve ordering (for example, set `"index": 0`).
@@ -41,6 +42,9 @@
       }
     }
     ```
+
+**Title-only detail request (Ford v Ferrari)**
+  - When the user says "Can you find the movie Ford v Ferrari? I want to know more about it," run the title-based query (sorted by `vote_count` desc then `popularity` desc) and, once the single hit is returned, emit a `detail` artifact summarizing that movie. Region-less responses are OK here—omit watch-provider data if none exists, but **still** send the `detail` artifact referencing the search tool call.
 
 **Cast or crew spotlight**
   - When the user specifically asks about a cast or crew member, highlight the corresponding property (for example, `movie-credits.cast`) from the `_source` so their role is explicit, and include the associated tool call ids in `references`.
