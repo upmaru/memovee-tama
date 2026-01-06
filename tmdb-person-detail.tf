@@ -44,6 +44,7 @@ module "person-detail" {
     reasoning = {
       effort = "low"
     }
+    prompt_cache_retention = "24h"
   })
 
   tooling_prompt_id = tama_prompt.person-detail-tooling.id

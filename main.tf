@@ -132,6 +132,7 @@ resource "tama_thought_processor" "artifact-processor" {
       reasoning = {
         effort = "low"
       }
+      prompt_cache_retention = "24h"
     })
   }
 }
@@ -187,9 +188,9 @@ resource "tama_thought_processor" "reply-processor" {
   completion {
     temperature = 1.0
     parameters = jsonencode({
-      prompt_cache_key = "memovee-reply-generation"
-      reasoning_effort = "medium"
-      verbosity        = "low"
+      reasoning_effort       = "medium"
+      verbosity              = "low"
+      prompt_cache_retention = "24h"
     })
   }
 }

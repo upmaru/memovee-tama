@@ -46,6 +46,7 @@ module "person-browsing" {
     reasoning = {
       effort = "low"
     }
+    prompt_cache_retention = "24h"
   })
 
   tooling_prompt_id = tama_prompt.person-browse-tooling.id

@@ -43,6 +43,7 @@ module "movie-analytics" {
     reasoning = {
       effort = "low"
     }
+    prompt_cache_retention = "24h"
   })
 
   tooling_prompt_id = tama_prompt.movie-analytics-tooling.id

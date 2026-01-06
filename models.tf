@@ -119,7 +119,15 @@ module "openai" {
   endpoint = "https://api.openai.com/v1"
   name     = "openai"
 
-  requests_per_second = 10
+  requests_per_second = 32
+
+  request = {
+    session_affinity = {
+      location = "body"
+      key      = "prompt_cache_key"
+      value    = "actor_id"
+    }
+  }
 
   models = [
     {
