@@ -43,7 +43,7 @@
     }
     ```
 
-**Title-only detail request (Ford v Ferrari)**
+**Title-only detail request**
   - When the user says "Can you find the movie Ford v Ferrari? I want to know more about it," run the title-based query (sorted by `vote_count` desc then `popularity` desc) and, once the single hit is returned, emit a `detail` artifact summarizing that movie. Region-less responses are OK here—omit watch-provider data if none exists, but **still** send the `detail` artifact referencing the search tool call.
 
 **Cast or crew spotlight**
