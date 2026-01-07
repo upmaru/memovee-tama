@@ -268,6 +268,39 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    Previous messages include search results showing MULTIPLE movies.
+
+    The user is asking where they can watch "these", "them", or uses other plural references to the movies.
+  </condition>
+  <user-query>
+    - Where can I watch these? I'm in Germany
+    - Where can I watch them in Germany?
+    - Can I stream these in Thailand?
+    - Are these available in the US?
+    - Where can I watch them? I'm in Japan
+    - Which ones are available to stream in Canada?
+    - Can I watch these movies in France?
+    - Where can I watch these?
+    - Where can I stream them?
+    - Are these available to stream?
+    - Which ones can I watch?
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    - The user is referring to MULTIPLE movies from the previous search results using plural references ("these", "them", "which ones").
+
+    - Routing to "movie-browsing" provides access to tooling that can show streaming provider information for multiple movies at once, with or without region filtering.
+
+    - CRITICAL: The key indicator is plural references to movies when asking about streaming availability. This distinguishes it from "movie-detail" which handles singular movie queries.
+
+    - If the user mentions a region, the movie-browsing tools can apply region-specific filtering. If no region is mentioned, it can use the user's default region preference or prompt for one.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     Previous messages include information about a specific movie that is still in context.
   </condition>
   <user-query>

@@ -96,6 +96,43 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
   </reasoning>
 </case>
 
+<case>
+  <condition>
+    The user previously asked about streaming availability for MULTIPLE movies (using plural references like "these", "them").
+
+    The assistant asked for the user's region because it was missing.
+
+    The user has now provided their region and preferences were successfully saved.
+  </condition>
+  <chat-history>
+    user: [Previous messages show search results with multiple movies]
+
+    user: Where can I stream these?
+
+    assistant: I need to know your region to look up where these movies are available to stream. Could you let me know which country you're in?
+
+    user: I'm in Germany.
+
+    assistant: [makes tool call to create or update the user's regional preferences]
+
+    tool: [shows successful creation of user's regional preferences]
+  </chat-history>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    1. The user's initial query was about streaming availability for MULTIPLE movies from existing search results (using plural reference "these").
+
+    2. The assistant collected the missing regional data and successfully saved it.
+
+    3. With the region now in context, the assistant needs to query streaming availability for those multiple movies.
+
+    4. Since this involves querying multiple movies with streaming provider filters, route to `movie-browsing`.
+
+    5. CRITICAL: The key indicator is the plural reference to movies ("these", "them", "which ones") in the original streaming availability question.
+  </reasoning>
+</case>
+
 ---
 
 <classes>

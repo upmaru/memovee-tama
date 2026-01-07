@@ -1753,6 +1753,83 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     }
     ```
 
+## User asks for streaming availability for multiple movies from existing search results
+**User Query**: "Where can I watch these? I'm in Germany" OR "Where can I watch them in Germany?" OR "Can I stream these in Thailand?" OR "Where can I watch these?" OR "Which ones are available to stream?"
+  - When the user asks about streaming availability for multiple movies (using plural references like "these", "them", "which ones") AND either:
+    1. Specifies a region explicitly (e.g., "in Germany", "I'm in Thailand"), OR
+    2. Has region preferences available from `list-user-preferences`
+  - You should query the existing movie IDs with a nested watch providers filter to show streaming availability.
+  
+  **Steps:**
+  1. If the user mentioned a region explicitly, use that region's ISO alpha-2 code (e.g., "DE" for Germany, "TH" for Thailand).
+  2. If no region was mentioned, check if `list-user-preferences` data is available in context. If not, call `list-user-preferences` first.
+  3. **CRITICAL**: If after calling `list-user-preferences` the region is still not available, respond with `no-call` to prompt the user to provide their region. Do NOT proceed with the query without a region.
+  4. Extract the movie IDs from the previous search results in context.
+  5. Query those specific movie IDs with a nested watch providers filter using the region.
+
+  **Example query structure:**
+  ```json
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date"
+      ],
+      "limit": 20,
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                // Extract these IDs from the previous search results
+                "id": [1184918, 823219, 558449, 912649]
+              }
+            },
+            {
+              "nested": {
+                "path": "memovee-movie-watch-providers.watch_providers",
+                "query": {
+                  "term": {
+                    // Use the user's specified region or region from list-user-preferences
+                    "memovee-movie-watch-providers.watch_providers.country": "DE"
+                  }
+                },
+                "inner_hits": {
+                  "name": "watch-providers",
+                  "_source": true,
+                  "size": 100
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "next": null
+  }
+  ```
+
+  **Important notes:**
+  - **Region is mandatory**: You MUST have a region (either from the user's explicit mention or from `list-user-preferences`) before making this query. If you don't have a region, respond with `no-call`.
+  - Use `"terms": { "id": [...] }` to filter for the specific movies from the previous search results.
+  - The nested watch providers filter ensures only movies with streaming availability in the specified region are returned.
+  - Use `"term"` (singular) for the country filter when matching a single region's ISO code.
+  - If the user wants multiple regions (e.g., "in Germany or France"), use `"terms"` (plural) with an array: `"terms": { "memovee-movie-watch-providers.watch_providers.country": ["DE", "FR"] }`.
+  - The `inner_hits` configuration returns the provider details (name, logo, country) for each movie.
+  - Set `"size": 100` in `inner_hits` to capture all available providers for each movie.
+  - Do NOT add `"memovee-movie-watch-providers"` to the top-level `_source` - the nested `inner_hits` already return the provider data.
+  - Movies without any streaming availability in the specified region will be automatically excluded from the results.
+
 ## User wants prequels/sequels/first entries from the same collection
 - When the user references a movie already in context (for example: "I'm looking at `[REC]²`—show me the first one") follow these steps:
   - Any time the user’s request includes keywords such as *prequel*, *sequel*, *first*, *last*, *collection*, or similar phrasing, ensure `belongs_to_collection` is included in the `_source` of your lookup queries so the collection metadata is always available.
