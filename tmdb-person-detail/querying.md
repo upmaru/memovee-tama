@@ -1033,6 +1033,229 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     }
     ```
 
+## MANDATORY FIELDS CHECKLIST - ALWAYS INCLUDE THESE
+
+Before generating any Elasticsearch query, ensure ALL of these fields are present in the correct locations:
+
+```json
+{
+  "path": {
+    "index": "tama-movie-db-person-details"  // REQUIRED: Index name
+  },
+  "body": {
+    "_source": [                             // REQUIRED: At body level, NOT in query
+      "id",
+      "name",
+      "biography",
+      "profile_path",
+      "metadata"
+      // Add other fields based on user request
+    ],
+    "limit": 1,                              // REQUIRED: At body level, NOT in query
+    "query": { ... }                         // REQUIRED: Query structure
+  },
+  "next": "verify-results-or-retry"          // REQUIRED: At top level, NOT in body
+}
+```
+
+### Common Validation Errors and Fixes
+
+**Error: "Required properties are missing: [\"next\"]"**
+
+This error occurs when:
+1. The `"next"` parameter is missing entirely
+2. The `"next"` parameter is placed inside `"body"` instead of at the top level
+3. The `"_source"` or `"limit"` are placed inside `"query"` instead of at the body level
+
+**WRONG structure (causes validation errors):**
+```json
+{
+  "path": {
+    "index": "tama-movie-db-person-details"
+  },
+  "body": {
+    "query": {
+      "bool": {
+        "must": [...]
+      },
+      "_source": [...],           // ❌ WRONG - _source inside query
+      "limit": 1                  // ❌ WRONG - limit inside query
+    },
+    "next": "verify-results-or-retry"  // ❌ WRONG - next inside body
+  }
+}
+```
+
+**CORRECT structure:**
+```json
+{
+  "path": {
+    "index": "tama-movie-db-person-details"
+  },
+  "body": {
+    "_source": [...],             // ✅ CORRECT - _source at body level
+    "limit": 1,                   // ✅ CORRECT - limit at body level
+    "query": {
+      "bool": {
+        "must": [...]
+      }
+    }
+  },
+  "next": "verify-results-or-retry"  // ✅ CORRECT - next at top level
+}
+```
+
+**CRITICAL Rules:**
+- `"next"` must be at the **top level** (same level as `"path"` and `"body"`)
+- `"_source"` must be at the **body level** (same level as `"query"` and `"limit"`)
+- `"limit"` must be at the **body level** (same level as `"query"` and `"_source"`)
+- `"query"` contains only the query structure, NOT `_source` or `limit` or `next`
+- NEVER omit the `"next"` parameter - it is required by the schema
+
+**Error: "[bool] malformed query, expected [END_OBJECT] but found [FIELD_NAME]"**
+
+This error commonly occurs when `inner_hits` is incorrectly placed inside the `query` object instead of at the `nested` object level.
+
+**WRONG nested query with inner_hits (causes parsing error):**
+```jsonc
+{
+  "nested": {
+    "path": "person-combined-credits.crew",
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "terms": {
+              "person-combined-credits.crew.job": ["Director"]
+            }
+          }
+        ]
+      },
+      "inner_hits": {  // ❌ WRONG - inner_hits inside query.bool causes parsing error
+        "size": 100,
+        "sort": {
+          "person-combined-credits.crew.release_date": {
+            "order": "desc"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**CORRECT nested query with inner_hits:**
+```jsonc
+{
+  "nested": {
+    "path": "person-combined-credits.crew",
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "terms": {
+              "person-combined-credits.crew.job": ["Director"]
+            }
+          }
+        ]
+      }
+    },
+    "inner_hits": {  // ✅ CORRECT - inner_hits at nested object level, NOT inside query
+      "size": 100,
+      "sort": {
+        "person-combined-credits.crew.release_date": {
+          "order": "desc"
+        }
+      }
+    }
+  }
+}
+```
+
+**CRITICAL: The `inner_hits` property must be:**
+- A direct property of the `nested` object
+- At the same level as `path` and `query` within the nested object
+- NEVER placed inside the `query` object or any of its children (bool, filter, must, etc.)
+- Always positioned AFTER the `query` object closes
+
+**Complete correct example with nested query and inner_hits:**
+```json
+{
+  "path": {
+    "index": "tama-movie-db-person-details"
+  },
+  "body": {
+    "_source": [
+      "adult",
+      "also_known_as",
+      "biography",
+      "birthday",
+      "deathday",
+      "gender",
+      "id",
+      "imdb_id",
+      "known_for_department",
+      "metadata",
+      "name",
+      "profile_path",
+      "place_of_birth",
+      "popularity"
+    ],
+    "limit": 1,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "match_phrase": {
+              "name": "Christopher Nolan"
+            }
+          },
+          {
+            "nested": {
+              "path": "person-combined-credits.crew",
+              "query": {
+                "bool": {
+                  "filter": [
+                    {
+                      "terms": {
+                        "person-combined-credits.crew.media_type": ["movie"]
+                      }
+                    },
+                    {
+                      "terms": {
+                        "person-combined-credits.crew.job": ["Director"]
+                      }
+                    }
+                  ]
+                }
+              },
+              "inner_hits": {
+                "size": 100,
+                "sort": {
+                  "person-combined-credits.crew.release_date": {
+                    "order": "desc"
+                  }
+                },
+                "_source": {
+                  "excludes": [
+                    "person-combined-credits.crew.order",
+                    "person-combined-credits.crew.overview",
+                    "person-combined-credits.crew.backdrop_path",
+                    "person-combined-credits.crew.credit_id",
+                    "person-combined-credits.crew.genre_ids"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "next": "verify-results-or-retry"
+}
+```
+
 ## Guidelines
 - **Index Definition**: Extract the index name from the provided index definition (e.g., from the `corpus` or context) and use it in the `path` object by replacing `[the index name from the definition]` with the actual index name (e.g., `tama-movie-db-person-details`). Use only the properties available in the index definition (`adult`, `also_known_as`, `biography`, `birthday`, `deathday`, `gender`, `id`, `imdb_id`, `known_for_department`, `metadata.space`, `metadata.class`, `name`, `parent_entity_id`, `place_of_birth`, `popularity`, `profile_path`, `preload.concept.content.merge`) for the `_source` field and for sorting.
 - **Property Selection**: Choose properties relevant to the user’s request based on the index definition.
