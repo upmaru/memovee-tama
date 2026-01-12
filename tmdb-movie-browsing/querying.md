@@ -1477,9 +1477,18 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 ## Filtering Out Movies by Genre from Existing Results
 - **User Query:** "Can you filter out the animated movies from the results" OR "Remove the horror films from this list" OR "Show me these movies but exclude the comedies" OR "Filter out animated movies"
-  - When the user wants to filter out or exclude specific genres from **existing search results**, you need to extract the movie IDs from context and requery with genre exclusion filters.
+  - When the user wants to filter out or exclude specific genres from **existing search results**, you have two strategies:
+  
+  **Strategy 1: Re-run Previous Query with must_not (PREFERRED)**
+  - **When to use**: When the previous query structure is available in context
+  - **How**: Take the complete previous query and add a `must_not` clause with the genre exclusion to the existing `bool` object
+  - **Why preferred**: This maintains the original search logic and is more efficient than filtering by IDs
+  
+  **Strategy 2: Filter by IDs (FALLBACK)**
+  - **When to use**: ONLY when the previous query structure is NOT available in context
+  - **How**: Extract movie IDs from the existing search results and create a new query with `terms` filter on `id` plus `must_not` for genre exclusion
+  
   - **CRITICAL**: The `must_not` clause must be placed in the **SAME `bool` object** as any `filter` clauses, NOT as a separate top-level query.
-  - **CRITICAL**: When filtering from existing results, you MUST use a `terms` filter on `id` to scope the query to those specific movies, then apply `must_not` to exclude the unwanted genre.
   
   **Incorrect Structure (causes "invalid_arguments" error):**
   
