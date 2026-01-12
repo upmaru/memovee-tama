@@ -1575,7 +1575,77 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   2. **Sort inside query**: The `"sort"` array is inside the `"query"` object instead of at the `"body"` level (parallel to `"query"`).
   3. **Missing score_mode**: The nested query is missing the `"score_mode": "avg"` property.
 
-  **Correct Structure:**
+  **Correct Structure (Strategy 1 - PREFERRED: Re-run Previous Query):**
+  
+  If the previous query was searching for top-rated movies, simply add `must_not` to that query:
+  ```jsonc
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status",
+        "genres.name"
+      ],
+      "limit": 10,
+      "query": {
+        "bool": {
+          // Keep the original query logic (e.g., filter by vote_count)
+          "filter": [
+            {
+              "range": {
+                "vote_count": {
+                  "gte": 500
+                }
+              }
+            }
+          ],
+          // Add must_not to exclude the genre
+          "must_not": [
+            {
+              "nested": {
+                "path": "genres",
+                "query": {
+                  "match": {
+                    "genres.name": "Animation"
+                  }
+                },
+                "score_mode": "avg"
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_count": {
+            "order": "desc"
+          }
+        }
+      ]
+    },
+    "next": null
+  }
+  ```
+
+  **Correct Structure (Strategy 2 - FALLBACK: Filter by IDs):**
+  
+  Only use this when the previous query structure is not available:
   ```jsonc
   {
     "path": {
@@ -1601,15 +1671,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
           "filter": [
             {
               "terms": {
-                // IDs from the existing search results in context
+                // IDs from the existing search results in context (ONLY if previous query unavailable)
                 "id": [791373, 263115, 533535, 550988, 284052]
-              }
-            },
-            {
-              "range": {
-                "vote_count": {
-                  "gte": 500
-                }
               }
             }
           ],
@@ -1711,12 +1774,23 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   ```
 
   **Implementation Steps:**
+  
+  **For Strategy 1 (PREFERRED - when previous query is available):**
+  1. **Locate the previous query** structure in the conversation context
+  2. **Identify the genre(s)** to exclude from the user's request
+  3. **Add must_not clause** to the existing `bool` object in the previous query:
+     - If the query already has a `bool` with `filter`, add `must_not` as a sibling array
+     - If the query has a `bool` with `must`, add `must_not` as a sibling array
+     - If the query only has simple filters, wrap in `bool` and add both `filter` and `must_not`
+  4. **Keep all original query logic** (filters, sorts, limits, etc.) and only add the genre exclusion
+  5. **Always include "genres.name" in _source** so the response can show which genres remain
+  
+  **For Strategy 2 (FALLBACK - when previous query is NOT available):**
   1. **Extract movie IDs** from the existing search results in the conversation context
   2. **Identify the genre(s)** to exclude from the user's request
-  3. **Build the query** with:
+  3. **Build a new query** with:
      - `terms` filter on `id` to scope to existing results
      - `must_not` with nested genre query to exclude unwanted genres
-     - Optional: Additional filters (e.g., `vote_count`) if needed
      - `sort` array for ordering results
   4. **Always include "genres.name" in _source** so the response can show which genres remain
 
