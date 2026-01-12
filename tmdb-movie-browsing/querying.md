@@ -1475,6 +1475,331 @@ Before processing a mixed keyword and genre query, you need to separate the genr
     - Each excluded genre gets its own nested query structure
     - Keep included genres in separate `must` nested queries
 
+## Filtering Out Movies by Genre from Existing Results
+- **User Query:** "Can you filter out the animated movies from the results" OR "Remove the horror films from this list" OR "Show me these movies but exclude the comedies" OR "Filter out animated movies"
+  - When the user wants to filter out or exclude specific genres from **existing search results**, you have two strategies:
+  
+  **Strategy 1: Re-run Previous Query with must_not (PREFERRED)**
+  - **When to use**: When the previous query structure is available in context
+  - **How**: Take the complete previous query and add a `must_not` clause with the genre exclusion to the existing `bool` object
+  - **Why preferred**: This maintains the original search logic and is more efficient than filtering by IDs
+  
+  **Strategy 2: Filter by IDs (FALLBACK)**
+  - **When to use**: ONLY when the previous query structure is NOT available in context
+  - **How**: Extract movie IDs from the existing search results and create a new query with `terms` filter on `id` plus `must_not` for genre exclusion
+  
+  - **CRITICAL**: The `must_not` clause must be placed in the **SAME `bool` object** as any `filter` clauses, NOT as a separate top-level query.
+  
+  **Incorrect Structure (causes "invalid_arguments" error):**
+  
+  This is the actual incorrect query that the LLM generated, which causes the error:
+  ```json
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status"
+      ],
+      "limit": 10,
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                "id": [284052, 49521, 287947, 505262, ...]
+              }
+            },
+            {
+              "range": {
+                "vote_count": {
+                  "gte": 500
+                }
+              }
+            }
+          ],
+          "must_not": [
+            {
+              "nested": {
+                "path": "genres",
+                "query": {
+                  "match": {
+                    "genres.name": "Animation"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "sort": [  // ❌ WRONG - sort must be at body level, not inside query
+          {
+            "vote_average": {
+              "order": "desc"
+            }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          }
+        ]
+      },
+      "next": "verify-results-or-re-query"  // ❌ WRONG - next must be at top level, not in body
+    },
+    "previous_context": "" // ❌ WRONG - should not be here
+  }
+  ```
+
+  **Error message received:**
+  ```json
+  {
+    "details": "Required properties are missing: [\"next\"].",
+    "error": "invalid_tool_call",
+    "message": "Arguments for search-index_query-and-sort-based-search failed schema validation.",
+    "reason": "invalid_arguments"
+  }
+  ```
+
+  **Why this structure fails:**
+  1. **"next" in body**: The `"next"` parameter is placed INSIDE `"body"` instead of at the top level. The schema validation looks for `"next"` at the root level and fails when it doesn't find it there.
+  2. **Sort inside query**: The `"sort"` array is inside the `"query"` object instead of at the `"body"` level (parallel to `"query"`).
+  3. **Missing score_mode**: The nested query is missing the `"score_mode": "avg"` property.
+
+  **Correct Structure (Strategy 1 - PREFERRED: Re-run Previous Query):**
+  
+  If the previous query was searching for top-rated movies, simply add `must_not` to that query:
+  ```jsonc
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status",
+        "genres.name"
+      ],
+      "limit": 10,
+      "query": {
+        "bool": {
+          // Keep the original query logic (e.g., filter by vote_count)
+          "filter": [
+            {
+              "range": {
+                "vote_count": {
+                  "gte": 500
+                }
+              }
+            }
+          ],
+          // Add must_not to exclude the genre
+          "must_not": [
+            {
+              "nested": {
+                "path": "genres",
+                "query": {
+                  "match": {
+                    "genres.name": "Animation"
+                  }
+                },
+                "score_mode": "avg"
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_count": {
+            "order": "desc"
+          }
+        }
+      ]
+    },
+    "next": null
+  }
+  ```
+
+  **Correct Structure (Strategy 2 - FALLBACK: Filter by IDs):**
+  
+  Only use this when the previous query structure is not available:
+  ```jsonc
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status",
+        "genres.name"
+      ],
+      "limit": 10,
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                // IDs from the existing search results in context (ONLY if previous query unavailable)
+                "id": [791373, 263115, 533535, 550988, 284052]
+              }
+            }
+          ],
+          "must_not": [
+            {
+              "nested": {
+                "path": "genres",
+                "query": {
+                  "match": {
+                    "genres.name": "Animation"
+                  }
+                },
+                "score_mode": "avg"
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_count": {
+            "order": "desc"
+          }
+        }
+      ]
+    },
+    "next": null
+  }
+  ```
+
+  **Key Structural Points:**
+  - **"next" placement**: ONLY at the top level, NEVER inside "body"
+  - **Single bool object**: Both `filter` and `must_not` are arrays within the SAME `bool` object
+  - **Separate filter objects**: Each filter condition (`terms`, `range`) is a separate object in the `filter` array
+  - **must_not at bool level**: The `must_not` array is a direct child of `bool`, parallel to `filter`
+  - **Sort at body level**: The `sort` array is at the same level as `query` within `body`
+  - **Genre exclusion**: Use nested query with `match` for single genre or `terms` for multiple genres to exclude
+
+  **Filtering Multiple Genres:**
+  ```jsonc
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": [
+        "id",
+        "imdb_id",
+        "title",
+        "overview",
+        "metadata",
+        "poster_path",
+        "vote_average",
+        "vote_count",
+        "release_date",
+        "status",
+        "genres.name"
+      ],
+      "limit": 10,
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                "id": [791373, 263115, 533535, 550988, 284052]
+              }
+            }
+          ],
+          "must_not": [
+            {
+              "nested": {
+                "path": "genres",
+                "query": {
+                  "terms": {
+                    "genres.name": ["Animation", "Horror"]
+                  }
+                },
+                "score_mode": "avg"
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        }
+      ]
+    },
+    "next": null
+  }
+  ```
+
+  **Implementation Steps:**
+  
+  **For Strategy 1 (PREFERRED - when previous query is available):**
+  1. **Locate the previous query** structure in the conversation context
+  2. **Identify the genre(s)** to exclude from the user's request
+  3. **Add must_not clause** to the existing `bool` object in the previous query:
+     - If the query already has a `bool` with `filter`, add `must_not` as a sibling array
+     - If the query has a `bool` with `must`, add `must_not` as a sibling array
+     - If the query only has simple filters, wrap in `bool` and add both `filter` and `must_not`
+  4. **Keep all original query logic** (filters, sorts, limits, etc.) and only add the genre exclusion
+  5. **Always include "genres.name" in _source** so the response can show which genres remain
+  
+  **For Strategy 2 (FALLBACK - when previous query is NOT available):**
+  1. **Extract movie IDs** from the existing search results in the conversation context
+  2. **Identify the genre(s)** to exclude from the user's request
+  3. **Build a new query** with:
+     - `terms` filter on `id` to scope to existing results
+     - `must_not` with nested genre query to exclude unwanted genres
+     - `sort` array for ordering results
+  4. **Always include "genres.name" in _source** so the response can show which genres remain
+
+  **Common Patterns:**
+  - "Filter out animated movies" → `must_not` with `"genres.name": "Animation"`
+  - "Remove horror and thriller films" → `must_not` with `"genres.name": ["Horror", "Thriller"]`
+  - "Exclude comedies from this list" → `must_not` with `"genres.name": "Comedy"`
+  - "Show only non-animated results" → `must_not` with `"genres.name": "Animation"`
+
 ## User wants to filter out movies they've already seen
 - **User Query:** "Only show me movies I haven't seen" OR "Please filter out the ones I've seen" OR "Show me movies I haven't watched"
   - When the user requests to exclude movies they've already seen, check for `list-record-markings` tool call results in the context.
