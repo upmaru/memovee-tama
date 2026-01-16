@@ -3066,7 +3066,6 @@ The `"next"` parameter must NEVER be placed inside the `"body"` object. It must 
 - Set the `limit` parameter to the user's requested number
 - If the search returns fewer results than requested, simply return ALL available results
 - Do not modify your search strategy based on the result count mismatch
-- The response handling and user communication is covered in the reply.md documentation
 
 ## The `_source` property
 
