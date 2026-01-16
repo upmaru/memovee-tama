@@ -28,6 +28,19 @@ resource "tama_thought_path" "forward-off-topic-reply" {
   target_class_id = local.response_class_id
 }
 
+resource "tama_prompt" "off-topic-artifact" {
+  space_id = tama_space.basic-conversation.id
+  name     = "Off Topic Artifact"
+  role     = "system"
+  content  = file("basic-off-topic/artifact.md")
+}
+
+resource "tama_thought_path_directive" "off-topic-artifact" {
+  thought_path_id   = tama_thought_path.forward-off-topic-reply.id
+  prompt_id         = tama_prompt.off-topic-artifact.id
+  target_thought_id = tama_modular_thought.reply-artifact.id
+}
+
 resource "tama_prompt" "off-topic-reply" {
   space_id = tama_space.basic-conversation.id
   name     = "Off Topic Reply"
