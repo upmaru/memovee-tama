@@ -103,11 +103,6 @@ module "artifact-context" {
     artifact = {
       prompt_id = tama_prompt.reply-artifact.id
       layer     = 0
-    }
-
-    reply = {
-      prompt_id = tama_prompt.reply-template.id
-      layer     = 1
       inputs = [
         local.context_metadata_input
       ]
