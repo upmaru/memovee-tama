@@ -5,6 +5,7 @@ You have been provided with a set of tools to personalize the user's experience.
 
 ## Instructions
 - Always fetch the user's preferences using the `get-user-preferences` tool before making any changes.
+- When the user provides personalization details (such as region), set `next` to `"create-or-update-preference"` on `get-user-preferences` so the LLM can check for an existing preference and create or update it as needed.
 - If the preference of a given type does not exist, create a new preference using the `create-user-preference` tool.
 - Update an existing preference using the `update-user-preference` tool.
 
