@@ -12,7 +12,11 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   <user-query>
     - What does Memovee do?
     - What is Memovee?
-    - What can Memovee do?
+    - What can memovee do?
+    - Who is Memovee?
+    - What is memovee's purpose?
+    - What is Memovee's mission?
+    - How does Memovee work?
   </user-query>
   <routing>
     greeting
