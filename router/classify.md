@@ -7,6 +7,23 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 ## Examples
 <case>
   <condition>
+    The user asks what Memovee does.
+  </condition>
+  <user-query>
+    - What does Memovee do?
+    - What is Memovee?
+    - What can Memovee do?
+  </user-query>
+  <routing>
+    greeting
+  </routing>
+  <reasoning>
+    The user is asking about Memovee itself, which is a greeting-style entrypoint.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     The user is starting a new conversation.
   </condition>
   <user-query>
