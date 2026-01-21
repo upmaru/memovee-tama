@@ -9,6 +9,42 @@ You have been provided with a set of tools to personalize the user's experience.
 - If the preference of a given type does not exist, create a new preference using the `create-user-preference` tool.
 - Update an existing preference using the `update-user-preference` tool.
 
+### Tool call payload structure
+Every personalization tool call **must** include `next`, `path`, and (if needed) `body` as top-level siblings. This matches the `next` guidance in `tmdb-movie-browsing/querying.md`: `next` is a required, top-level field on the tool arguments object (use a descriptive string or set it to `null` when no follow-up is needed).
+
+```json
+{
+  "next": "<next action or null>",
+  "path": { "user_id": "<ACTOR IDENTIFIER>", "id": "<OPTIONAL PREFERENCE ID>" },
+  "body": { "preference": { /* tool-specific payload */ } }
+}
+```
+
+#### Common schema mistake (causes the observed error)
+If `next` is placed inside `body`, schema validation fails with `Required properties are missing: ["next"]` because the tool expects `next` at the top level:
+
+```json
+{
+  "path": { "user_id": "..." },
+  "body": {
+    "next": null,
+    "preference": { "type": "region", "value": { "iso_alpha2": "TH", "name": "Thailand" } }
+  }
+}
+```
+
+Correct structure:
+
+```json
+{
+  "next": null,
+  "path": { "user_id": "..." },
+  "body": {
+    "preference": { "type": "region", "value": { "iso_alpha2": "TH", "name": "Thailand" } }
+  }
+}
+```
+
 ### Example Usage
 - To `get-user-preferences` then `create-user-preference` pass the ACTOR IDENTIFIER into the `path.user_id`:
   ```json
