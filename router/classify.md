@@ -269,6 +269,31 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </routing>
   <reasoning>
     - The user is answering the assistant's request for the user's regional data.
+
+    - Route to "personalization" ONLY when the user is providing persistent user profile/preferences like region (and similar settings used across searches), not when they are expressing movie taste.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    Previous messages include movie recommendations or movie search results.
+
+    The user expresses a movie taste/preference to refine the movie recommendations (including using the word "preference") or cites a reference title they like.
+  </condition>
+  <user-query>
+    - yea, for preference I like the wailing
+    - Yeah, for preference I like The Wailing
+    - I like The Wailing
+    - Something like The Wailing
+    - More like The Wailing please
+  </user-query>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    - The user is providing criteria to refine the movie recommendations (their taste / a reference title), which is part of browsing for movies.
+
+    - This is NOT user profile personalization like region; it should be handled by "movie-browsing" so the assistant can search for similar titles and re-rank/filter accordingly.
   </reasoning>
 </case>
 
