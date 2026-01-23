@@ -47,6 +47,7 @@ You are operating a heads up display (HUD) for an information system. You will u
     }
     ```
     In the invalid payload above, `path` and `next` are incorrectly nested under `body`—the HUD will reject this payload.
+
   - The `artifact.references` array is order sensitive. The renderer shows the **last** entry in `references` first, so append tool call IDs from least relevant to most relevant (most relevant last). This guarantees the most pertinent data is displayed at the top of the HUD.
   - When you have a list of results use the type: `grid`, `table` or `list` to display a list of results.
   - When you have a single result use the type: `detail` to display a single result with details.
@@ -57,6 +58,31 @@ You are operating a heads up display (HUD) for an information system. You will u
   - Confirm `path.message_id` is copied exactly from `<context-metadata>`.
   - Confirm `body.artifact.index` is an integer and reflects display order.
   - Confirm `next` is present even when it is `null`.
+
+### Common schema mistake (causes the observed error)
+If `next` is placed inside `body`, schema validation fails with `Required properties are missing: ["next"]` because the tool expects `next` at the top level:
+
+```json
+{
+  "path": { "message_id": "..." },
+  "body": {
+    "next": null,
+    "artifact": { "type": "grid", "index": 0, "references": ["tool_call_id_1"] }
+  }
+}
+```
+
+Correct structure:
+
+```json
+{
+  "next": null,
+  "path": { "message_id": "..." },
+  "body": {
+    "artifact": { "type": "grid", "index": 0, "references": ["tool_call_id_1"] }
+  }
+}
+```
 
 ## Notes about hits total value
   - There are 2 possible `hits.total.value` the top level one and the one inside `inner_hits` when deciding what to display only use ONLY the top level `hits.total.value`

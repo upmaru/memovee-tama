@@ -1996,6 +1996,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 ## Sorting & Cross Index Data Querying
 - You can pass the IDs from `search-index_text-based-vector-search` or from `person-combined-credits.cast.id` or `person-combined-credits.crew.id` into `search-index_query-and-sort-based-search` to sort.
+- **CRITICAL (watch providers + sorting):** If Step 1 includes a nested watch-provider clause with `inner_hits`, Step 2 (the sort query) must include that same nested clause with `inner_hits` as well; `inner_hits` do not carry over between tool calls.
 - **CRITICAL**: When processing results from Step 1, ALWAYS include sorting in Step 2
 - **DEFAULT SORTING**: Use `popularity` (desc) and `vote_average` (desc) when no specific sort order is requested
   Example:
@@ -2023,6 +2024,56 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         }
       ],
       "_source": ["id", "imdb_id", "title", "poster_path", "overview", "metadata"]
+    },
+    "next": null
+  }
+  ```
+  Example (sorted results that also include streaming providers via `inner_hits`):
+  ```json
+  {
+    "path": {
+      "index": "tama-movie-db-movie-details"
+    },
+    "body": {
+      "_source": ["id", "imdb_id", "title", "poster_path", "overview", "metadata"],
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                "id": [1234, 7876]
+              }
+            },
+            {
+              "nested": {
+                "path": "memovee-movie-watch-providers.watch_providers",
+                "query": {
+                  "term": {
+                    "memovee-movie-watch-providers.watch_providers.country": "DE"
+                  }
+                },
+                "inner_hits": {
+                  "name": "watch-providers",
+                  "_source": true,
+                  "size": 100
+                }
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "popularity": {
+            "order": "desc"
+          }
+        },
+        {
+          "vote_average": {
+            "order": "desc"
+          }
+        }
+      ]
     },
     "next": null
   }
