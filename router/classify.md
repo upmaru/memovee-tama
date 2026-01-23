@@ -102,6 +102,8 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - What are some movies similar to The Wailing?
     - Give me films like Interstellar
     - Recommend movies like Parasite (2019)
+    - Stuff like Bladerunner
+    - Something like The Godfather
   </user-query>
   <routing>
     movie-detail
