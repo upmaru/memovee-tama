@@ -6,6 +6,7 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 3. If the user specified a movie title and a query was performed and no results were found. You should route to `movie-browsing`.
 4. If the user asks for movies similar to a given title (e.g., "movies like [title]", "similar to [title]") and the seed movie has been loaded into context, you should route to `movie-browsing` to perform the similarity search/recommendation step.
 5. The user may provide **multiple seed titles** (e.g., "movies like X and Y"). If the required seed movies have been loaded into context (one-at-a-time, chained via `next`), route to `movie-browsing` to run the similarity workflow using all loaded seeds.
+6. If the user asks for movies similar to one or more titles but the seed movie lookup did not return a match, you should still route to `movie-browsing` so the assistant can fall back to pretrained knowledge and run a broader similarity search.
 
 ## Examples
 <case>
@@ -78,6 +79,31 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
     1. The user’s request is for recommendations/similar titles, not details about the seed movie itself.
 
     2. Loading the seed movie(s) provides the needed context (concept preload) to drive similarity.
+
+    3. The next step is to search/browse for similar movies, which is handled by tooling in `movie-browsing`.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user asked for movies similar to one or more titles.
+
+    The assistant attempted to load the seed movie record(s) but could not find a match (lookup returned no hits).
+  </condition>
+  <chat-history>
+    user: Find me movies like [title] (or movies like [title A] and [title B])
+
+    assistant: [makes tool call(s) to load the seed movie(s) by title]
+
+    tool: [returns no hits / no matching seed record]
+  </chat-history>
+  <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    1. The user’s request is still for recommendations/similar titles, even though the seed lookup failed.
+
+    2. The assistant can fall back to pretrained knowledge and the user-provided title(s) to construct a high-quality text query.
 
     3. The next step is to search/browse for similar movies, which is handled by tooling in `movie-browsing`.
   </reasoning>
