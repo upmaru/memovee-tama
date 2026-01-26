@@ -2453,6 +2453,18 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **WRONG**: `"visually stunning cinematography beautiful visuals breathtaking imagery"`
   - **REQUIRED FORMAT**: Each descriptive term/phrase separated by comma and space
 
+1.75. **Similarity seed context (`preload.concept.content.merge`)**:
+- Once the seed movie title is in context (from a prior lookup or the user's prompt), run a `search-index_text-based-vector-search` similarity query using that seed data instead of re-querying by title.
+- Always blend the seed data in context with the LLM's pretrained knowledge to build richer, more accurate keyword lists.
+- If the user is asking for similar movies ("movies like X", "similar to X") and one or more seed movies have been loaded into context with `preload.concept.content.merge`, use that seed content as an input when generating the text query keywords.
+  - Combine signals:
+    - **Seed content** (`preload.concept.content.merge`): extract the most salient genres, themes, settings, tone, and motifs.
+    - **Pretrained knowledge**: fill gaps (e.g., well-known genre labels/subgenres) and normalize phrasing into searchable English keywords.
+  - Multiple seeds:
+    - Prefer **overlapping** themes/genres across the seed movies first, then add 1–2 distinguishing concepts if needed.
+    - Keep within the normal 5–7 keyword budget; avoid long plot summaries.
+  - If seed content is **not** available in context (seed movie not loaded, or missing `preload.concept.content.merge`), do your best using pretrained knowledge to produce good keywords. You may include the seed title(s) as an anchor in the initial query, but follow the existing fallback guidance to remove specific titles if results are poor.
+
 2. **MANDATORY: Keyword Escalation Strategy (5-7→8-10)**:
   - **Start with 5-7 keywords**: Initial attempt should use 5-7 keywords for comprehensive search
   - **Expand to 8-10 keywords**: If 0 results, system expands to 8-10 keywords for maximum coverage
