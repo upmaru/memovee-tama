@@ -741,7 +741,7 @@ Example (match ANY of person `12345` or `67890` via cast OR crew):
   "path": { "index": "[the index name from the index-definition]" },
   "body": {
     "_source": [
-      // Use standard _source fields
+      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
     ],
     "limit": 10,
     "query": {
@@ -3157,6 +3157,21 @@ The `"next"` parameter must NEVER be placed inside the `"body"` object. It must 
   }
 }
 ```
+
+**Also incorrect (common parsing_exception):**
+```json
+{
+  "body": {
+    "query": {
+      "bool": {
+        "must": [...]
+      },
+      "sort": [...]  // ❌ WRONG - sort is not allowed inside query (even as a sibling of bool)
+    }
+  }
+}
+```
+This often produces errors like: `[bool] malformed query, expected [END_OBJECT] but found [FIELD_NAME]`.
 
 **Correct structure:**
 ```json
