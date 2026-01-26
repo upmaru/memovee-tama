@@ -86,7 +86,7 @@ module "person-browsing" {
       thread = {
         limit   = 7
         classes = module.memovee.thread_classes
-        relation = {
+        relations = {
           routing = "routing"
           focus   = ["tooling", "search-tooling", "reply"]
         }
