@@ -4,6 +4,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 1. **Context matters** — Always consider the previous conversation when deciding the class.
 2. **Follow class guidelines** — Each class has its own definition; strictly adhere to it.
 3. **Mood-only messages are actionable** — If the user is primarily sharing feelings (sad, depressed, lonely, angry, grieving) without a non-movie request, treat it as an implicit request for mood-based recommendations and route to `movie-browsing`.
+4. **"Movies like X" routes to movie-detail** — Requests for similar titles (e.g., "movies like [title]", "similar to [title]") must route to `movie-detail` so the assistant can load the referenced movie and use its concept preload fields to drive downstream similarity queries.
 
 ## Examples
 <case>
@@ -87,6 +88,28 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - "Who played [character name]" The user is trying to find out who played a given character or role in the movie in context, so the correct class is "movie-detail".
 
     - "the movie" refers to the specific movie from context. The query seeks a specific fact about that movie, so the correct class is "movie-detail".
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user is looking for movies like another movie (similarity-based recommendations) using a specific reference title.
+
+    The request may be the first message in the conversation or may appear after other discussion, but it is anchored on a single "seed" movie title.
+  </condition>
+  <user-query>
+    - Find me movies like "Moana"
+    - What are some movies similar to The Wailing?
+    - Give me films like Interstellar
+    - Recommend movies like Parasite (2019)
+    - Stuff like Bladerunner
+    - Something like The Godfather
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <reasoning>
+    - This is a similarity workflow anchored on a specific seed title. Routing to "movie-detail" ensures the assistant loads the referenced movie record (including concept preload fields) before issuing any follow-up similarity queries.
   </reasoning>
 </case>
 
@@ -285,8 +308,6 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     - yea, for preference I like the wailing
     - Yeah, for preference I like The Wailing
     - I like The Wailing
-    - Something like The Wailing
-    - More like The Wailing please
   </user-query>
   <routing>
     movie-browsing
