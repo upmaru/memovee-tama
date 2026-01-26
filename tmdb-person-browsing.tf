@@ -22,6 +22,13 @@ resource "tama_prompt" "person-browse-artifact" {
   content  = file("tmdb-person-browsing/artifact.md")
 }
 
+resource "tama_prompt" "person-browse-routing" {
+  space_id = tama_space.media-conversation.id
+  name     = "Person Browse Routing"
+  role     = "system"
+  content  = file("tmdb-person-browsing/routing.md")
+}
+
 module "person-browsing" {
   source = "./modules/media-conversate"
 
@@ -66,4 +73,32 @@ module "person-browsing" {
 
   faculty_queue_id = tama_queue.conversation.id
   faculty_priority = 0
+
+  routeable_classes = {
+    movie_browsing = module.movie-browsing-forwardable.class.id
+  }
+
+  router = {
+    enabled = true
+    parameters = {
+      class_name = var.router_classification_class_name
+      properties = var.router_classification_properties
+      thread = {
+        limit   = 7
+        classes = module.memovee.thread_classes
+        relation = {
+          routing = "routing"
+          focus   = ["tooling", "search-tooling", "reply"]
+        }
+      }
+    }
+
+    model_id          = module.openai.model_ids["gpt-5-mini"]
+    model_temperature = 1.0
+    model_parameters = jsonencode({
+      reasoning_effort = "minimal"
+    })
+
+    prompt_id = tama_prompt.person-browse-routing.id
+  }
 }
