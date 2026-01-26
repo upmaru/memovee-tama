@@ -6,6 +6,8 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 3. **Mood-only messages are actionable** — If the user is primarily sharing feelings (sad, depressed, lonely, angry, grieving) without a non-movie request, treat it as an implicit request for mood-based recommendations and route to `movie-browsing`.
 4. **"Movies like X" routes to movie-detail** — When the user introduces a seed title that is not already loaded in context and asks for similar titles (e.g., "movies like [title]", "similar to [title]"), route to `movie-detail` so the assistant can load the referenced movie and use its concept preload fields to drive downstream similarity queries.
 5. **Follow-up "more like it" routes to movie-browsing** — When the seed movie is already loaded in context (or the assistant has already returned similar-movie results) and the user asks for more/another/next results or specifies a new count (e.g., "more like it", "another 5 titles"), route to `movie-browsing`.
+6. **Short likely-title queries route to movie-detail** — If the user enters a single keyword or very short phrase (including sequel-ish patterns like a trailing number) that looks like a movie title (including potential misspellings) and it is not clearly a person, mood, or preference update, route to `movie-detail` so the assistant can attempt a title lookup and spelling correction.
+7. **Movies featuring a person route to movie-browsing when person ID is known** — If the user asks for movies/TV featuring a specific person (e.g., "movies with [person] in it", "top 10 movies starring [person]") and that person's `id` is already in context, route to `movie-browsing` so the next step can search for titles using the person `id`.
 
 ## Examples
 <case>
@@ -52,10 +54,10 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     What movies has he been in?
   </user-query>
   <routing>
-    person-detail
+    movie-browsing
   </routing>
   <reasoning>
-    "he" refers to Keanu Reeves from context. The query asks about his filmography, so the correct class is "person-detail".
+    "he" refers to Keanu Reeves from context. The user wants a list of movies featuring that person, which is a browsing-style request; with the person's `id` already in context, the correct class is "movie-browsing".
   </reasoning>
 </case>
 
@@ -134,6 +136,32 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    The user provides a single keyword / very short phrase that appears to be a movie title (possibly misspelled), without any other intent signals.
+  </condition>
+  <user-query>
+    - f1
+    - dhurander
+    - dune2
+    - mad mah 2
+    - avatr 2
+    - spidrman
+    - interstllr
+    - mision imposble
+    - john wick 4
+    - top gun 2
+    - lotr 3
+    - harry pottre
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <reasoning>
+    - These look like title-only lookups (and may be misspellings/abbreviations), so routing to "movie-detail" allows the assistant to resolve the intended movie via title search + correction.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     The user has been discussing a specific cast or crew member.
 
     You have a given cast or crew member's list of media in context.
@@ -142,14 +170,12 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     Can you sort the movies by release date showing the recent ones first.
   </user-query>
   <routing>
-    person-detail
+    movie-browsing
   </routing>
   <reasoning>
-    - The user is asking about the media associated with a specific cast or crew member, so the correct class is "person-detail".
+    - The user is modifying the search parameters (sorting) for a list of movies featuring a person in context.
 
-    - The user is asking to modify the list of movies associated with a specific cast or crew member, so the correct class is "person-detail".
-
-    - Routing to "person-detail" will provide access to tooling that will allow the modification of the results.
+    - This is a browsing-style operation, so the correct class is "movie-browsing".
   </reasoning>
 </case>
 

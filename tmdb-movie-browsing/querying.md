@@ -726,8 +726,61 @@ Before processing a mixed keyword and genre query, you need to separate the genr
         ]
       },
       "next": null
-    }
-    ```
+	    }
+	    ```
+
+## User query for movies featuring one or more people (person `id` already in context)
+- When the user asks for movies/TV featuring a specific person (or multiple people) and the person `id`(s) are already in context, prefer ID-based filtering over name matching.
+- Query against **both** `movie-credits.cast.id` and `movie-credits.crew.id` (the person may appear as cast or crew).
+- Use `terms` inside the nested queries, and put the cast/crew match inside a top-level `must` clause.
+  - For multiple people, put all person IDs into the same `terms` list (this matches movies where **any** of the IDs appear in cast or crew).
+
+Example (match ANY of person `12345` or `67890` via cast OR crew):
+```jsonc
+{
+  "path": { "index": "[the index name from the index-definition]" },
+  "body": {
+    "_source": [
+      // Use standard _source fields
+    ],
+    "limit": 10,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "bool": {
+              "should": [
+                {
+                  "nested": {
+                    "path": "movie-credits.cast",
+                    "query": {
+                      "terms": { "movie-credits.cast.id": [12345, 67890] }
+                    }
+                  }
+                },
+                {
+                  "nested": {
+                    "path": "movie-credits.crew",
+                    "query": {
+                      "terms": { "movie-credits.crew.id": [12345, 67890] }
+                    }
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          }
+        ]
+      }
+    },
+    "sort": [
+      { "vote_average": { "order": "desc" } },
+      { "vote_count": { "order": "desc" } }
+    ]
+  },
+  "next": null
+}
+```
 
 ## User query by where the movie takes place and specify the person who should be in the movie
 - **User Query:** "Can you find movies that take place in the ocean and has Dwayne Johnson in it?" OR "Can you find movies that take place in the ocean and has Tom Hanks in it?"
