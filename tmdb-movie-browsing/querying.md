@@ -2454,7 +2454,9 @@ To generate a high-quality Elasticsearch query with a natural language query:
   - **REQUIRED FORMAT**: Each descriptive term/phrase separated by comma and space
 
 1.75. **Similarity seed context (`preload.concept.content.merge`)**:
-  - If the user is asking for similar movies ("movies like X", "similar to X") and one or more seed movies have been loaded into context with `preload.concept.content.merge`, use that seed content as an input when generating the text query keywords.
+- Once the seed movie title is in context (from a prior lookup or the user's prompt), run a `search-index_text-based-vector-search` similarity query using that seed data instead of re-querying by title.
+- Always blend the seed data in context with the LLM's pretrained knowledge to build richer, more accurate keyword lists.
+- If the user is asking for similar movies ("movies like X", "similar to X") and one or more seed movies have been loaded into context with `preload.concept.content.merge`, use that seed content as an input when generating the text query keywords.
   - Combine signals:
     - **Seed content** (`preload.concept.content.merge`): extract the most salient genres, themes, settings, tone, and motifs.
     - **Pretrained knowledge**: fill gaps (e.g., well-known genre labels/subgenres) and normalize phrasing into searchable English keywords.
