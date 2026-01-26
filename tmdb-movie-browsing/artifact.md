@@ -2,7 +2,8 @@
 
 ### Artifact Rendering Rule
   - For `body.artifact.type` you can choose between `table`, `grid` or `list`.
-  - If the search results contain hits, you MUST render an artifact and MUST NOT use `no-call()`.
+  - If `hits.total.value` is greater than `0` (i.e., there are results to display), you MUST render an artifact and MUST NOT use `no-call()`.
+  - Only consider `no-call()` when `hits.total.value` is `0` and you need the user to refine the request.
   - Always decide between `list`, `grid`, and `table` using the top-level `hits.total.value`; ignore counts from `inner_hits`.
   - When the user mentions wanting larger images you must use the `grid` layout because it renders the largest images.
   - When the user explicitly asks for a table you must use the `table` layout.
