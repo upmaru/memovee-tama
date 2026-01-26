@@ -730,7 +730,7 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 	    ```
 
 ## User query for movies featuring one or more people (person `id` already in context)
-- When the user asks for movies/TV featuring a specific person (or multiple people) and the person `id`(s) are already in context, prefer ID-based filtering over name matching.
+- When the user asks for movies featuring a specific person (or multiple people) and the person `id`(s) are already in context, prefer ID-based filtering over name matching.
 - Query against **both** `movie-credits.cast.id` and `movie-credits.crew.id` (the person may appear as cast or crew).
 - Use `terms` inside the nested queries, and put the cast/crew match inside a top-level `must` clause.
   - For multiple people, put all person IDs into the same `terms` list (this matches movies where **any** of the IDs appear in cast or crew).

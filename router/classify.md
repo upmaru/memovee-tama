@@ -8,6 +8,7 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 5. **Follow-up "more like it" routes to movie-browsing** — When the seed movie is already loaded in context (or the assistant has already returned similar-movie results) and the user asks for more/another/next results or specifies a new count (e.g., "more like it", "another 5 titles"), route to `movie-browsing`.
 6. **Short likely-title queries route to movie-detail** — If the user enters a single keyword or very short phrase (including sequel-ish patterns like a trailing number) that looks like a movie title (including potential misspellings) and it is not clearly a person, mood, or preference update, route to `movie-detail` so the assistant can attempt a title lookup and spelling correction.
 7. **Movies featuring a person route to movie-browsing when person ID is known** — If the user asks for movies/TV featuring a specific person (e.g., "movies with [person] in it", "top 10 movies starring [person]") and that person's `id` is already in context, route to `movie-browsing` so the next step can search for titles using the person `id`.
+8. **Movies featuring multiple people route to person-browsing when IDs are unknown** — If the user mentions 2+ person names in the same query and wants a movie/TV title featuring them (e.g., "a movie with A and B"), route to `person-browsing` to resolve each person to an `id` before running the movie search.
 
 ## Examples
 <case>
@@ -58,6 +59,25 @@ You are a classifier. Your task is to assign the **last user message** to exactl
   </routing>
   <reasoning>
     "he" refers to Keanu Reeves from context. The user wants a list of movies featuring that person, which is a browsing-style request; with the person's `id` already in context, the correct class is "movie-browsing".
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user mentions multiple people by name and is trying to find a movie/TV title featuring them.
+
+    The person IDs are not already known in context.
+  </condition>
+  <user-query>
+    - I'm looking for a movie that has Justin Timberlake and Mila Kunis, what movie is it?
+    - What movie has both Tom Hanks and Meg Ryan in it?
+    - Find me a film starring Leonardo DiCaprio and Kate Winslet
+  </user-query>
+  <routing>
+    person-browsing
+  </routing>
+  <reasoning>
+    - The user supplied multiple person names but no movie title. The next step is to resolve each person to an `id` (disambiguation), which is handled by "person-browsing".
   </reasoning>
 </case>
 
