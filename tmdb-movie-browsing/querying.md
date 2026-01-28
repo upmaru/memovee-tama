@@ -731,11 +731,124 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 
 ## User query for movies featuring one or more people (person `id` already in context)
 - When the user asks for movies featuring a specific person (or multiple people) and the person `id`(s) are already in context, prefer ID-based filtering over name matching.
-- Query against **both** `movie-credits.cast.id` and `movie-credits.crew.id` (the person may appear as cast or crew).
-- Use `terms` inside the nested queries, and put the cast/crew match inside a top-level `must` clause.
-  - For multiple people, put all person IDs into the same `terms` list (this matches movies where **any** of the IDs appear in cast or crew).
+- **CRITICAL - Cast vs Crew scope**: Decide whether to query `cast`, `crew`, or `cast OR crew` based on the user's wording.
+  - **Cast-only** (actor/actress intent): "in it", "starring", "cast", "featuring", "with <actor>", "played by".
+  - **Crew-only** (behind-the-camera intent): "directed by", "written by", "produced by", "shot by", "edited by", "composed by", "cinematography", "screenplay".
+  - **Cast OR crew** (broad "worked on" intent): "involved in", "worked on", "associated with", or when the user explicitly says "cast or crew".
+  - If ambiguous, default to **cast-only** for phrasing like "movies with <person>" / "has <person> in it".
+- Query the chosen scope using `nested` queries:
+  - Cast-only: `movie-credits.cast.id`
+  - Crew-only: `movie-credits.crew.id` (optionally also filter by `movie-credits.crew.job` when the user specifies a role like "directed by")
+  - Cast OR crew: query both and combine with a `should` + `minimum_should_match: 1`
+- Use `terms` inside the nested queries, and put the person match logic inside a top-level `must` clause.
+- **Include `inner_hits` (recommended)**: For person-based queries, include `inner_hits` on the `nested` query so the response shows *which* cast/crew entries matched.
+  - Default: use `"_source": true` inside `inner_hits` to return the full matched nested cast/crew entries (simplifies templates and avoids missing fields).
+  - If response size becomes an issue, switch `inner_hits._source` from `true` to an explicit allowlist.
+  - Tip: For AND queries (one nested clause per person), consider setting `inner_hits.name` to identify which person matched which clause (optional).
+- **CRITICAL - AND vs OR (multiple people)**:
+  - If the user says **OR** / **either** / **any of** (or asks a broad query like "movies with X" and supplies multiple people without saying "both"), use the **ANY** strategy: put all person IDs into the same `terms` list (matches movies where **any** of the IDs appear in cast or crew).
+  - If the user says **AND** / **both** / **together** / "has X and Y in it", use the **ALL** strategy: create **one clause per person ID** and put those clauses in a top-level `bool.must`. This is required because `movie-credits.*` are `nested` arrays; to require two different people you must match each person in its own nested query.
 
 Example (match ANY of person `12345` or `67890` via cast OR crew):
+```jsonc
+{
+  "path": { "index": "[the index name from the index-definition]" },
+  "body": {
+    "_source": [
+      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
+    ],
+    "limit": 10,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "bool": {
+	              "should": [
+	                {
+	                  "nested": {
+	                    "path": "movie-credits.cast",
+	                    "query": {
+	                      "terms": { "movie-credits.cast.id": [12345, 67890] }
+	                    },
+		                    "inner_hits": {
+		                      "size": 100,
+		                      "_source": true
+		                    }
+		                  }
+		                },
+	                {
+	                  "nested": {
+	                    "path": "movie-credits.crew",
+	                    "query": {
+	                      "terms": { "movie-credits.crew.id": [12345, 67890] }
+	                    },
+		                    "inner_hits": {
+		                      "size": 100,
+		                      "_source": true
+		                    }
+		                  }
+		                }
+	              ],
+	              "minimum_should_match": 1
+	            }
+          }
+        ]
+      }
+    },
+    "sort": [
+      { "vote_average": { "order": "desc" } },
+      { "vote_count": { "order": "desc" } }
+    ]
+  },
+  "next": "verify-results-or-re-query"
+}
+```
+
+Example (match ALL of person `12345` AND `67890` in cast only):
+```jsonc
+{
+  "path": { "index": "[the index name from the index-definition]" },
+  "body": {
+    "_source": [
+      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
+    ],
+    "limit": 10,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "nested": {
+              "path": "movie-credits.cast",
+              "query": { "terms": { "movie-credits.cast.id": [12345] } },
+              "inner_hits": {
+                "size": 100,
+                "_source": true
+              }
+            }
+          },
+          {
+            "nested": {
+              "path": "movie-credits.cast",
+              "query": { "terms": { "movie-credits.cast.id": [67890] } },
+              "inner_hits": {
+                "size": 100,
+                "_source": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    "sort": [
+      { "vote_average": { "order": "desc" } },
+      { "vote_count": { "order": "desc" } }
+    ]
+  },
+  "next": "verify-results-or-re-query"
+}
+```
+
+Example (match ALL of person `12345` AND `67890` via cast OR crew):
 ```jsonc
 {
   "path": { "index": "[the index name from the index-definition]" },
@@ -753,16 +866,47 @@ Example (match ANY of person `12345` or `67890` via cast OR crew):
                 {
                   "nested": {
                     "path": "movie-credits.cast",
-                    "query": {
-                      "terms": { "movie-credits.cast.id": [12345, 67890] }
+                    "query": { "terms": { "movie-credits.cast.id": [12345] } },
+                    "inner_hits": {
+                      "size": 100,
+                      "_source": true
                     }
                   }
                 },
                 {
                   "nested": {
                     "path": "movie-credits.crew",
-                    "query": {
-                      "terms": { "movie-credits.crew.id": [12345, 67890] }
+                    "query": { "terms": { "movie-credits.crew.id": [12345] } },
+                    "inner_hits": {
+                      "size": 100,
+                      "_source": true
+                    }
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "nested": {
+                    "path": "movie-credits.cast",
+                    "query": { "terms": { "movie-credits.cast.id": [67890] } },
+                    "inner_hits": {
+                      "size": 100,
+                      "_source": true
+                    }
+                  }
+                },
+                {
+                  "nested": {
+                    "path": "movie-credits.crew",
+                    "query": { "terms": { "movie-credits.crew.id": [67890] } },
+                    "inner_hits": {
+                      "size": 100,
+                      "_source": true
                     }
                   }
                 }
@@ -778,7 +922,53 @@ Example (match ANY of person `12345` or `67890` via cast OR crew):
       { "vote_count": { "order": "desc" } }
     ]
   },
-  "next": null
+  "next": "verify-results-or-re-query"
+}
+```
+
+Example (mixed roles: "directed by <idA> AND starring <idB>"):
+```jsonc
+{
+  "path": { "index": "[the index name from the index-definition]" },
+  "body": {
+    "_source": ["id", "title", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"],
+    "limit": 10,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "nested": {
+              "path": "movie-credits.crew",
+              "query": {
+                "bool": {
+                  "filter": [
+                    { "terms": { "movie-credits.crew.id": [12345] } },
+                    { "match_phrase": { "movie-credits.crew.job": "Director" } }
+                  ]
+                }
+              },
+              "inner_hits": {
+                "size": 100,
+                "_source": true
+              }
+            }
+          },
+          {
+            "nested": {
+              "path": "movie-credits.cast",
+              "query": { "terms": { "movie-credits.cast.id": [67890] } },
+              "inner_hits": {
+                "size": 100,
+                "_source": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    "sort": [{ "vote_average": { "order": "desc" } }, { "vote_count": { "order": "desc" } }]
+  },
+  "next": "verify-results-or-re-query"
 }
 ```
 
@@ -841,14 +1031,7 @@ Example (match ANY of person `12345` or `67890` via cast OR crew):
                   },
                   "inner_hits": {
                     "size": 100,
-                    "_source": [
-                      "movie-credits.cast.id",
-                      "movie-credits.cast.name",
-                      "movie-credits.cast.order",
-                      "movie-credits.cast.character",
-                      "movie-credits.cast.biography",
-                      "movie-credits.cast.profile_path"
-                    ]
+                    "_source": true
                   }
                 }
               }
