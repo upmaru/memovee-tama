@@ -74,6 +74,11 @@ resource "tama_thought_path" "route-to-movie-browsing" {
   target_class_id = module.movie-browsing-forwardable.class.id
 }
 
+resource "tama_thought_path" "route-to-movie-by-person" {
+  thought_id      = module.router.routing_thought_id
+  target_class_id = module.movie-by-person-forwardable.class.id
+}
+
 resource "tama_thought_path" "route-to-person-detail" {
   thought_id      = module.router.routing_thought_id
   target_class_id = module.person-detail-forwardable.class.id

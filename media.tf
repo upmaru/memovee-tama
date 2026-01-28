@@ -23,6 +23,16 @@ module "movie-browsing-forwardable" {
   description = file("media/movie-browsing.md")
 }
 
+module "movie-by-person-forwardable" {
+  source     = "upmaru/base/tama//modules/forwardable-class"
+  version    = "0.5.2"
+  depends_on = [module.global.schemas]
+
+  space_id    = tama_space.media-conversation.id
+  title       = "movie-by-person"
+  description = file("media/movie-by-person.md")
+}
+
 module "movie-analytics-forwardable" {
   source     = "upmaru/base/tama//modules/forwardable-class"
   version    = "0.5.2"

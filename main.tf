@@ -299,6 +299,11 @@ resource "tama_listener_filter" "movie-browsing" {
   chain_id    = module.movie-browsing.chain_id
 }
 
+resource "tama_listener_filter" "movie-by-person" {
+  listener_id = tama_listener.memovee-ui-listener.id
+  chain_id    = module.movie-by-person.chain_id
+}
+
 resource "tama_listener_filter" "movie-detail" {
   listener_id = tama_listener.memovee-ui-listener.id
   chain_id    = module.movie-detail.chain_id

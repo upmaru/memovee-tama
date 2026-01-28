@@ -3,7 +3,7 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 ## Rules
 1. **Enough Data in Context** - If there is enough data in the context to answer the user's query, you should respond by choosing `response` class. All other classes will continue thinking.
 2. **Follow the class guidelines** - The class guidelines will help you choose the right class.
-3. **Movie with multiple people -> movie-browsing** - If the user is trying to find a movie title that includes 2+ specific people and person-browsing has already resolved those people to `id`s in context, route to `movie-browsing` so the next step can search titles using those person IDs.
+3. **Movie with multiple people -> movie-by-person** - If the user is trying to find a movie title that includes 2+ specific people and person-browsing has already resolved those people to `id`s in context, route to `movie-by-person` so the next step can search titles using those person IDs.
 4. **General people trivia -> response** - If the user asks a general question about people that is not a "find this person in the database" lookup (e.g., awards trivia), route to `response`.
 
 ## Examples
@@ -21,14 +21,14 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
     tool: [returns person hits that include the resolved `id`s for Justin Timberlake and Mila Kunis]
   </chat-history>
   <routing>
-    movie-browsing
+    movie-by-person
   </routing>
   <reasoning>
     1. The user wants a movie title (a browsing/search task), not person profiles.
 
     2. Person-browsing has resolved the people to `id`s in context.
 
-    3. The next step is to query movies using those person IDs, which is handled by tooling in `movie-browsing`.
+    3. The next step is to query movies using those person IDs, which is handled by tooling in `movie-by-person`.
   </reasoning>
 </case>
 

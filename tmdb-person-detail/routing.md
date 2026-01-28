@@ -3,7 +3,7 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
 ## Rules
 1. **Enough Data in Context** - If there is enough data in the context to answer the user's query, you should respond by choosing `response` class. All other classes will continue thinking.
 2. **Follow the class guidelines** - The class guidelines will help you choose the right class.
-3. **Filmography-style browsing routes to movie-browsing** - If the user is asking for a list of movies/TV featuring a person (e.g., "top 10 movies with [person]", "movies with [person] in it", "show me their best movies") and the person's `id` is already loaded in context, route to `movie-browsing` to fetch and display multiple titles using that `id`.
+3. **Filmography-style browsing routes to movie-by-person** - If the user is asking for a list of movies/TV featuring a person (e.g., "top 10 movies with [person]", "movies with [person] in it", "show me their best movies") and the person's `id` is already loaded in context, route to `movie-by-person` to fetch and display multiple titles using that `id`.
 
 ## Examples
 <case>
@@ -20,14 +20,14 @@ Your task is to decide how to route the conversation. Choosing the `response` wi
     tool: [returns Gene Hackman's person record and includes the `id`]
   </chat-history>
   <routing>
-    movie-browsing
+    movie-by-person
   </routing>
   <reasoning>
     1. The user wants a list of movies (a browsing result), not a person profile response.
 
     2. The person `id` is now available in context from the person lookup.
 
-    3. The next step is to search movies using that person `id`, which is handled by tooling in `movie-browsing`.
+    3. The next step is to search movies using that person `id`, which is handled by tooling in `movie-by-person`.
   </reasoning>
 </case>
 

@@ -729,327 +729,6 @@ Before processing a mixed keyword and genre query, you need to separate the genr
 	    }
 	    ```
 
-## User query for movies featuring one or more people (person `id` already in context)
-- When the user asks for movies featuring a specific person (or multiple people) and the person `id`(s) are already in context, prefer ID-based filtering over name matching.
-- **CRITICAL - Cast vs Crew scope**: Decide whether to query `cast`, `crew`, or `cast OR crew` based on the user's wording.
-  - **Cast-only** (actor/actress intent): "in it", "starring", "cast", "featuring", "with <actor>", "played by".
-  - **Crew-only** (behind-the-camera intent): "directed by", "written by", "produced by", "shot by", "edited by", "composed by", "cinematography", "screenplay".
-  - **Cast OR crew** (broad "worked on" intent): "involved in", "worked on", "associated with", or when the user explicitly says "cast or crew".
-  - If ambiguous, default to **cast-only** for phrasing like "movies with <person>" / "has <person> in it".
-- Query the chosen scope using `nested` queries:
-  - Cast-only: `movie-credits.cast.id`
-  - Crew-only: `movie-credits.crew.id` (optionally also filter by `movie-credits.crew.job` when the user specifies a role like "directed by")
-  - Cast OR crew: query both and combine with a `should` + `minimum_should_match: 1`
-- Use `terms` inside the nested queries, and put the person match logic inside a top-level `must` clause.
-- **Include `inner_hits` (recommended)**: For person-based queries, include `inner_hits` on the `nested` query so the response shows *which* cast/crew entries matched.
-  - Default: use `"_source": true` inside `inner_hits` to return the full matched nested cast/crew entries (simplifies templates and avoids missing fields).
-  - If response size becomes an issue, switch `inner_hits._source` from `true` to an explicit allowlist.
-  - Tip: For AND queries (one nested clause per person), consider setting `inner_hits.name` to identify which person matched which clause (optional).
-- **CRITICAL - AND vs OR (multiple people)**:
-  - If the user says **OR** / **either** / **any of** (or asks a broad query like "movies with X" and supplies multiple people without saying "both"), use the **ANY** strategy: put all person IDs into the same `terms` list (matches movies where **any** of the IDs appear in cast or crew).
-  - If the user says **AND** / **both** / **together** / "has X and Y in it", use the **ALL** strategy: create **one clause per person ID** and put those clauses in a top-level `bool.must`. This is required because `movie-credits.*` are `nested` arrays; to require two different people you must match each person in its own nested query.
-
-Example (match ANY of person `12345` or `67890` via cast OR crew):
-```jsonc
-{
-  "path": { "index": "[the index name from the index-definition]" },
-  "body": {
-    "_source": [
-      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
-    ],
-    "limit": 10,
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "bool": {
-	              "should": [
-	                {
-	                  "nested": {
-	                    "path": "movie-credits.cast",
-	                    "query": {
-	                      "terms": { "movie-credits.cast.id": [12345, 67890] }
-	                    },
-		                    "inner_hits": {
-		                      "size": 100,
-		                      "_source": true
-		                    }
-		                  }
-		                },
-	                {
-	                  "nested": {
-	                    "path": "movie-credits.crew",
-	                    "query": {
-	                      "terms": { "movie-credits.crew.id": [12345, 67890] }
-	                    },
-		                    "inner_hits": {
-		                      "size": 100,
-		                      "_source": true
-		                    }
-		                  }
-		                }
-	              ],
-	              "minimum_should_match": 1
-	            }
-          }
-        ]
-      }
-    },
-    "sort": [
-      { "vote_average": { "order": "desc" } },
-      { "vote_count": { "order": "desc" } }
-    ]
-  },
-  "next": "verify-results-or-re-query"
-}
-```
-
-Example (match ALL of person `12345` AND `67890` in cast only):
-```jsonc
-{
-  "path": { "index": "[the index name from the index-definition]" },
-  "body": {
-    "_source": [
-      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
-    ],
-    "limit": 10,
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "nested": {
-              "path": "movie-credits.cast",
-              "query": { "terms": { "movie-credits.cast.id": [12345] } },
-              "inner_hits": {
-                "size": 100,
-                "_source": true
-              }
-            }
-          },
-          {
-            "nested": {
-              "path": "movie-credits.cast",
-              "query": { "terms": { "movie-credits.cast.id": [67890] } },
-              "inner_hits": {
-                "size": 100,
-                "_source": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "sort": [
-      { "vote_average": { "order": "desc" } },
-      { "vote_count": { "order": "desc" } }
-    ]
-  },
-  "next": "verify-results-or-re-query"
-}
-```
-
-Example (match ALL of person `12345` AND `67890` via cast OR crew):
-```jsonc
-{
-  "path": { "index": "[the index name from the index-definition]" },
-  "body": {
-    "_source": [
-      "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status", "revenue", "popularity"
-    ],
-    "limit": 10,
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "bool": {
-              "should": [
-                {
-                  "nested": {
-                    "path": "movie-credits.cast",
-                    "query": { "terms": { "movie-credits.cast.id": [12345] } },
-                    "inner_hits": {
-                      "size": 100,
-                      "_source": true
-                    }
-                  }
-                },
-                {
-                  "nested": {
-                    "path": "movie-credits.crew",
-                    "query": { "terms": { "movie-credits.crew.id": [12345] } },
-                    "inner_hits": {
-                      "size": 100,
-                      "_source": true
-                    }
-                  }
-                }
-              ],
-              "minimum_should_match": 1
-            }
-          },
-          {
-            "bool": {
-              "should": [
-                {
-                  "nested": {
-                    "path": "movie-credits.cast",
-                    "query": { "terms": { "movie-credits.cast.id": [67890] } },
-                    "inner_hits": {
-                      "size": 100,
-                      "_source": true
-                    }
-                  }
-                },
-                {
-                  "nested": {
-                    "path": "movie-credits.crew",
-                    "query": { "terms": { "movie-credits.crew.id": [67890] } },
-                    "inner_hits": {
-                      "size": 100,
-                      "_source": true
-                    }
-                  }
-                }
-              ],
-              "minimum_should_match": 1
-            }
-          }
-        ]
-      }
-    },
-    "sort": [
-      { "vote_average": { "order": "desc" } },
-      { "vote_count": { "order": "desc" } }
-    ]
-  },
-  "next": "verify-results-or-re-query"
-}
-```
-
-Example (mixed roles: "directed by <idA> AND starring <idB>"):
-```jsonc
-{
-  "path": { "index": "[the index name from the index-definition]" },
-  "body": {
-    "_source": ["id", "title", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"],
-    "limit": 10,
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "nested": {
-              "path": "movie-credits.crew",
-              "query": {
-                "bool": {
-                  "filter": [
-                    { "terms": { "movie-credits.crew.id": [12345] } },
-                    { "match_phrase": { "movie-credits.crew.job": "Director" } }
-                  ]
-                }
-              },
-              "inner_hits": {
-                "size": 100,
-                "_source": true
-              }
-            }
-          },
-          {
-            "nested": {
-              "path": "movie-credits.cast",
-              "query": { "terms": { "movie-credits.cast.id": [67890] } },
-              "inner_hits": {
-                "size": 100,
-                "_source": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "sort": [{ "vote_average": { "order": "desc" } }, { "vote_count": { "order": "desc" } }]
-  },
-  "next": "verify-results-or-re-query"
-}
-```
-
-## User query by where the movie takes place and specify the person who should be in the movie
-- **User Query:** "Can you find movies that take place in the ocean and has Dwayne Johnson in it?" OR "Can you find movies that take place in the ocean and has Tom Hanks in it?"
-  - Step 1: Use the `search-index_text-based-vector-search` to query for `movies that take place in the ocean`.
-    ```jsonc
-    {
-      "body": {
-        "_source": [
-          // Use standard _source fields
-        ],
-        "limit": 8,
-        "query": "movies that take place in the ocean",
-        // OPTIONAL: Use filter to exclude specific movie IDs when user wants to filter out certain titles
-        "filter": {
-          "bool": {
-            "must_not": [
-              {
-                "terms": {
-                  "id": ["124223", "567890", "789012"]
-                }
-              }
-            ]
-          }
-        }
-      },
-      "next": "search-index_query-and-sort-based-search",
-      "path": {
-        "index": "[the index name from the definition]"
-      }
-    }
-    ```
-
-  - Step 2: Use the `search-index_query-and-sort-based-search` and apply the filter based on the id of movies from Step 1 and query the cast list with a nested query.
-    ```json
-    {
-      "body": {
-        "_source": [
-          // Use standard _source fields
-        ],
-        "query": {
-          "bool": {
-            "filter": [
-              {
-                "terms": {
-                  // the ids from the movies in Step 1
-                  "id": ["762509"]
-                }
-              }
-            ],
-            "must": [
-              {
-                "nested": {
-                  "path": "movie-credits.cast",
-                  "query": {
-                    "match_phrase": {
-                      "movie-credits.cast.name": "Dwayne Johnson"
-                    }
-                  },
-                  "inner_hits": {
-                    "size": 100,
-                    "_source": true
-                  }
-                }
-              }
-            ]
-          }
-        },
-        "sort": [
-          {
-            "vote_average": {
-              "order": "desc"
-            }
-          }
-        ]
-      },
-      "next": null
-    }
-    ```
-
 ## User query requires text based vector search OR doesn't match any of the above examples. This is a 'catch all' strategy
 
 **IMPORTANT: Use text-based search for circumstantial/contextual queries**
@@ -1500,48 +1179,47 @@ Example (mixed roles: "directed by <idA> AND starring <idB>"):
 - **NEVER omit sorting**: Even for simple ID-based queries, always include sort parameters
 
 **For circumstantial queries**: Use Step 2 to filter by specific mentioned elements (e.g., if user mentions "child", filter results to include family-appropriate content)
-
-      ```json
-      {
-        "body": {
-          "_source": [
-            "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
+  ```jsonc
+  {
+    "body": {
+      "_source": [
+        "id", "imdb_id", "title", "overview", "metadata", "poster_path", "vote_average", "vote_count", "release_date", "status"
+      ],
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "terms": {
+                // the ids from the movies in Step 1
+                "id": ["762509"]
+              }
+            }
           ],
-          "query": {
-            "bool": {
-              "filter": [
-                {
-                  "terms": {
-                    // the ids from the movies in Step 1
-                    "id": ["762509"]
-                  }
-                }
-              ],
-              // Add additional filters for circumstantial queries
-              // Example: for "child's emotions" query, add family-friendly filters
-              "must": [
-                // Add specific filters based on mentioned elements like "child", "family", etc.
-              ]
-            }
-          },
-        "sort": [
-          // MANDATORY: Always include sorting when results are found
-          // DEFAULT: Use popularity and vote_average when no specific sorting is requested
-          {
-            "popularity": {
-              "order": "desc"
-            }
-          },
-          {
-            "vote_average": {
-              "order": "desc"
-            }
-          }
-        ]
+          // Add additional filters for circumstantial queries
+          // Example: for "child's emotions" query, add family-friendly filters
+          "must": [
+            // Add specific filters based on mentioned elements like "child", "family", etc.
+          ]
+        }
       },
-      "next": null
-    }
-      ```
+    "sort": [
+      // MANDATORY: Always include sorting when results are found
+      // DEFAULT: Use popularity and vote_average when no specific sorting is requested
+      {
+        "popularity": {
+          "order": "desc"
+        }
+      },
+      {
+        "vote_average": {
+          "order": "desc"
+        }
+      }
+    ]
+  },
+  "next": null
+}
+```
 
 ## User is asking specifically for a child or family appropriate movies
   - **Age Group Recognition:** The following age ranges and terms should be treated as child/family movie requests:
@@ -2231,7 +1909,7 @@ Example (mixed roles: "directed by <idA> AND starring <idB>"):
   ```
 
 ## Sorting & Cross Index Data Querying
-- You can pass the IDs from `search-index_text-based-vector-search` or from `person-combined-credits.cast.id` or `person-combined-credits.crew.id` into `search-index_query-and-sort-based-search` to sort.
+- You can pass the IDs from `search-index_text-based-vector-search` or from any earlier `search-index_query-and-sort-based-search` call into `search-index_query-and-sort-based-search` to sort.
 - **CRITICAL (watch providers + sorting):** If Step 1 includes a nested watch-provider clause with `inner_hits`, Step 2 (the sort query) must include that same nested clause with `inner_hits` as well; `inner_hits` do not carry over between tool calls.
 - **CRITICAL**: When processing results from Step 1, ALWAYS include sorting in Step 2
 - **DEFAULT SORTING**: Use `popularity` (desc) and `vote_average` (desc) when no specific sort order is requested
@@ -2314,54 +1992,7 @@ Example (mixed roles: "directed by <idA> AND starring <idB>"):
     "next": null
   }
   ```
-  Example with person `id` or `_id` from in context data  with `_source.person-combined-credits`:
-  ```json
-  {
-    "path": {
-      "index": "[the index name from the definition]"
-    },
-    "body": {
-      "query": {
-        "terms": {
-          "id": [348, 313]
-        }
-      },
-      "sort": [
-        {
-          "release_date": {
-            "order": "desc"
-          }
-        }
-      ],
-      "_source": ["id", "imdb_id", "title", "poster_path", "overview", "metadata"]
-    },
-    "next": null
-  }
-  ```
-  In this example, IDs like `313` and `348` can come from `person-combined-credits.cast.id` or `person-combined-credits.crew.id`, such as:
-  ```json
-  "_source": {
-    "person-combined-credits": {
-      "cast": [
-        {
-          "character": "Linda",
-          "media_type": "movie",
-          "release_date": "2006-09-08",
-          "id": 313,
-          "title": "Snow Cake"
-        },
-        {
-          "character": "Ripley",
-          "media_type": "movie",
-          "release_date": "1979-05-25",
-          "id": 348,
-          "title": "Alien"
-        }
-        ]
-      },
-      "next": null
-    }
-    ```
+
 
 ## User wants to find the best film from existing search results
 - **User Query:** "out of all of these films tell me the best film" OR "which one is the best?" OR "show me the highest rated from these" OR "what's the best movie from the previous results?"

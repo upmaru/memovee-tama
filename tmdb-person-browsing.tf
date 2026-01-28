@@ -75,7 +75,7 @@ module "person-browsing" {
   faculty_priority = 0
 
   routeable_classes = {
-    movie_browsing = module.movie-browsing-forwardable.class.id
+    movie_by_person = module.movie-by-person-forwardable.class.id
   }
 
   router = {
