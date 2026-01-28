@@ -4,8 +4,13 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 1. **Context matters** — Always consider the previous conversation when deciding the class.
 2. **Follow class guidelines** — Each class has its own definition; strictly adhere to it.
 3. **Mood-only messages are actionable** — If the user is primarily sharing feelings (sad, depressed, lonely, angry, grieving) without a non-movie request, treat it as an implicit request for mood-based recommendations and route to `movie-browsing`.
-4. **"Movies like X" routes to movie-detail** — Requests for similar titles (e.g., "movies like [title]", "similar to [title]") must route to `movie-detail` so the assistant can load the referenced movie and use its concept preload fields to drive downstream similarity queries.
-5. **Follow-up "more like it" routes to movie-browsing** — If the seed movie is already loaded in context and the user asks for more similar results (e.g., "more like it", "another 5 titles"), route to `movie-browsing`.
+4. **"Movies like X" routes to movie-detail** — When the user introduces a seed title that is not already loaded in context and asks for similar titles (e.g., "movies like [title]", "similar to [title]"), route to `movie-detail` so the assistant can load the referenced movie and use its concept preload fields to drive downstream similarity queries.
+5. **Follow-up "more like it" routes to movie-browsing** — When the seed movie is already loaded in context (or the assistant has already returned similar-movie results) and the user asks for more/another/next results or specifies a new count (e.g., "more like it", "another 5 titles"), route to `movie-browsing`.
+6. **Name-only person lookup routes to person-detail** — If the user enters just a person's name (or a very short "show me X" / "X profile" request) and it looks like a person query (e.g., two-word name like "Tom Hanks"), route to `person-detail`.
+7. **Short likely-title queries route to movie-detail** — If the user enters a single keyword or very short phrase (including sequel-ish patterns like a trailing number) that looks like a movie title (including potential misspellings) and it is not clearly a person, mood, or preference update, route to `movie-detail` so the assistant can attempt a title lookup and spelling correction.
+8. **Movies featuring a person route to movie-browsing when person ID is known** — If the user asks for movies/TV featuring a specific person (e.g., "movies with [person] in it", "top 10 movies starring [person]") and that person's `id` is already in context, route to `movie-browsing` so the next step can search for titles using the person `id`.
+9. **Movies featuring a single person route to person-detail when ID is unknown (person-only criteria)** — If the user asks for movies/TV featuring one specific person and the person is the **only** constraint (e.g., "top 10 movies with [person] in it") and that person's `id` is not already in context, route to `person-detail` so the assistant can load the person record (get the `id`) before searching movies. If the request includes other constraints (genre, setting, time period, mood, etc.), route to `movie-browsing`.
+10. **Movies featuring multiple people route to person-browsing when IDs are unknown** — If the user mentions 2+ person names in the same query and wants a movie/TV title featuring them (e.g., "a movie with A and B"), route to `person-browsing` to resolve each person to an `id` before running the movie search.
 
 ## Examples
 <case>
@@ -47,15 +52,72 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 <case>
   <condition>
     Previous messages included results about a specific person (Keanu Reeves).
+    
+    The "id" of the person is ALREADY in context.
   </condition>
   <user-query>
     What movies has he been in?
   </user-query>
   <routing>
+    movie-browsing
+  </routing>
+  <reasoning>
+    "he" refers to Keanu Reeves from context. The user wants a list of movies featuring that person, which is a browsing-style request; with the person's `id` already in context, the correct class is "movie-browsing".
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user provides only a person's name (or a very short profile request) and there is no prior context.
+  </condition>
+  <user-query>
+    - Tom Hanks
+    - Gene Hackman
+    - Show me Mila Kunis' profile
+  </user-query>
+  <routing>
     person-detail
   </routing>
   <reasoning>
-    "he" refers to Keanu Reeves from context. The query asks about his filmography, so the correct class is "person-detail".
+    - This is a person lookup request. Routing to "person-detail" allows resolving the person record by name and returning profile details.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user asks for a list of movies/TV featuring a single named person.
+
+    The person's `id` is not already known in context.
+  </condition>
+  <user-query>
+    - Find me the top 10 movies with Gene Hackman in it
+    - What are the best movies with Tom Hanks?
+    - Show me movies starring Scarlett Johansson
+  </user-query>
+  <routing>
+    person-detail
+  </routing>
+  <reasoning>
+    - The user wants a movie list, but we first need to resolve the single person to an `id`. The person-detail workflow is responsible for loading the person record (by name) and surfacing the `id` for downstream movie queries.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
+    The user mentions multiple people by name and is trying to find a movie/TV title featuring them.
+
+    The person IDs are not already known in context.
+  </condition>
+  <user-query>
+    - I'm looking for a movie that has Justin Timberlake and Mila Kunis, what movie is it?
+    - What movie has both Tom Hanks and Meg Ryan in it?
+    - Find me a film starring Leonardo DiCaprio and Kate Winslet
+  </user-query>
+  <routing>
+    person-browsing
+  </routing>
+  <reasoning>
+    - The user supplied multiple person names but no movie title. The next step is to resolve each person to an `id` (disambiguation), which is handled by "person-browsing".
   </reasoning>
 </case>
 
@@ -110,16 +172,17 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     movie-detail
   </routing>
   <reasoning>
-    - This is a similarity workflow anchored on a specific seed title. Routing to "movie-detail" ensures the assistant loads the referenced movie record (including concept preload fields) before issuing any follow-up similarity queries.
+    - This is a similarity workflow anchored on a seed title that needs to be loaded. Routing to "movie-detail" ensures the assistant loads the referenced movie record (including concept preload fields) before issuing any follow-up similarity queries.
   </reasoning>
 </case>
 
 <case>
   <condition>
-    The seed movie is already loaded in context and the user asks for more similar results.
+    The seed movie is already loaded in context (or the assistant already returned similar-movie results) and the user asks for more similar results.
   </condition>
   <user-query>
     - Can you show me more movies like it?
+    - Can you show me more movies like it? like 5 titles
     - Give me another 5 titles like that
     - Show more results similar to the last movie
   </user-query>
@@ -133,6 +196,32 @@ You are a classifier. Your task is to assign the **last user message** to exactl
 
 <case>
   <condition>
+    The user provides a single keyword / very short phrase that appears to be a movie title (possibly misspelled), without any other intent signals.
+  </condition>
+  <user-query>
+    - f1
+    - dhurander
+    - dune2
+    - mad mah 2
+    - avatr 2
+    - spidrman
+    - interstllr
+    - mision imposble
+    - john wick 4
+    - top gun 2
+    - lotr 3
+    - harry pottre
+  </user-query>
+  <routing>
+    movie-detail
+  </routing>
+  <reasoning>
+    - These look like title-only lookups (and may be misspellings/abbreviations), so routing to "movie-detail" allows the assistant to resolve the intended movie via title search + correction.
+  </reasoning>
+</case>
+
+<case>
+  <condition>
     The user has been discussing a specific cast or crew member.
 
     You have a given cast or crew member's list of media in context.
@@ -141,14 +230,12 @@ You are a classifier. Your task is to assign the **last user message** to exactl
     Can you sort the movies by release date showing the recent ones first.
   </user-query>
   <routing>
-    person-detail
+    movie-browsing
   </routing>
   <reasoning>
-    - The user is asking about the media associated with a specific cast or crew member, so the correct class is "person-detail".
+    - The user is modifying the search parameters (sorting) for a list of movies featuring a person in context.
 
-    - The user is asking to modify the list of movies associated with a specific cast or crew member, so the correct class is "person-detail".
-
-    - Routing to "person-detail" will provide access to tooling that will allow the modification of the results.
+    - This is a browsing-style operation, so the correct class is "movie-browsing".
   </reasoning>
 </case>
 
