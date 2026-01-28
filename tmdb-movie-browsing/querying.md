@@ -745,6 +745,39 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   - Default: use `"_source": true` inside `inner_hits` to return the full matched nested cast/crew entries (simplifies templates and avoids missing fields).
   - If response size becomes an issue, switch `inner_hits._source` from `true` to an explicit allowlist.
   - Tip: For AND queries (one nested clause per person), consider setting `inner_hits.name` to identify which person matched which clause (optional).
+- **CRITICAL - `inner_hits` placement (common parsing error)**: `inner_hits` must be a direct property of the `nested` object (same level as `path` and `query`), never inside `query` or `query.bool`.
+  - Wrong (causes `[bool] malformed query, expected [END_OBJECT]`):
+    ```jsonc
+    {
+      "nested": {
+        "path": "movie-credits.cast",
+        "query": {
+          "bool": {
+            "filter": [
+              { "terms": { "movie-credits.cast.id": [2157] } }
+            ],
+            "inner_hits": { "_source": true } // WRONG - inner_hits inside query
+          }
+        }
+      }
+    }
+    ```
+  - Correct:
+    ```jsonc
+    {
+      "nested": {
+        "path": "movie-credits.cast",
+        "query": {
+          "bool": {
+            "filter": [
+              { "terms": { "movie-credits.cast.id": [2157] } }
+            ]
+          }
+        },
+        "inner_hits": { "_source": true, "size": 5 } // CORRECT
+      }
+    }
+    ```
 - **Stop after a successful person-ID query**: If the first person-ID query returns results and already includes the requested sort + fields, **do not** run a follow-up `terms` query by IDs. End the workflow with `no-call()` so the reply can be generated from the existing results.
   - Only re-query when the user explicitly asks for a different sort, additional fields not in `_source`, or streaming availability/region filters that were not included in the original query.
 - **CRITICAL - AND vs OR (multiple people)**:
@@ -772,24 +805,24 @@ Example (match ANY of person `12345` or `67890` via cast OR crew):
 	                    "query": {
 	                      "terms": { "movie-credits.cast.id": [12345, 67890] }
 	                    },
-		                    "inner_hits": {
-		                      "size": 100,
-		                      "_source": true
-		                    }
-		                  }
-		                },
+	                    "inner_hits": {
+	                      "size": 100,
+	                      "_source": true
+	                    }
+	                  }
+	                },
 	                {
 	                  "nested": {
 	                    "path": "movie-credits.crew",
 	                    "query": {
 	                      "terms": { "movie-credits.crew.id": [12345, 67890] }
 	                    },
-		                    "inner_hits": {
-		                      "size": 100,
-		                      "_source": true
-		                    }
-		                  }
-		                }
+	                    "inner_hits": {
+	                      "size": 100,
+	                      "_source": true
+	                    }
+	                  }
+	                }
 	              ],
 	              "minimum_should_match": 1
 	            }
