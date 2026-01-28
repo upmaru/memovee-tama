@@ -745,6 +745,8 @@ Before processing a mixed keyword and genre query, you need to separate the genr
   - Default: use `"_source": true` inside `inner_hits` to return the full matched nested cast/crew entries (simplifies templates and avoids missing fields).
   - If response size becomes an issue, switch `inner_hits._source` from `true` to an explicit allowlist.
   - Tip: For AND queries (one nested clause per person), consider setting `inner_hits.name` to identify which person matched which clause (optional).
+- **Stop after a successful person-ID query**: If the first person-ID query returns results and already includes the requested sort + fields, **do not** run a follow-up `terms` query by IDs. End the workflow with `no-call()` so the reply can be generated from the existing results.
+  - Only re-query when the user explicitly asks for a different sort, additional fields not in `_source`, or streaming availability/region filters that were not included in the original query.
 - **CRITICAL - AND vs OR (multiple people)**:
   - If the user says **OR** / **either** / **any of** (or asks a broad query like "movies with X" and supplies multiple people without saying "both"), use the **ANY** strategy: put all person IDs into the same `terms` list (matches movies where **any** of the IDs appear in cast or crew).
   - If the user says **AND** / **both** / **together** / "has X and Y in it", use the **ALL** strategy: create **one clause per person ID** and put those clauses in a top-level `bool.must`. This is required because `movie-credits.*` are `nested` arrays; to require two different people you must match each person in its own nested query.
