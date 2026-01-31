@@ -7,8 +7,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
 - **MANDATORY `_source.metadata`**: Every query MUST include `"metadata"` inside `_source` so personalization context is always available downstream. **Exception**: similarity seed-movie preload for "movies like X" (see Similarity + checklist).
 - **MANDATORY `_source.belongs_to_collection`**: Always include `"belongs_to_collection"` in `_source` so collection context (prequels/sequels, franchise name, artwork) is available for downstream formatting—even if the user didn’t explicitly ask for it. **Exception**: similarity seed-movie preload for "movies like X" (see Similarity + checklist).
 - **CRITICAL**: Every query must include the complete structure: a `path` with `index`, a `body` containing `query`, `_source`, `limit`, and any optional `sort`, and a `next` value (descriptive string or `null`), exactly as defined by the index specification.
-- **CRITICAL**: Use the top-level `"next"` parameter to enable **verify-or-re-query** steps. If results need validation or may require retry (title lookups, ambiguous matches, spell fixes), set `"next": "verify-results-or-retry"` (or similar). Only set `"next": "verify-or-re-query"` when the workflow is truly complete.
-- **CRITICAL**: After a verify step confirms a successful tool response (HTTP status 200 / success), stop calling tools and respond with `no-call()` to deliver the final user-facing answer.
+- **CRITICAL**: Use the top-level `"next"` parameter to enable **verify-or-re-query** steps. If results need validation or may require retry (title lookups, ambiguous matches, spell fixes), set `"next": "verify-results-or-retry"` (or similar). Only set `"next": null` when the workflow is truly complete.
 
 ### Media Watch Providers
 - Whenever regional data is available, every movie-detail workflow must also return watch-provider availability for that region.
@@ -65,7 +64,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     }
   }
   ```
-- Do **not** add `"memovee-movie-watch-providers"` to the top-level `_source`; the nested `inner_hits` already return the provider details. Once this query is executed the workflow is complete, so set `"next": "verify-or-re-query"` unless additional steps are still required for the user’s request. Treat the clause as mandatory whenever a region is available; omit it entirely when no region information exists.
+- Do **not** add `"memovee-movie-watch-providers"` to the top-level `_source`; the nested `inner_hits` already return the provider details. Once this query is executed the workflow is complete, so set `"next": null` unless additional steps are still required for the user’s request. Treat the clause as mandatory whenever a region is available; omit it entirely when no region information exists.
 
 
 ## Instructions
@@ -138,7 +137,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     },
     "limit": 1
   },
-  "next": "verify-or-re-query"
+  "next": null
 }
 ```
 
@@ -167,9 +166,9 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       }
     },
     "sort": [
-      { "vote_count": { "order": "desc" } },
+      { "release_date": { "order": "desc" } },
       { "popularity": { "order": "desc" } },
-      { "release_date": { "order": "desc" } }      
+      { "vote_count": { "order": "desc" } }
     ],
     "limit": 1
   },
@@ -249,7 +248,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
   - When only the media title is available in context (and a region is known, include the `should` block; otherwise omit it):
@@ -321,14 +320,25 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         },
         "sort": [
-          { "vote_count": { "order": "desc" } },
-          { "popularity": { "order": "desc" } },
-          { "release_date": { "order": "desc" } }
-
+          {
+            "release_date": {
+              "order": "desc"
+            }
+          },
+          {
+            "popularity": {
+              "order": "desc"
+            }
+          },
+          {
+            "vote_count": {
+              "order": "desc"
+            }
+          }
         ],
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
   - When the media title and release year are provided together (e.g., "Hollywoodland 2006") and regional information is available, include the `should` block; otherwise omit it:
@@ -414,7 +424,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "sort": [
           {
-            "vote_count": {
+            "release_date": {
               "order": "desc"
             }
           },
@@ -424,14 +434,14 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             }
           },
           {
-            "release_date": {
+            "vote_count": {
               "order": "desc"
             }
           }
         ],
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
     **Explanation**: When the user provides a movie title followed by a release year (e.g., "Hollywoodland 2006"), use a `bool` query with:
@@ -471,7 +481,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       }
     }
   },
-  "next": "verify-or-re-query"
+  "next": null
 }
 ```
 
@@ -530,7 +540,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "path": {
         "index": "[the index name from the index-definition]"
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
   - When only the title of the movie is available in context:
@@ -595,7 +605,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
       "path": {
         "index": "[the index name from the index-definition]"
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
 
@@ -650,7 +660,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         }
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
   - When only the media title is available in context:
@@ -705,18 +715,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "sort": [
           {
-            "vote_count": { "order": "desc" }
+            "release_date": { "order": "desc" }
           },
           {
             "popularity": { "order": "desc" }
           },
           {
-            "release_date": { "order": "desc" }
+            "vote_count": { "order": "desc" }
           }
         ],
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
 **User Query**: "Who is the lead actor in the movie"
@@ -769,7 +779,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         }
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
     Explanation: This query retrieves the lead actor's information for a specific movie by using the `ID` of the movie. The `movie-credits.cast.order` shows the order of significance of the cast member. The lower the number the more significant the cast member is.
@@ -827,7 +837,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
   - When only the media title is available in context:
@@ -882,18 +892,18 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "sort": [
           {
-            "vote_count": { "order": "desc" }
+            "release_date": { "order": "desc" }
           },
           {
             "popularity": { "order": "desc" }
           },
           {
-            "release_date": { "order": "desc" }
+            "vote_count": { "order": "desc" }
           }
         ],
         "limit": 1
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
 
@@ -974,7 +984,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           },
           "limit": 1
         },
-        "next": "verify-or-re-query"
+        "next": null
       }
       ```
     </example>
@@ -1049,18 +1059,21 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
               ]
             }
           },
-          "sort": [
-            {
-              "vote_count": { "order": "desc" }
-            },
-            {
-              "popularity": { "order": "desc" }
-            }
-          ],
-          "limit": 1
-        },
-        "next": "verify-or-re-query"
-      }
+        "sort": [
+          {
+            "release_date": { "order": "desc" }
+          },
+          {
+            "popularity": { "order": "desc" }
+          },
+          {
+            "vote_count": { "order": "desc" }
+          }
+        ],
+        "limit": 1
+      },
+      "next": null
+    }
       ```
     </example>
   </case>
@@ -1092,7 +1105,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         ]
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
 - If the sorting is on a nested field the `nested` `path` needs to be specified in the `sort`:
@@ -1155,7 +1168,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         ]
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
 - If there is data in context with the following structure `_source.person-combined-credits.crew` OR `_source.person-combined-credits.cast` you can pass the ID from `_source.person-combined-credits.cast.id` OR `_source.person-combined-credits.crew.id` in to the query like the example below:
@@ -1180,7 +1193,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         ]
       },
-      "next": "verify-or-re-query"
+      "next": null
     }
     ```
     In this example, IDs like `313` and `348` can come from `person-combined-credits.cast.id` or `person-combined-credits.crew.id`, such as:
@@ -1444,7 +1457,7 @@ This error commonly occurs when `inner_hits` is incorrectly placed inside the `q
     },
     "limit": 1
   },
-  "next": "verify-or-re-query"
+  "next": null
 }
 ```
 
