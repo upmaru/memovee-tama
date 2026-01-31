@@ -172,8 +172,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
     },
     "sort": [
       { "vote_count": { "order": "desc" } },
-      { "popularity": { "order": "desc" } },
-      { "release_date": { "order": "desc" } }      
+      { "popularity": { "order": "desc" } }
     ],
     "limit": 1
   },
@@ -326,9 +325,7 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         },
         "sort": [
           { "vote_count": { "order": "desc" } },
-          { "popularity": { "order": "desc" } },
-          { "release_date": { "order": "desc" } }
-
+          { "popularity": { "order": "desc" } }
         ],
         "limit": 1
       },
@@ -417,21 +414,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         },
         "sort": [
-          {
-            "vote_count": {
-              "order": "desc"
-            }
-          },
-          {
-            "popularity": {
-              "order": "desc"
-            }
-          },
-          {
-            "release_date": {
-              "order": "desc"
-            }
-          }
+          { "vote_count": { "order": "desc" } },
+          { "popularity": { "order": "desc" } }
         ],
         "limit": 1
       },
@@ -560,15 +544,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
         ],
         "limit": 1,
         "sort": [
-          {
-            "release_date": { "order": "desc" }
-          },
-          {
-            "popularity": { "order": "desc" }
-          },
-          {
-            "vote_count": { "order": "desc" }
-          }
+          { "vote_count": { "order": "desc" } },
+          { "popularity": { "order": "desc" } }
         ],
         "query": {
           "bool": {
@@ -708,15 +685,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         },
         "sort": [
-          {
-            "vote_count": { "order": "desc" }
-          },
-          {
-            "popularity": { "order": "desc" }
-          },
-          {
-            "release_date": { "order": "desc" }
-          }
+          { "vote_count": { "order": "desc" } },
+          { "popularity": { "order": "desc" } }
         ],
         "limit": 1
       },
@@ -885,15 +855,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
           }
         },
         "sort": [
-          {
-            "vote_count": { "order": "desc" }
-          },
-          {
-            "popularity": { "order": "desc" }
-          },
-          {
-            "release_date": { "order": "desc" }
-          }
+          { "vote_count": { "order": "desc" } },
+          { "popularity": { "order": "desc" } }
         ],
         "limit": 1
       },
@@ -1054,12 +1017,8 @@ You are an Elasticsearch querying expert tasked with retrieving detailed informa
             }
           },
           "sort": [
-            {
-              "vote_count": { "order": "desc" }
-            },
-            {
-              "popularity": { "order": "desc" }
-            }
+            { "vote_count": { "order": "desc" } },
+            { "popularity": { "order": "desc" } }
           ],
           "limit": 1
         },
