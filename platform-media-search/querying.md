@@ -9,7 +9,11 @@ When the user provides a query with spelling errors or typos, you should correct
 
 ## Query examples
 
-Below are some examples of cases and query examples, once you have generated the query use the `create-search-artifact` tool.
+Below are some examples of cases and query examples, once you have generated the query use the `create-search-artifact_SearchArtifactRequest` tool.
+
+## Basic Structure of function calling arguments
+
+Include only the properties that are required for the query. **DO NOT** include `parent_entity_id` in the function calling arguments.
 
 ### User provides movie title
 

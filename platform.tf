@@ -44,15 +44,29 @@ resource "tama_node" "forward-user-message" {
   type = "reactive"
 }
 
+resource "tama_listener" "memovee-search-listener" {
+  space_id = module.memovee-search.space_id
+  endpoint = "${var.memovee_ui_endpoint}/tama/hook/broadcasts"
+  secret   = var.memovee_listener_secret
+}
+
+//
+// Listener Topic
+//
+resource "tama_listener_topic" "search-user-message-topic" {
+  listener_id = tama_listener.memovee-search-listener.id
+  class_id    = module.memovee-search.schemas.user-message.id
+}
+
 //
 // Listener Filters
 //
 resource "tama_listener_filter" "memovee-search-forwarding" {
-  listener_id = tama_listener.memovee-ui-listener.id
+  listener_id = tama_listener.memovee-search-listener.id
   chain_id    = tama_chain.forward-to-media-search.id
 }
 
 resource "tama_listener_filter" "memovee-search-media-search" {
-  listener_id = tama_listener.memovee-ui-listener.id
+  listener_id = tama_listener.memovee-search-listener.id
   chain_id    = tama_chain.media-search.id
 }
