@@ -110,3 +110,9 @@ data "tama_action" "list-record-markings" {
   method           = "GET"
   path             = "/tama/content/users/{user_id}/markings"
 }
+
+data "tama_action" "create-search-artifact" {
+  specification_id = tama_specification.memovee-ui.id
+  method           = "POST"
+  path             = "/tama/search/messages/{message_id}/artifacts"
+}
