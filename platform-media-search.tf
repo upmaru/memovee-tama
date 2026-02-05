@@ -75,15 +75,13 @@ resource "tama_thought_context_input" "media-search-tooling-metadata" {
 
 resource "tama_thought_processor" "media-search-tooling-model" {
   thought_id = tama_modular_thought.media-search-tooling.id
-  model_id   = module.openai.model_ids["gpt-5.1-codex-mini"]
+  model_id   = module.groq.model_ids["openai/gpt-oss-20b"]
 
   completion {
     temperature = 1.0
     tool_choice = "required"
     parameters = jsonencode({
-      reasoning = {
-        effort = "low"
-      }
+      reasoning_effort = "low"
     })
   }
 }
