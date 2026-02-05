@@ -139,10 +139,6 @@ All function-calling arguments MUST use this top-level shape and MUST include al
 }
 ```
 
-## Basic Structure of function calling arguments
-
-Include only the properties that are required for the query. **DO NOT** include `parent_entity_id` in the function calling arguments.
-
 ## Query examples
 
 Below are some examples of cases and query examples, once you have generated the query use the `create-search-artifact_SearchArtifactRequest` tool.
