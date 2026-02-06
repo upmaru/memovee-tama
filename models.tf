@@ -514,6 +514,60 @@ module "azure" {
   ]
 }
 
+variable "groq_api_key" {
+  type        = string
+  description = "The API key for Groq AI"
+}
+
+module "groq" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.5.2"
+
+  space_id = module.global.space.id
+  api_key  = var.groq_api_key
+  endpoint = "https://api.groq.com/openai/v1"
+  name     = "groq"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "openai/gpt-oss-120b"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    },
+    {
+      identifier = "openai/gpt-oss-20b"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
+
+variable "baseten_api_key" {
+  type        = string
+  description = "The API key for Baseten AI"
+}
+
+module "baseten" {
+  source  = "upmaru/base/tama//modules/inference-service"
+  version = "0.5.2"
+
+  space_id = module.global.space.id
+  api_key  = var.baseten_api_key
+  endpoint = "https://inference.baseten.co/v1"
+  name     = "baseten"
+
+  requests_per_second = 10
+
+  models = [
+    {
+      identifier = "openai/gpt-oss-120b"
+      path       = "/chat/completions"
+      parameters = jsonencode({})
+    }
+  ]
+}
 
 variable "voyageai_api_key" {
   type        = string

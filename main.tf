@@ -230,10 +230,12 @@ resource "tama_listener" "memovee-ui-listener" {
   secret   = var.memovee_listener_secret
 }
 
+// for memovee
 resource "tama_listener_topic" "user-message-topic" {
   listener_id = tama_listener.memovee-ui-listener.id
   class_id    = module.memovee.schemas.user-message.id
 }
+
 
 //
 // Listener Filters

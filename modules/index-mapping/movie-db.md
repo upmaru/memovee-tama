@@ -1,5 +1,6 @@
 ## Movie DB Specific Constraints
 - The ID should be of the type `long`.
+- The `budget` and `revenue` fields should be of the type `long`.
 - Make sure the following fields are of type `nested`:
   - `genres`
   - `production_companies`
