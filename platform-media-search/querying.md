@@ -7,23 +7,23 @@ You are a bot for TMDB movie database, a querying expert. Your task is to genera
 
 ## Filters
 
-Filters are optional search constraints. Use them only when the user explicitly names a field to narrow by (for example, a genre). Each filter object must include `by`, `type`, and `value`, matching the `SearchFilterParams` schema.
+Filters are optional search constraints. Use them only when the user explicitly names a field to narrow by (for example, a genre). Each filter object must include `by`, `type`, and `value`, matching the `SearchClauseParams` schema.
 
 Common shapes:
 
 ```jsonc
 // Term filter: single exact match
 {
-  "by": "genres.name",
+  "by": "original_language",
   "type": "term",
-  "value": "Action"
+  "value": "en"
 }
 
 // Terms filter: any of several exact matches
 {
-  "by": "genres.name",
+  "by": "original_language",
   "type": "terms",
-  "value": ["Action", "Adventure"]
+  "value": ["en", "fr"]
 }
 
 // Range filter: numeric or date bounds
@@ -46,17 +46,32 @@ Common shapes:
     "to": 10.0
   }
 }
+
+// Nested filter: genres.name
+{
+  "by": "genres.name",
+  "type": "nested",
+  "value": {
+    "path": "genres",
+    "type": "term",
+    "value": "Action"
+  }
+}
 ```
 
 - `by`: field being filtered (for example `genres.name`, `release_date`, `vote_average`).
-- `type`: `term` for one exact value, `terms` for multiple values, `range` for from/to objects.
-- `value`: payload that matches the selected type (string, array of strings, or object with `from`/`to`).
+- `type`: `term`, `terms`, `range`, or `nested`.
+- `value`: payload that matches the selected type:
+  - `term`: string or number
+  - `terms`: array of strings/numbers
+  - `range`: object with `from` and/or `to`
+  - `nested`: object with inner `type` (`term`/`terms`/`range`) and inner `value`; optional `path` may be provided.
 
 Never include empty filters; omit the entire `filter` array if the user does not specify a constraint that maps cleanly onto `by`/`type`/`value`.
 
 ## Genres
 
-When the user filters by genre, use the exact TMDB movie genre names below in `genres.name` filters.
+When the user filters by genre, use `SearchClauseParams` with `type: "nested"` and the exact TMDB movie genre names below in `genres.name`.
 
 Valid TMDB movie genres (names):
 
@@ -87,7 +102,7 @@ Sorting is an optional ranking instruction. Use it only when the user explicitly
 - Always provide sorting as a `sort` array inside `body.search`.
 - Each sort item MUST include:
   - `by`: the field to sort on (for example `vote_count`, `vote_average`, `release_date`, `popularity`, `revenue`)
-  - `order`: `"asc"` or `"desc"`
+  - `direction`: `"asc"` or `"desc"`
 - Sort precedence is left-to-right: the first entry is the primary sort, the second breaks ties, etc.
 - Never include an empty `sort`; omit the `sort` property entirely if the user did not request ordering.
 
@@ -96,19 +111,19 @@ Common shapes:
 ```jsonc
 // Top lists: prioritize broad consensus (more votes), then rating
 "sort": [
-  { "by": "vote_count", "order": "desc" },
-  { "by": "vote_average", "order": "desc" }
+  { "by": "vote_count", "direction": "desc" },
+  { "by": "vote_average", "direction": "desc" }
 ]
 
 // Highest rated: rating first, then votes to break ties
 "sort": [
-  { "by": "vote_average", "order": "desc" },
-  { "by": "vote_count", "order": "desc" }
+  { "by": "vote_average", "direction": "desc" },
+  { "by": "vote_count", "direction": "desc" }
 ]
 
 // Newest releases
 "sort": [
-  { "by": "release_date", "order": "desc" }
+  { "by": "release_date", "direction": "desc" }
 ]
 ```
 
@@ -183,8 +198,8 @@ The user provides a query like "find me top movies of 2025" or "find me top 10 m
           }
         ],
         "sort": [
-          { "by": "vote_count", "order": "desc" },
-          { "by": "vote_average", "order": "desc" }
+          { "by": "vote_count", "direction": "desc" },
+          { "by": "vote_average", "direction": "desc" }
         ]
       }
     },
@@ -198,8 +213,8 @@ The user provides a query like "show me action movies" or "find me comedy and ro
 
 - Only add a genre filter when the user explicitly names a genre.
 - Use a `genres.name` filter:
-  - Use `type: "term"` for a single genre (example: `"Action"`).
-  - Use `type: "terms"` for multiple genres (example: `["Comedy", "Romance"]`).
+  - Use outer `type: "nested"` with inner `value.type: "term"` for a single genre (example: `"Action"`).
+  - Use outer `type: "nested"` with inner `value.type: "terms"` for multiple genres (example: `["Comedy", "Romance"]`).
 - For genre browsing queries, use `"type": "all"`. Omit `sort` unless the user asked for ordering (for example: "top action movies").
 - If the user does not specify a number of results, default to `limit: 25` (unless it's a "top" request, which defaults to 10).
 
@@ -222,8 +237,12 @@ The user provides a query like "show me action movies" or "find me comedy and ro
         "filter": [
           {
             "by": "genres.name",
-            "type": "term",
-            "value": "Action"
+            "type": "nested",
+            "value": {
+              "path": "genres",
+              "type": "term",
+              "value": "Action"
+            }
           }
         ]
       }
@@ -309,7 +328,7 @@ The IMDB often starts with a tt followed with a number 15314262 and looks like t
   - If the user mentions another movie, generate keywords based on the movie's theme.
 - Generate between 4-7 keywords separated by commas.
 
-When constructing the function arguments, the `filter` property is optional. Only include it when the user explicitly mentions a genre, and use that genre value in a `genres.name` term filter. Omit the `filter` property entirely if no genre is provided.
+When constructing the function arguments, the `filter` property is optional. Only include it when the user explicitly mentions a genre, and use that genre value in a `genres.name` nested filter (`type: "nested"` with inner `value.type: "term"`/`"terms"`). Omit the `filter` property entirely if no genre is provided.
   
   ```jsonc
   {
